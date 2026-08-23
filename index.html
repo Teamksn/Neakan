@@ -44,6 +44,26 @@
       margin-top: 2px;
     }
 
+    /* ប្រអប់វីដេអូ Highlight ខាងលើ */
+    .video-section {
+      width: 100%;
+      max-width: 800px;
+      padding: 20px 16px 0 16px;
+    }
+    .video-wrapper {
+      width: 100%;
+      background-color: #000;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    }
+    .video-wrapper iframe {
+      width: 100%;
+      aspect-ratio: 16/9;
+      border: none;
+      display: block;
+    }
+
     .library-container {
       width: 100%;
       max-width: 800px;
@@ -126,11 +146,25 @@
 </head>
 <body>
 
+  <!-- Header ខាងលើ -->
   <header class="site-header">
     <h1>NEAKAN (អ្នកអាន)</h1>
     <p>បណ្តុំប្រលោមលោក និងការបកប្រែ</p>
   </header>
 
+  <!-- កន្លែងបង្ហាញវីដេអូពី Dailymotion -->
+  <section class="video-section">
+    <div class="video-wrapper">
+      <iframe 
+        src="https://www.dailymotion.com/video/xazyezq" 
+        title="Dailymotion Video Player" 
+        allow="autoplay; fullscreen; picture-in-picture" 
+        allowfullscreen>
+      </iframe>
+    </div>
+  </section>
+
+  <!-- បញ្ជីកាតរឿងទាំងអស់ -->
   <main class="library-container">
 
     <!-- កាតរឿងទី ១៖ ស៊ាននី (仙逆) -->
