@@ -2,7 +2,7 @@
 const novelInfo = {
   title: "仙逆 (Renegade Immortal)",
   author: "អ្នកនិពន្ធ: អឺកិន (耳根)",
-  coverUrl: "EP153 WANG LIN 1.PNG"
+  coverUrl: "Cover.jpg"
 };
 
 // ២. បញ្ជីជំពូក (រាល់ពេលចង់ថែមជំពូកថ្មី គ្រាន់តែ Copy ដុំ { ... } បិទភ្ជាប់បន្តបន្ទាប់)
