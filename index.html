@@ -22,7 +22,6 @@
       align-items: center;
     }
 
-    /* Header ខាងលើបង្អស់ */
     .site-header {
       width: 100%;
       background-color: #f7f4ed;
@@ -38,7 +37,6 @@
       font-size: 22px;
       color: #28a745;
       font-weight: 900;
-      letter-spacing: 0.5px;
     }
     .site-header p {
       font-size: 13px;
@@ -46,17 +44,15 @@
       margin-top: 2px;
     }
 
-    /* កុងតឺន័របញ្ជីរឿង */
     .library-container {
       width: 100%;
-      max-width: 900px;
+      max-width: 800px;
       padding: 25px 16px 50px 16px;
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 20px;
     }
 
-    /* កាតរឿងនីមួយៗ (Novel Card) */
     .novel-card {
       background-color: #ffffff;
       border: 1px solid #e5dfd3;
@@ -65,19 +61,18 @@
       display: flex;
       flex-direction: column;
       box-shadow: 0 3px 10px rgba(0,0,0,0.04);
-      transition: transform 0.2s, box-shadow 0.2s;
       text-decoration: none;
       color: inherit;
+      transition: transform 0.2s;
     }
     .novel-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 6px 16px rgba(0,0,0,0.08);
       border-color: #28a745;
     }
 
     .card-cover {
       width: 100%;
-      height: 200px;
+      height: 320px;
       background-color: #eee9dc;
       overflow: hidden;
       display: flex;
@@ -88,10 +83,11 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      display: block;
     }
 
     .card-info {
-      padding: 15px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       flex: 1;
@@ -100,22 +96,18 @@
       font-size: 16px;
       font-weight: 700;
       color: #111;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       line-height: 1.4;
     }
     .card-author {
       font-size: 12.5px;
       color: #777;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     .card-desc {
       font-size: 13px;
       color: #444;
-      line-height: 1.6;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      line-height: 1.5;
       margin-bottom: 15px;
       flex: 1;
     }
@@ -126,55 +118,41 @@
       background-color: #28a745;
       color: white;
       text-align: center;
-      border-radius: 5px;
+      border-radius: 4px;
       font-size: 13.5px;
       font-weight: bold;
-      transition: background 0.2s;
-    }
-    .novel-card:hover .card-btn {
-      background-color: #218838;
-    }
-
-    @media (max-width: 600px) {
-      .library-container {
-        grid-template-columns: 1fr;
-        padding: 15px;
-      }
-      .card-cover { height: 180px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Header លើគេ -->
   <header class="site-header">
     <h1>NEAKAN (អ្នកអាន)</h1>
-    <p>បណ្តុំប្រលោមលោក និងការបកប្រែសម្រាយ</p>
+    <p>បណ្តុំប្រលោមលោក និងការបកប្រែ</p>
   </header>
 
-  <!-- បញ្ជីរឿងទាំងអស់ (អាចបន្ថែមរឿងថ្មីៗនៅត្រង់នេះ) -->
   <main class="library-container">
 
-    <!-- រឿងទី ១៖ ស៊ាននី (仙逆) -->
+    <!-- កាតរឿងទី ១៖ ស៊ាននី (仙逆) -->
     <a href="xianni/" class="novel-card">
       <div class="card-cover">
-        <img src="xianni/Cover.jpg" alt="Renegade Immortal Cover" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
+        <img src="xianni/Cover.jpg" alt="Poster 仙逆" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
       </div>
       <div class="card-info">
-        <div class="card-title">仙逆 (ស៊ាននី - Renegade Immortal)</div>
-        <div class="card-author">អ្នកនិពន្ធ: អឺកើន (耳根)</div>
-        <div class="card-desc">ដំណើរផ្សងព្រេងរបស់យុវជន វ៉ាងលីន ក្នុងការដើរលើផ្លូវបដិបត្តិធម៌ប្រឆាំងនឹងវាសនា និងស្វែងរកអមតៈភាពពេញល័រធាន។</div>
+        <div class="card-title">仙逆 (ប្រឆាំងនឹងអមតៈ - Renegade Immortal)</div>
+        <div class="card-author">អ្នកនិពន្ធ: អឺកិន (耳根)</div>
+        <div class="card-desc">ស្របជាមនុស្សសាមញ្ញ ប្រឆាំងដើម្បីភាពអមតៈ។</div>
         <div class="card-btn">ចូលអានជំពូក →</div>
       </div>
     </a>
 
-    <!-- រឿងទី ២៖ ដាវឈិនភីងអាន (剑来) -->
+    <!-- កាតរឿងទី ២៖ ដាវឈិនភីងអាន (剑来) -->
     <a href="jianlai/" class="novel-card">
       <div class="card-cover">
-        <img src="jianlai/Cover.jpg" alt="Sword of Coming Cover" onerror="this.src='https://images.unsplash.com/photo-1532012164546-f432f2e3edd3?w=400'">
+        <img src="jianlai/Cover.jpg" alt="Poster 剑来" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/9/90/Sword_of_Coming_poster.jpg/440px-Sword_of_Coming_poster.jpg'">
       </div>
       <div class="card-info">
-        <div class="card-title">剑来 (ដាវឈិនភីងអាន - Sword of Coming)</div>
+        <div class="card-title">剑来 (អមតៈភាពនៃដាវឈិនភីងអាន - Sword of Coming)</div>
         <div class="card-author">អ្នកនិពន្ធ: ហ្វុងហ័រ (烽火戏诸侯)</div>
         <div class="card-desc">ដំណើររឿងរបស់យុវជន ឈិនភីងអាន ចេញពីទីប្រជុំជនតូចមួយ ឆ្ពោះទៅកាន់ពិភពដាវ និងការស្វែងរកសច្ចធម៌លើលោក។</div>
         <div class="card-btn">ចូលអានជំពូក →</div>
