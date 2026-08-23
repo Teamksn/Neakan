@@ -12,7 +12,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      background-color: #eae6df;
+      background-color: #faf7ed; /* ពណ៌ផ្ទៃពេញដូចគ្នាទាំងមូល */
       font-family: 'Battambang', sans-serif;
       display: flex;
       min-height: 100vh;
@@ -68,59 +68,60 @@
     .toc-list li:hover { background-color: #e5decb; }
     .toc-list li.active { background-color: #dbd2bd; color: #000; font-weight: 700; }
 
-    /* ២. ផ្ទាំងអានកណ្តាល */
+    /* ២. ផ្ទាំងអានកណ្តាល (កែសម្រួលឱ្យពេញផ្ទៃ) */
     .reader-area {
       flex: 1;
       display: flex;
       justify-content: center;
-      padding: 40px 20px 80px 20px;
+      padding: 20px 0 60px 0; /* លុបគម្លាតធំខាងលើចេញ */
       overflow-y: auto;
+      background-color: #faf7ed;
     }
     .novel-page {
       background-color: #faf7ed;
       max-width: 850px;
       width: 100%;
-      padding: 60px 70px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.04);
+      padding: 20px 25px; /* បង្រួមគម្លាតឱ្យសមល្មម */
       min-height: 100%;
     }
     .volume-title {
       text-align: center;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 900;
       color: #111;
-      margin-bottom: 15px;
+      margin-top: 5px;
+      margin-bottom: 10px;
     }
     .chapter-title {
       text-align: center;
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 700;
       color: #1a1a1a;
-      margin-bottom: 40px;
+      margin-bottom: 25px;
       line-height: 1.5;
     }
     .novel-body p {
       font-size: 18px;
-      line-height: 2.3;
+      line-height: 2.1;
       color: #222;
-      margin-bottom: 22px;
+      margin-bottom: 18px;
       text-align: justify;
-      text-indent: 2.5em;
+      text-indent: 0; /* លុប Space ដកឃ្លាក្បាលបន្ទាត់ធំៗចេញ */
     }
 
-    /* ៣. ប៊ូតុងរុករកជំពូកនៅខាងក្រោមអត្ថបទ */
+    /* ៣. ប៊ូតុងរុករកជំពូកខាងក្រោម */
     .bottom-nav {
       display: flex;
       justify-content: space-between;
-      margin-top: 50px;
-      padding-top: 25px;
+      margin-top: 40px;
+      padding-top: 20px;
       border-top: 1px solid #e0dacf;
       gap: 10px;
     }
     .nav-action-btn {
       flex: 1;
       padding: 12px;
-      font-size: 15px;
+      font-size: 14px;
       font-family: 'Battambang';
       font-weight: bold;
       background-color: #f2eee5;
@@ -128,9 +129,7 @@
       border-radius: 6px;
       cursor: pointer;
       text-align: center;
-      transition: background 0.2s;
     }
-    .nav-action-btn:hover { background-color: #dbd2bd; }
 
     /* ៤. Toolbar ស្តាំ (កុំព្យូទ័រ) */
     .right-toolbar {
@@ -157,17 +156,16 @@
       color: #444;
       font-size: 16px;
       font-weight: bold;
-      transition: all 0.2s;
     }
 
-    /* ប៊ូតុង Menu អណ្តែតសម្រាប់ទូរស័ព្ទ (Floating Mobile Menu Button) */
+    /* ប៊ូតុង Menu លើទូរស័ព្ទ */
     .mobile-menu-toggle {
       display: none;
       position: fixed;
       bottom: 25px;
       right: 25px;
-      width: 52px;
-      height: 52px;
+      width: 50px;
+      height: 50px;
       background-color: #333;
       color: white;
       border-radius: 50%;
@@ -185,26 +183,28 @@
       z-index: 999;
     }
 
-    /* ការរៀបចំប្លង់សម្រាប់ទូរស័ព្ទដៃ */
+    /* កំណត់សម្រាប់អេក្រង់ទូរស័ព្ទ (Mobile View) */
     @media (max-width: 900px) {
+      body { background-color: #faf7ed; }
       .left-sidebar {
         position: fixed;
         left: 0; top: 0;
         transform: translateX(-100%);
-        box-shadow: 5px 0 15px rgba(0,0,0,0.2);
       }
       .left-sidebar.open { transform: translateX(0); }
       .sidebar-overlay.active { display: block; }
       .mobile-menu-toggle { display: block; }
       .right-toolbar { display: none; }
-      .novel-page { padding: 35px 20px; }
-      .novel-body p { font-size: 16.5px; line-height: 2.1; text-indent: 1.8em; }
+      .reader-area { padding: 10px 0 50px 0; }
+      .novel-page { padding: 10px 16px; }
+      .volume-title { font-size: 19px; }
+      .chapter-title { font-size: 17px; margin-bottom: 20px; }
+      .novel-body p { font-size: 17px; line-height: 1.95; }
     }
   </style>
 </head>
 <body>
 
-  <!-- ស្រមោលបាំងពេលបើក Menu លើទូរស័ព្ទ -->
   <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileMenu()"></div>
 
   <!-- Sidebar ឆ្វេង -->
@@ -226,7 +226,6 @@
       <div class="chapter-title" id="displayTitle"></div>
       <div class="novel-body" id="displayContent"></div>
 
-      <!-- ប៊ូតុងរុករកជំពូកនៅខាងក្រោមងាយស្រួលចុចលើទូរស័ព្ទ -->
       <div class="bottom-nav">
         <button class="nav-action-btn" onclick="navigateChapter(-1)">← ជំពូកមុន</button>
         <button class="nav-action-btn" onclick="toggleMobileMenu()">បញ្ជីជំពូក (☰)</button>
@@ -235,7 +234,7 @@
     </div>
   </div>
 
-  <!-- Toolbar ស្តាំសម្រាប់កុំព្យូទ័រ -->
+  <!-- Toolbar ស្តាំ (កុំព្យូទ័រ) -->
   <div class="right-toolbar">
     <div class="tool-btn" title="ជំពូកមុន" onclick="navigateChapter(-1)">‹</div>
     <div class="tool-btn" title="ជំពូកបន្ទាប់" onclick="navigateChapter(1)">›</div>
@@ -243,14 +242,14 @@
     <div class="tool-btn" title="បង្រួមអក្សរ" onclick="adjustFont(-1)">A-</div>
   </div>
 
-  <!-- ប៊ូតុងរង្វង់អណ្តែត ☰ លើទូរស័ព្ទ -->
   <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
 
-  <script src="chapters.js?v=1.1"></script>
+  <!-- ហៅឯកសារ chapters.js ជាមួយ Version ដើម្បីកម្ចាត់ Cache -->
+  <script src="chapters.js?v=2.0"></script>
 
   <script>
     let currentChapterIndex = 0;
-    let currentFontSize = 18;
+    let currentFontSize = 17;
 
     function initWebsite() {
       if (typeof novelInfo !== 'undefined') {
@@ -327,7 +326,7 @@
     function adjustFont(step) {
       currentFontSize += step;
       if (currentFontSize < 14) currentFontSize = 14;
-      if (currentFontSize > 28) currentFontSize = 28;
+      if (currentFontSize > 26) currentFontSize = 26;
       document.querySelectorAll('#displayContent p').forEach(p => {
         p.style.fontSize = currentFontSize + 'px';
       });
