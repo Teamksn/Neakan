@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>គេហទំព័រអានប្រលោមលោក</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: #eae6df;
+      font-family: 'Battambang', sans-serif;
+      display: flex;
+      min-height: 100vh;
+      color: #222;
+    }
+
+    /* Sidebar ឆ្វេង */
+    .left-sidebar {
+      width: 290px;
+      background-color: #f2eee5;
+      border-right: 1px solid #ddd6c8;
+      padding: 20px;
+      height: 100vh;
+      position: sticky;
+      top: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .back-btn {
+      font-size: 13px;
+      color: #777;
+      text-decoration: none;
+      margin-bottom: 15px;
+      display: inline-block;
+    }
+    .novel-meta {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .novel-meta img {
+      width: 110px;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 4px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      margin-bottom: 8px;
+    }
+    .novel-meta h3 { font-size: 17px; color: #111; font-weight: 700; }
+    .novel-meta p { font-size: 13px; color: #666; }
+
+    .toc-search {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      font-family: 'Battambang';
+      font-size: 13px;
+      outline: none;
+    }
+    .toc-search:focus { border-color: #888; }
+
+    .toc-list {
+      flex: 1;
+      overflow-y: auto;
+      list-style: none;
+    }
+    .toc-list li {
+      padding: 9px 10px;
+      font-size: 13.5px;
+      border-radius: 4px;
+      cursor: pointer;
+      color: #444;
+      transition: all 0.2s;
+      line-height: 1.4;
+    }
+    .toc-list li:hover { background-color: #e5decb; }
+    .toc-list li.active {
+      background-color: #dbd2bd;
+      color: #000;
+      font-weight: 700;
+    }
+
+    /* ផ្ទាំងអានកណ្តាល */
+    .reader-area {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      padding: 40px 20px 80px 20px;
+      overflow-y: auto;
+    }
+    .novel-page {
+      background-color: #faf7ed;
+      max-width: 850px;
+      width: 100%;
+      padding: 60px 70px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.04);
+      min-height: 100%;
+    }
+    .volume-title {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 900;
+      color: #111;
+      margin-bottom: 15px;
+    }
+    .chapter-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 40px;
+      line-height: 1.5;
+    }
+    .novel-body p {
+      font-size: 18px;
+      line-height: 2.3;
+      color: #222;
+      margin-bottom: 22px;
+      text-align: justify;
+      text-indent: 2.5em;
+    }
+
+    /* Toolbar ស្តាំ */
+    .right-toolbar {
+      width: 60px;
+      position: sticky;
+      top: 40px;
+      height: fit-content;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+    }
+    .tool-btn {
+      width: 40px;
+      height: 40px;
+      background-color: #f2eee5;
+      border: 1px solid #ddd6c8;
+      border-radius: 6px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      color: #444;
+      font-size: 16px;
+      font-weight: bold;
+      transition: all 0.2s;
+      user-select: none;
+    }
+    .tool-btn:hover { background-color: #dbd2bd; color: #000; }
+
+    @media (max-width: 900px) {
+      .left-sidebar, .right-toolbar { display: none; }
+      .novel-page { padding: 30px 18px; }
+      .novel-body p { font-size: 16px; line-height: 2.0; text-indent: 1.8em; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar ឆ្វេង -->
+  <div class="left-sidebar">
+    <a href="#" class="back-btn">‹ ត្រឡប់ទៅទំព័រដើម</a>
+    
+    <div class="novel-meta">
+      <img id="novelCover" src="" alt="Poster">
+      <h3 id="novelName">...</h3>
+      <p id="novelAuthor">...</p>
+    </div>
+
+    <input type="text" id="searchInput" class="toc-search" placeholder="ស្វែងរកជំពូក..." onkeyup="filterChapters()">
+    <ul class="toc-list" id="tocContainer"></ul>
+  </div>
+
+  <!-- ផ្ទាំងអានកណ្តាល -->
+  <div class="reader-area" id="readerArea">
+    <div class="novel-page">
+      <div class="volume-title" id="displayVolume"></div>
+      <div class="chapter-title" id="displayTitle"></div>
+      <div class="novel-body" id="displayContent"></div>
+    </div>
+  </div>
+
+  <!-- Toolbar ស្តាំ -->
+  <div class="right-toolbar">
+    <div class="tool-btn" title="ជំពូកមុន" onclick="navigateChapter(-1)">‹</div>
+    <div class="tool-btn" title="ជំពូកបន្ទាប់" onclick="navigateChapter(1)">›</div>
+    <div class="tool-btn" title="ពង្រីកអក្សរ" onclick="adjustFont(1)">A+</div>
+    <div class="tool-btn" title="បង្រួមអក្សរ" onclick="adjustFont(-1)">A-</div>
+  </div>
+
+  <!-- ទាញយកទិន្នន័យពីឯកសារ chapters.js មកដំណើរការ -->
+  <script src="chapters.js"></script>
+
+  <script>
+    let currentChapterIndex = 0;
+    let currentFontSize = 18;
+
+    function initWebsite() {
+      if (typeof novelInfo === 'undefined' || typeof chaptersData === 'undefined') {
+        document.getElementById('displayTitle').innerText = 'សូមពិនិត្យឯកសារ chapters.js';
+        return;
+      }
+      document.getElementById('novelName').innerText = novelInfo.title;
+      document.getElementById('novelAuthor').innerText = novelInfo.author;
+      document.getElementById('novelCover').src = novelInfo.coverUrl;
+      renderSidebarTOC();
+      if (chaptersData.length > 0) {
+        loadChapter(0);
+      }
+    }
+
+    function renderSidebarTOC() {
+      const container = document.getElementById('tocContainer');
+      container.innerHTML = '';
+      chaptersData.forEach((chap, idx) => {
+        const li = document.createElement('li');
+        li.innerText = chap.title;
+        li.id = 'toc-item-' + idx;
+        li.onclick = () => loadChapter(idx);
+        container.appendChild(li);
+      });
+    }
+
+    function loadChapter(index) {
+      if (index < 0 || index >= chaptersData.length) return;
+      currentChapterIndex = index;
+      const chapter = chaptersData[index];
+
+      document.getElementById('displayVolume').innerText = chapter.volume || '';
+      document.getElementById('displayTitle').innerText = chapter.title;
+
+      const formattedHtml = chapter.content
+        .split('\n\n')
+        .filter(p => p.trim() !== '')
+        .map(p => `<p style="font-size: ${currentFontSize}px;">${p.trim()}</p>`)
+        .join('');
+
+      document.getElementById('displayContent').innerHTML = formattedHtml;
+
+      document.querySelectorAll('#tocContainer li').forEach(li => li.classList.remove('active'));
+      const activeLi = document.getElementById('toc-item-' + index);
+      if (activeLi) {
+        activeLi.classList.add('active');
+        activeLi.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      document.getElementById('readerArea').scrollTop = 0;
+    }
+
+    function navigateChapter(direction) {
+      loadChapter(currentChapterIndex + direction);
+    }
+
+    function filterChapters() {
+      const keyword = document.getElementById('searchInput').value.toLowerCase();
+      chaptersData.forEach((chap, idx) => {
+        const el = document.getElementById('toc-item-' + idx);
+        if (el) {
+          el.style.display = chap.title.toLowerCase().includes(keyword) ? '' : 'none';
+        }
+      });
+    }
+
+    function adjustFont(step) {
+      currentFontSize += step;
+      if (currentFontSize < 14) currentFontSize = 14;
+      if (currentFontSize > 28) currentFontSize = 28;
+      document.querySelectorAll('#displayContent p').forEach(p => {
+        p.style.fontSize = currentFontSize + 'px';
+      });
+    }
+
+    window.onload = initWebsite;
+  </script>
+</body>
+</html>
