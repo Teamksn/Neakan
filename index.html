@@ -2,7 +2,7 @@
 <html lang="km">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>គេហទំព័រអានប្រលោមលោក</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,251 +11,272 @@
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
-      background-color: #faf7ed; /* ពណ៌ផ្ទៃពេញដូចគ្នាទាំងមូល */
+      background-color: #f7f4ed; /* ពណ៌ក្រដាសភ្នែកដូច Hetushu */
       font-family: 'Battambang', sans-serif;
+      color: #1a1a1a;
       display: flex;
+      justify-content: center;
       min-height: 100vh;
-      color: #222;
+    }
+
+    /* កុងតឺន័រធំ */
+    .app-container {
+      width: 100%;
+      max-width: 800px;
+      min-height: 100vh;
+      background-color: #f7f4ed;
+      display: flex;
+      flex-direction: column;
       position: relative;
     }
 
-    /* ១. Sidebar ឆ្វេង */
-    .left-sidebar {
-      width: 300px;
-      background-color: #f2eee5;
-      border-right: 1px solid #ddd6c8;
-      padding: 20px;
-      height: 100vh;
+    /* ១. របារខាងលើបង្អស់ (App Header ដូច Hetushu) */
+    .top-header {
       position: sticky;
       top: 0;
-      display: flex;
-      flex-direction: column;
-      z-index: 1000;
-      transition: transform 0.3s ease;
-    }
-    .novel-meta { text-align: center; margin-bottom: 15px; }
-    .novel-meta img {
-      width: 110px;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 4px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-      margin-bottom: 8px;
-    }
-    .novel-meta h3 { font-size: 17px; color: #111; font-weight: 700; }
-    .novel-meta p { font-size: 13px; color: #666; }
-
-    .toc-search {
+      left: 0;
       width: 100%;
-      padding: 8px 12px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      margin-bottom: 10px;
-      font-family: 'Battambang';
-      font-size: 13px;
-      outline: none;
-    }
-    .toc-list { flex: 1; overflow-y: auto; list-style: none; }
-    .toc-list li {
-      padding: 10px;
-      font-size: 14px;
-      border-radius: 4px;
-      cursor: pointer;
-      color: #444;
-      transition: all 0.2s;
-    }
-    .toc-list li:hover { background-color: #e5decb; }
-    .toc-list li.active { background-color: #dbd2bd; color: #000; font-weight: 700; }
-
-    /* ២. ផ្ទាំងអានកណ្តាល (កែសម្រួលឱ្យពេញផ្ទៃ) */
-    .reader-area {
-      flex: 1;
+      height: 50px;
+      background-color: #f7f4ed;
+      border-bottom: 1.5px solid #28a745; /* បន្ទាត់បៃតងដូចគំរូ */
       display: flex;
-      justify-content: center;
-      padding: 20px 0 60px 0; /* លុបគម្លាតធំខាងលើចេញ */
-      overflow-y: auto;
-      background-color: #faf7ed;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 15px;
+      z-index: 100;
     }
-    .novel-page {
-      background-color: #faf7ed;
-      max-width: 850px;
-      width: 100%;
-      padding: 20px 25px; /* បង្រួមគម្លាតឱ្យសមល្មម */
-      min-height: 100%;
-    }
-    .volume-title {
-      text-align: center;
+    .header-btn {
+      background: none;
+      border: none;
       font-size: 22px;
+      color: #28a745;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 35px;
+      height: 35px;
+    }
+    .header-title {
+      font-size: 15px;
+      color: #28a745;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 70%;
+      text-align: center;
+    }
+
+    /* ២. របារឧបករណ៍តូច (Icons Bar) */
+    .action-icons-bar {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      padding: 12px 18px 5px 18px;
+    }
+    .icon-action-btn {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #222;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ៣. ផ្ទៃអានអត្ថបទពេញអេក្រង់ */
+    .content-canvas {
+      flex: 1;
+      padding: 10px 18px 40px 18px; /* គម្លាតគែមសងខាងល្មមស្អាតពេញទូរស័ព្ទ */
+    }
+    .volume-header {
+      font-size: 18px;
       font-weight: 900;
       color: #111;
-      margin-top: 5px;
-      margin-bottom: 10px;
-    }
-    .chapter-title {
       text-align: center;
-      font-size: 20px;
-      font-weight: 700;
-      color: #1a1a1a;
-      margin-bottom: 25px;
-      line-height: 1.5;
+      margin-bottom: 5px;
     }
-    .novel-body p {
+    .chapter-main-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #28a745;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+    .novel-text p {
       font-size: 18px;
       line-height: 2.1;
-      color: #222;
-      margin-bottom: 18px;
+      color: #1a1a1a;
+      margin-bottom: 20px;
       text-align: justify;
-      text-indent: 0; /* លុប Space ដកឃ្លាក្បាលបន្ទាត់ធំៗចេញ */
+      word-break: break-word;
     }
 
-    /* ៣. ប៊ូតុងរុករកជំពូកខាងក្រោម */
-    .bottom-nav {
+    /* ៤. ប៊ូតុងរុករកជំពូកបាតក្រោម */
+    .bottom-pagination {
       display: flex;
       justify-content: space-between;
-      margin-top: 40px;
-      padding-top: 20px;
-      border-top: 1px solid #e0dacf;
       gap: 10px;
+      padding: 20px 18px 60px 18px;
+      border-top: 1px solid #e2ddd2;
     }
-    .nav-action-btn {
+    .page-btn {
       flex: 1;
-      padding: 12px;
-      font-size: 14px;
+      padding: 10px;
+      border: 1px solid #d5cec0;
+      background-color: #eee9dc;
+      border-radius: 4px;
       font-family: 'Battambang';
+      font-size: 14px;
       font-weight: bold;
-      background-color: #f2eee5;
-      border: 1px solid #ddd6c8;
-      border-radius: 6px;
+      color: #333;
       cursor: pointer;
-      text-align: center;
     }
 
-    /* ៤. Toolbar ស្តាំ (កុំព្យូទ័រ) */
-    .right-toolbar {
-      width: 60px;
-      position: sticky;
-      top: 40px;
-      height: fit-content;
+    /* ៥. ផ្ទាំង Drawer មាតិកាខាងឆ្វេង (TOC) */
+    .toc-drawer {
+      position: fixed;
+      top: 0;
+      left: -320px;
+      width: 300px;
+      height: 100%;
+      background-color: #f7f4ed;
+      box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+      z-index: 1000;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 0;
+      padding: 20px 15px;
+      transition: left 0.3s ease;
     }
-    .tool-btn {
-      width: 40px;
-      height: 40px;
-      background-color: #f2eee5;
-      border: 1px solid #ddd6c8;
-      border-radius: 6px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      color: #444;
-      font-size: 16px;
-      font-weight: bold;
-    }
-
-    /* ប៊ូតុង Menu លើទូរស័ព្ទ */
-    .mobile-menu-toggle {
-      display: none;
-      position: fixed;
-      bottom: 25px;
-      right: 25px;
-      width: 50px;
-      height: 50px;
-      background-color: #333;
-      color: white;
-      border-radius: 50%;
-      border: none;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      font-size: 20px;
-      z-index: 1100;
-      cursor: pointer;
-    }
-    .sidebar-overlay {
+    .toc-drawer.open { left: 0; }
+    .toc-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
       background: rgba(0,0,0,0.5);
       z-index: 999;
     }
+    .toc-overlay.active { display: block; }
+    .drawer-novel-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 12px;
+      text-align: center;
+      color: #111;
+    }
+    .toc-search-box {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: 'Battambang';
+      margin-bottom: 12px;
+      outline: none;
+    }
+    .toc-items-container {
+      flex: 1;
+      overflow-y: auto;
+      list-style: none;
+    }
+    .toc-items-container li {
+      padding: 10px;
+      font-size: 13.5px;
+      border-bottom: 1px solid #eee7d7;
+      cursor: pointer;
+      color: #333;
+    }
+    .toc-items-container li.active {
+      color: #28a745;
+      font-weight: bold;
+      background-color: #eee7d7;
+    }
 
-    /* កំណត់សម្រាប់អេក្រង់ទូរស័ព្ទ (Mobile View) */
-    @media (max-width: 900px) {
-      body { background-color: #faf7ed; }
-      .left-sidebar {
-        position: fixed;
-        left: 0; top: 0;
-        transform: translateX(-100%);
-      }
-      .left-sidebar.open { transform: translateX(0); }
-      .sidebar-overlay.active { display: block; }
-      .mobile-menu-toggle { display: block; }
-      .right-toolbar { display: none; }
-      .reader-area { padding: 10px 0 50px 0; }
-      .novel-page { padding: 10px 16px; }
-      .volume-title { font-size: 19px; }
-      .chapter-title { font-size: 17px; margin-bottom: 20px; }
-      .novel-body p { font-size: 17px; line-height: 1.95; }
+    /* ផ្ទាំងរៀបទំហំអក្សរ */
+    .font-settings-panel {
+      display: none;
+      background-color: #eee9dc;
+      padding: 10px 18px;
+      border-bottom: 1px solid #d5cec0;
+      justify-content: space-around;
+      align-items: center;
+    }
+    .font-settings-panel.active { display: flex; }
+    .font-btn {
+      padding: 5px 15px;
+      border: 1px solid #ccc;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
 
-  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobileMenu()"></div>
+  <!-- Overlay បាំងពេលបើក Menu -->
+  <div class="toc-overlay" id="tocOverlay" onclick="toggleTOC()"></div>
 
-  <!-- Sidebar ឆ្វេង -->
-  <div class="left-sidebar" id="leftSidebar">
-    <div class="novel-meta">
-      <img id="novelCover" src="Cover.jpg" alt="Poster">
-      <h3 id="novelName">仙逆 (ស៊ាននី)</h3>
-      <p id="novelAuthor">អ្នកនិពន្ធ: អឺកើន (耳根)</p>
+  <!-- ផ្ទាំងបញ្ជីជំពូក Drawer -->
+  <div class="toc-drawer" id="tocDrawer">
+    <div class="drawer-novel-title" id="drawerNovelName">មាតិការឿង</div>
+    <input type="text" id="searchInput" class="toc-search-box" placeholder="ស្វែងរកជំពូក..." onkeyup="filterChapters()">
+    <ul class="toc-items-container" id="tocContainer"></ul>
+  </div>
+
+  <!-- តួខ្លួនវេបសាយទាំងមូល -->
+  <div class="app-container">
+    
+    <!-- Header ខាងលើដូច Hetushu -->
+    <header class="top-header">
+      <button class="header-btn" onclick="navigateChapter(-1)">‹</button>
+      <div class="header-title" id="topHeaderTitle">...</div>
+      <button class="header-btn" onclick="toggleTOC()">☰</button>
+    </header>
+
+    <!-- Toolbar កែ Font -->
+    <div class="action-icons-bar">
+      <button class="icon-action-btn" title="បញ្ជីមាតិកា" onclick="toggleTOC()">📖</button>
+      <button class="icon-action-btn" title="ប្តូរទំហំអក្សរ" onclick="toggleFontPanel()">⚙️</button>
     </div>
 
-    <input type="text" id="searchInput" class="toc-search" placeholder="ស្វែងរកជំពូក..." onkeyup="filterChapters()">
-    <ul class="toc-list" id="tocContainer"></ul>
-  </div>
-
-  <!-- ផ្ទាំងអានកណ្តាល -->
-  <div class="reader-area" id="readerArea">
-    <div class="novel-page">
-      <div class="volume-title" id="displayVolume"></div>
-      <div class="chapter-title" id="displayTitle"></div>
-      <div class="novel-body" id="displayContent"></div>
-
-      <div class="bottom-nav">
-        <button class="nav-action-btn" onclick="navigateChapter(-1)">← ជំពូកមុន</button>
-        <button class="nav-action-btn" onclick="toggleMobileMenu()">បញ្ជីជំពូក (☰)</button>
-        <button class="nav-action-btn" onclick="navigateChapter(1)">ជំពូកបន្ទាប់ →</button>
-      </div>
+    <!-- ផ្ទាំងលៃតម្រូវ Font -->
+    <div class="font-settings-panel" id="fontPanel">
+      <span>ទំហំអក្សរ៖</span>
+      <button class="font-btn" onclick="adjustFont(-1)">A -</button>
+      <button class="font-btn" onclick="adjustFont(1)">A +</button>
     </div>
+
+    <!-- ផ្ទាំងអានអត្ថបទ -->
+    <main class="content-canvas" id="contentCanvas">
+      <div class="volume-header" id="displayVolume"></div>
+      <div class="chapter-main-title" id="displayTitle"></div>
+      <div class="novel-text" id="displayContent"></div>
+    </main>
+
+    <!-- ប៊ូតុងរុករកខាងក្រោម -->
+    <div class="bottom-pagination">
+      <button class="page-btn" onclick="navigateChapter(-1)">‹ ជំពូកមុន</button>
+      <button class="page-btn" onclick="toggleTOC()">មាតិកា</button>
+      <button class="page-btn" onclick="navigateChapter(1)">ជំពូកបន្ទាប់ ›</button>
+    </div>
+
   </div>
 
-  <!-- Toolbar ស្តាំ (កុំព្យូទ័រ) -->
-  <div class="right-toolbar">
-    <div class="tool-btn" title="ជំពូកមុន" onclick="navigateChapter(-1)">‹</div>
-    <div class="tool-btn" title="ជំពូកបន្ទាប់" onclick="navigateChapter(1)">›</div>
-    <div class="tool-btn" title="ពង្រីកអក្សរ" onclick="adjustFont(1)">A+</div>
-    <div class="tool-btn" title="បង្រួមអក្សរ" onclick="adjustFont(-1)">A-</div>
-  </div>
-
-  <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
-
-  <!-- ហៅឯកសារ chapters.js ជាមួយ Version ដើម្បីកម្ចាត់ Cache -->
-  <script src="chapters.js?v=2.0"></script>
+  <!-- ហៅទិន្នន័យពី chapters.js -->
+  <script src="chapters.js?v=3.0"></script>
 
   <script>
     let currentChapterIndex = 0;
-    let currentFontSize = 17;
+    let currentFontSize = 18;
 
     function initWebsite() {
       if (typeof novelInfo !== 'undefined') {
-        document.getElementById('novelName').innerText = novelInfo.title;
-        document.getElementById('novelAuthor').innerText = novelInfo.author;
-        if (novelInfo.coverUrl) document.getElementById('novelCover').src = novelInfo.coverUrl;
+        document.getElementById('drawerNovelName').innerText = novelInfo.title;
       }
       renderSidebarTOC();
       if (typeof chaptersData !== 'undefined' && chaptersData.length > 0) {
@@ -273,7 +294,7 @@
         li.id = 'toc-item-' + idx;
         li.onclick = () => {
           loadChapter(idx);
-          if (window.innerWidth <= 900) toggleMobileMenu();
+          toggleTOC();
         };
         container.appendChild(li);
       });
@@ -284,6 +305,7 @@
       currentChapterIndex = index;
       const chapter = chaptersData[index];
 
+      document.getElementById('topHeaderTitle').innerText = chapter.title;
       document.getElementById('displayVolume').innerText = chapter.volume || '';
       document.getElementById('displayTitle').innerText = chapter.title;
 
@@ -302,7 +324,6 @@
         activeLi.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
 
-      document.getElementById('readerArea').scrollTop = 0;
       window.scrollTo(0, 0);
     }
 
@@ -310,9 +331,13 @@
       loadChapter(currentChapterIndex + direction);
     }
 
-    function toggleMobileMenu() {
-      document.getElementById('leftSidebar').classList.toggle('open');
-      document.getElementById('sidebarOverlay').classList.toggle('active');
+    function toggleTOC() {
+      document.getElementById('tocDrawer').classList.toggle('open');
+      document.getElementById('tocOverlay').classList.toggle('active');
+    }
+
+    function toggleFontPanel() {
+      document.getElementById('fontPanel').classList.toggle('active');
     }
 
     function filterChapters() {
@@ -326,7 +351,7 @@
     function adjustFont(step) {
       currentFontSize += step;
       if (currentFontSize < 14) currentFontSize = 14;
-      if (currentFontSize > 26) currentFontSize = 26;
+      if (currentFontSize > 28) currentFontSize = 28;
       document.querySelectorAll('#displayContent p').forEach(p => {
         p.style.fontSize = currentFontSize + 'px';
       });
