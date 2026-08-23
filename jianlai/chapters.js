@@ -1,7 +1,7 @@
 window.novelInfo = {
   title: "剑来 (ដាវឈិនភីងអាន - Sword of Coming)",
   author: "អ្នកនិពន្ធ: ហ្វុងហ័រ (烽火戏诸侯)",
-  coverUrl: "2123.jpg"
+  coverUrl: "Cover.jpg"
 };
 
 window.chaptersData = [
