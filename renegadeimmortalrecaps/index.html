@@ -69,7 +69,6 @@
       gap: 16px; 
     }
 
-    /* ប្រអប់ Player Container */
     .player-container { 
       width: 100%; 
       min-height: 480px; 
@@ -78,7 +77,7 @@
       overflow: hidden; 
       border: 1px solid #333; 
       position: relative; 
-      display: flex;
+      display: flex; 
     }
     .player-container iframe { 
       width: 100%; 
@@ -88,7 +87,6 @@
       display: none; 
     }
 
-    /* ផ្ទាំងចាក់សោរ Paywall */
     .lock-view { 
       width: 100%; 
       min-height: 480px; 
@@ -110,7 +108,6 @@
       left: 0; 
     }
     
-    /* កាតផ្ទាំងចាក់សោរបែប Split-View ទំនើប */
     .lock-card { 
       position: relative; 
       z-index: 2; 
@@ -123,9 +120,9 @@
       box-shadow: 0 10px 40px rgba(0,0,0,0.85); 
       backdrop-filter: blur(8px); 
     }
-    .lock-header {
-      text-align: center;
-      margin-bottom: 15px;
+    .lock-header { 
+      text-align: center; 
+      margin-bottom: 15px; 
     }
     .lock-header h3 { 
       font-size: 16.5px; 
@@ -133,26 +130,25 @@
       font-weight: 900; 
     }
 
-    .lock-body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 16px;
+    .lock-body { 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      gap: 16px; 
     }
     @media (min-width: 600px) {
-      .lock-body {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
+      .lock-body { 
+        flex-direction: row; 
+        align-items: center; 
+        justify-content: space-between; 
       }
     }
 
-    /* រូបភាព KHQR ធំ ច្បាស់ ស្រួលស្កេន */
-    .qr-column {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    .qr-column { 
+      flex: 1; 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
     }
     .qr-image { 
       width: 180px; 
@@ -162,27 +158,26 @@
       border: 2.5px solid #28a745; 
       background: #fff; 
       padding: 4px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
     }
-    .qr-hint {
-      font-size: 11px;
-      color: #888;
-      margin-top: 6px;
+    .qr-hint { 
+      font-size: 11px; 
+      color: #888; 
+      margin-top: 6px; 
     }
 
-    /* ផ្នែកបញ្ចូលព័ត៌មាន និងប៊ូតុង */
-    .action-column {
-      flex: 1.2;
-      display: flex;
-      flex-direction: column;
-      width: 100%;
+    .action-column { 
+      flex: 1.2; 
+      display: flex; 
+      flex-direction: column; 
+      width: 100%; 
     }
     .action-column p { 
       font-size: 12.5px; 
       color: #bbb; 
       margin-bottom: 12px; 
       line-height: 1.45; 
-      text-align: center;
+      text-align: center; 
     }
 
     .telegram-actions { 
@@ -199,7 +194,7 @@
       font-size: 12px; 
       font-weight: bold; 
       display: block; 
-      text-align: center;
+      text-align: center; 
     }
     .tg-bot { background-color: #0088cc; }
     .tg-group { background-color: #229ED9; }
@@ -227,7 +222,7 @@
       font-size: 13.5px; 
       font-weight: bold; 
       cursor: pointer; 
-      transition: background 0.2s;
+      transition: background 0.2s; 
     }
     .unlock-btn:hover { background-color: #218838; }
     .status-alert { 
@@ -235,7 +230,7 @@
       font-size: 12px; 
       font-weight: bold; 
       min-height: 16px; 
-      text-align: center;
+      text-align: center; 
     }
 
     .video-details { 
@@ -326,13 +321,11 @@
           </div>
 
           <div class="lock-body">
-            <!-- ផ្នែកខាងឆ្វេង៖ រូបភាព QR Code ធំច្បាស់ -->
             <div class="qr-column">
               <img src="../xianni/khqr.jpg" class="qr-image" alt="KHQR Payment" onerror="this.src='../khqr.jpg'">
               <span class="qr-hint">ស្កេនបង់ប្រាក់ជាមួយ ABA KHQR</span>
             </div>
 
-            <!-- ផ្នែកខាងស្តាំ៖ ប៊ូតុង និងប្រអប់ APV -->
             <div class="action-column">
               <p>សូមផ្ញើវិក្កយបត្រ ABA ទៅកាន់ Telegram Bot ឬ Group ដើម្បីទទួលបានលេខ APV ៦ ខ្ទង់ដោះសោរ ២៤ ម៉ោង។</p>
 
@@ -353,7 +346,7 @@
     </div>
 
     <div class="video-details">
-      <h2 id="currentEpTitle">ភាគ ១១៩</h2>
+      <h2 id="currentEpTitle">ភាគ ១០៦</h2>
       <p>ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal / Xian Ni សម្រាយរឿង</p>
     </div>
 
@@ -367,7 +360,7 @@
 
   <script>
     const API_VERIFY_URL = 'https://understanding-contracts-con-adapted.trycloudflare.com/api/verify-payment';
-    let currentSelectedEp = 13; // ចាប់ផ្តើមត្រង់ភាគ ១១៩
+    let currentSelectedEp = 0; // លំនាំដើមភាគ ១០៦ (Index 0)
 
     function getOrCreateDeviceId() {
       let devId = localStorage.getItem('device_uuid');
@@ -397,15 +390,30 @@
         let freeBadge = item.isFree ? `<span class="ep-badge-free">ឥតគិតថ្លៃ</span>` : '';
         btn.innerHTML = `${item.ep}${freeBadge}`;
         
-        btn.onclick = () => selectEpisode(index);
+        btn.onclick = () => selectEpisode(index, true);
         container.appendChild(btn);
       });
     }
 
-    function selectEpisode(index) {
+    // អនុគមន៍ជ្រើសរើសភាគ និងផ្លាស់ប្តូរ URL លើ Browser Address Bar ដោយស្វ័យប្រវត្តិ
+    function selectEpisode(index, updateUrl = true) {
       currentSelectedEp = index;
       if (typeof episodesData === 'undefined' || !episodesData[index]) return;
       const target = episodesData[index];
+
+      // ស្រង់លេខភាគចេញពីអក្សរ (ឧ. "ភាគ ១០៦" -> "106", "ភាគ ១២២" -> "122")
+      const khmerNumerals = { '០':'0', '១':'1', '២':'2', '៣':'3', '៤':'4', '៥':'5', '៦':'6', '៧':'7', '៨':'8', '៩':'9' };
+      const epNum = target.ep.replace(/[^០-៩0-9]/g, '').replace(/[០-៩]/g, d => khmerNumerals[d]);
+
+      // Dynamic URL Push State
+      if (updateUrl) {
+        const baseUrl = window.location.pathname.split('?')[0];
+        if (epNum === '106') {
+          window.history.pushState({ epIndex: index }, '', baseUrl);
+        } else {
+          window.history.pushState({ epIndex: index }, '', `${baseUrl}?ep=${epNum}`);
+        }
+      }
 
       document.getElementById('currentEpTitle').innerText = target.title;
       renderPlaylist();
@@ -413,7 +421,6 @@
       const iframe = document.getElementById('activeVideoFrame');
       const lockView = document.getElementById('lockView');
 
-      // បើជាភាគ Free ឬមាន APV សុពលភាព ២៤ ម៉ោង គឺចាក់វីដេអូភ្លាម
       if (target.isFree === true || isSubscriptionValid()) {
         lockView.style.display = 'none';
         if (target.url && target.url.trim() !== '') {
@@ -425,7 +432,6 @@
           alert('⏳ វីដេអូភាគនេះនឹងមកដល់ឆាប់ៗ!');
         }
       } else {
-        // បើជាភាគបង់ប្រាក់ ហើយមិនទាន់ដោះសោរ បង្ហាញផ្ទាំង Lock
         iframe.src = '';
         iframe.style.display = 'none';
         lockView.style.display = 'flex';
@@ -460,7 +466,7 @@
           statusMsg.innerText = '✅ ' + data.message;
           localStorage.setItem('apv_unlocked_code', code);
           localStorage.setItem('apv_expires_at', data.expiresAt);
-          setTimeout(() => selectEpisode(currentSelectedEp), 1200);
+          setTimeout(() => selectEpisode(currentSelectedEp, false), 1200);
         } else {
           statusMsg.style.color = '#dc3545';
           statusMsg.innerText = '❌ ' + data.message;
@@ -471,10 +477,38 @@
       }
     }
 
+    // ត្រួតពិនិត្យ URL Parameters នៅពេលបើកគេហទំព័រដំបូង
+    function initEpisodeFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const epParam = params.get('ep');
+
+      let initialIndex = 0; // លំនាំដើមភាគ ១០៦ (Index 0)
+
+      if (epParam && typeof episodesData !== 'undefined') {
+        const khmerNumerals = { '០':'0', '១':'1', '២':'2', '៣':'3', '៤':'4', '៥':'5', '៦':'6', '៧':'7', '៨':'8', '៩':'9' };
+        const foundIndex = episodesData.findIndex(item => {
+          const itemNum = item.ep.replace(/[^០-៩0-9]/g, '').replace(/[០-៩]/g, d => khmerNumerals[d]);
+          return itemNum === epParam;
+        });
+        if (foundIndex !== -1) initialIndex = foundIndex;
+      }
+
+      selectEpisode(initialIndex, false);
+    }
+
+    // គាំទ្រការចុច Back/Forward ប៊ូតុងលើ Browser
+    window.onpopstate = (event) => {
+      if (event.state && typeof event.state.epIndex !== 'undefined') {
+        selectEpisode(event.state.epIndex, false);
+      } else {
+        initEpisodeFromUrl();
+      }
+    };
+
     document.addEventListener('contextmenu', e => e.preventDefault(), true);
     window.onload = () => {
       renderPlaylist();
-      selectEpisode(13); // ចាក់ភាគ ១១៩ ភ្លាមៗ
+      initEpisodeFromUrl();
     };
   </script>
 
