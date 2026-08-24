@@ -13,14 +13,14 @@ app.use(express.json());
 
 // មូលដ្ឋានទិន្នន័យ APV
 let apvDatabase = {
-  '103992': { status: 'UNUSED', deviceId: null, expiresAt: null },
-  '111111': { status: 'UNUSED', deviceId: null, expiresAt: null },
-  '200101': { status: 'UNUSED', deviceId: null, expiresAt: null },
-  '222222': { status: 'UNUSED', deviceId: null, expiresAt: null },
-  '242134': { status: 'UNUSED', deviceId: null, expiresAt: null },
-  '242756': { status: 'UNUSED', deviceId: null, expiresAt: null },
-  '266721': { status: 'UNUSED', deviceId: null, expiresAt: null },
-  '471140': { status: 'UNUSED', deviceId: null, expiresAt: null }
+  '103992': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null },
+  '111111': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null },
+  '200101': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null },
+  '222222': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null },
+  '242134': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null },
+  '242756': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null },
+  '266721': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null },
+  '471140': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null }
 };
 
 // Root Route
@@ -28,20 +28,22 @@ app.get('/', (req, res) => {
   res.send('Neakan API Server is running successfully!');
 });
 
-// API ទាញទិន្នន័យសម្រាប់ Dashboard
+// API Dashboard សម្រាប់ទាញទិន្នន័យ
 app.get('/api/dashboard', (req, res) => {
   const now = Date.now();
   Object.keys(apvDatabase).forEach(code => {
     if (apvDatabase[code].status === 'ACTIVE' && apvDatabase[code].expiresAt && now >= apvDatabase[code].expiresAt) {
       apvDatabase[code].status = 'UNUSED';
       apvDatabase[code].deviceId = null;
+      apvDatabase[code].deviceType = null;
+      apvDatabase[code].loginAt = null;
       apvDatabase[code].expiresAt = null;
     }
   });
   res.json({ status: 'SUCCESS', data: apvDatabase });
 });
 
-// API Admin Action (ចុច Lock ឬ Reset ចេញពី Dashboard)
+// API Admin Action (ចុច Lock ឬ Reset)
 app.post('/api/admin-action', (req, res) => {
   const { action, code } = req.body;
 
@@ -56,6 +58,8 @@ app.post('/api/admin-action', (req, res) => {
     Object.keys(apvDatabase).forEach(c => {
       apvDatabase[c].status = 'UNUSED';
       apvDatabase[c].deviceId = null;
+      apvDatabase[c].deviceType = null;
+      apvDatabase[c].loginAt = null;
       apvDatabase[c].expiresAt = null;
     });
     return res.json({ status: 'SUCCESS', message: 'បាន Reset/Lock ឧបករណ៍ទាំងអស់ជោគជ័យ!' });
@@ -69,9 +73,9 @@ app.post('/api/admin-action', (req, res) => {
   res.status(400).json({ status: 'FAILED', message: 'សកម្មភាពមិនត្រឹមត្រូវ!' });
 });
 
-// API ផ្ទៀងផ្ទាត់ និងដោះសោរវីដេអូសម្រាប់ User
+// API ផ្ទៀងផ្ទាត់ និងដោះសោរវីដេអូ
 app.post('/api/verify-payment', (req, res) => {
-  const { code, deviceId } = req.body;
+  const { code, deviceId, deviceType } = req.body;
 
   if (!code || code.length !== 6) {
     return res.status(400).json({ status: 'FAILED', message: 'លេខកូដ APV មិនត្រឹមត្រូវ!' });
@@ -89,11 +93,14 @@ app.post('/api/verify-payment', (req, res) => {
 
   const now = Date.now();
 
+  // ករណីដោះសោរថ្មី
   if (record.status === 'UNUSED' || !record.expiresAt || now >= record.expiresAt) {
     const expiresAt = now + (2 * 60 * 1000); // កំណត់ ២ នាទី (ឬ ២៤ ម៉ោង)
     apvDatabase[code] = {
       status: 'ACTIVE',
       deviceId: deviceId || 'DEV-UNKNOWN',
+      deviceType: deviceType || 'Unknown Device',
+      loginAt: now,
       expiresAt: expiresAt
     };
     return res.json({
@@ -103,6 +110,7 @@ app.post('/api/verify-payment', (req, res) => {
     });
   }
 
+  // ករណីឧបករណ៍ផ្សេងលួចចូល
   if (record.deviceId && record.deviceId !== deviceId) {
     return res.status(400).json({
       status: 'FAILED',
@@ -117,7 +125,7 @@ app.post('/api/verify-payment', (req, res) => {
   });
 });
 
-// 🌐 ផ្ទាំងគ្រប់គ្រង Admin Dashboard Online (បើកមើលតាម Browser បានគ្រប់ទីកន្លែង)
+// 🌐 ផ្ទាំងគ្រប់គ្រង Dashboard Admin Online
 app.get('/admin/apv-status', (req, res) => {
   res.send(`
 <!DOCTYPE html>
@@ -144,6 +152,7 @@ app.get('/admin/apv-status', (req, res) => {
     .badge-active { background: #e8f5e9; color: #2e7d32; }
     .badge-unused { background: #e3f2fd; color: #1565c0; }
     .badge-locked { background: #ffebee; color: #c62828; }
+    .badge-device { background: #f3e5f5; color: #7b1fa2; font-weight: bold; padding: 3px 8px; border-radius: 4px; border: 1px solid #ce93d8; }
     .btn-action { padding: 4px 10px; background: #dc3545; color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; }
   </style>
 </head>
@@ -163,13 +172,14 @@ app.get('/admin/apv-status', (req, res) => {
         <tr>
           <th>លេខ APV</th>
           <th>ស្ថានភាព</th>
-          <th>Device ID</th>
+          <th>ឧបករណ៍ (Device)</th>
+          <th>ម៉ោង Login</th>
           <th>រយៈពេលនៅសល់</th>
           <th>ផុតកំណត់</th>
           <th>សកម្មភាព</th>
         </tr>
       </thead>
-      <tbody id="activeTableBody"><tr><td colspan="6" style="text-align:center; color:#888;">មិនមានអ្នកកំពុងប្រើប្រាស់ឡើយ</td></tr></tbody>
+      <tbody id="activeTableBody"><tr><td colspan="7" style="text-align:center; color:#888;">មិនមានអ្នកកំពុងប្រើប្រាស់ឡើយ</td></tr></tbody>
     </table>
   </div>
 
@@ -180,7 +190,7 @@ app.get('/admin/apv-status', (req, res) => {
         <tr>
           <th>លេខ APV</th>
           <th>ស្ថានភាព</th>
-          <th>ផុតកំណត់</th>
+          <th>ផុតកំណត់ចុងក្រោយ</th>
           <th>សកម្មភាព</th>
         </tr>
       </thead>
@@ -217,15 +227,18 @@ app.get('/admin/apv-status', (req, res) => {
           const remainingSec = Math.floor((item.expiresAt - now) / 1000);
           const m = Math.floor(remainingSec / 60);
           const s = remainingSec % 60;
-          const expDate = new Date(item.expiresAt).toLocaleTimeString();
+          const loginTime = item.loginAt ? new Date(item.loginAt).toLocaleTimeString() : 'មិនស្គាល់';
+          const expTime = new Date(item.expiresAt).toLocaleTimeString();
+          const devType = item.deviceType || 'PC';
 
           activeRows += \`
             <tr>
               <td><strong>\${code}</strong></td>
               <td><span class="badge badge-active">ACTIVE</span></td>
-              <td><code>\${item.deviceId}</code></td>
+              <td><span class="badge-device">\${devType}</span></td>
+              <td style="color:#555; font-weight:bold;">\${loginTime}</td>
               <td style="color:#2e7d32; font-weight:bold;">\${m} នាទី \${s} វិនាទី</td>
-              <td>\${expDate}</td>
+              <td>\${expTime}</td>
               <td><button class="btn-action" onclick="adminAction('LOCK_ONE', '\${code}')">🔒 Lock / Kick</button></td>
             </tr>\`;
         } else {
@@ -246,7 +259,7 @@ app.get('/admin/apv-status', (req, res) => {
 
       document.getElementById('activeCount').innerText = activeCount;
       document.getElementById('idleCount').innerText = idleCount;
-      activeBody.innerHTML = activeRows || '<tr><td colspan="6" style="text-align:center; color:#888;">មិនមានអ្នកកំពុងប្រើប្រាស់ឡើយ</td></tr>';
+      activeBody.innerHTML = activeRows || '<tr><td colspan="7" style="text-align:center; color:#888;">មិនមានអ្នកកំពុងប្រើប្រាស់ឡើយ</td></tr>';
       idleBody.innerHTML = idleRows;
     }
 
