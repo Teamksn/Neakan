@@ -87,12 +87,44 @@
       display: none; 
     }
 
+    .upcoming-view {
+      width: 100%;
+      height: 100%;
+      min-height: 480px;
+      position: relative;
+      background-color: #1a1a1a;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .upcoming-view img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.45;
+      position: absolute;
+      top: 0; left: 0;
+    }
+    .upcoming-badge {
+      position: relative;
+      z-index: 2;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1.5px solid #28a745;
+      padding: 10px 22px;
+      border-radius: 50px;
+      color: #fff;
+      font-size: 14.5px;
+      font-weight: bold;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    }
+
     .lock-view { 
       width: 100%; 
       min-height: 480px; 
       position: relative; 
       background-color: #141414; 
-      display: flex; 
+      display: none; 
       flex-direction: column; 
       align-items: center; 
       justify-content: center; 
@@ -144,7 +176,6 @@
       }
     }
 
-    /* រចនាបថរូបភាព QR អាចចុចបាន */
     .qr-column { 
       flex: 1; 
       display: flex; 
@@ -169,17 +200,14 @@
       background: #fff; 
       padding: 4px; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
-      display: block;
+      display: block; 
     }
     .qr-hint { 
       font-size: 11.5px; 
       color: #28a745; 
       margin-top: 6px; 
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      cursor: pointer;
+      font-weight: bold; 
+      cursor: pointer; 
     }
 
     .action-column { 
@@ -317,7 +345,6 @@
       margin-top: 2px; 
     }
 
-    /* ផ្ទាំង Lightbox Pop-up ពេលចុចលើ QR Code */
     .qr-modal {
       display: none;
       position: fixed;
@@ -328,7 +355,7 @@
       justify-content: center;
       align-items: center;
       padding: 20px;
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(5px); 
     }
     .qr-modal-content {
       background: #1e1e1e;
@@ -379,6 +406,11 @@
 
   <main class="container">
     <div class="player-container">
+      <div class="upcoming-view" id="upcomingView">
+        <img src="../xianni/Cover.jpg" alt="Poster Thumbnail" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
+        <div class="upcoming-badge" id="upcomingText">⏳ វីដេអូភាគនេះនឹងមកដល់ឆាប់ៗ</div>
+      </div>
+
       <div class="lock-view" id="lockView">
         <img src="../xianni/Cover.jpg" class="bg-poster" alt="Poster Thumbnail" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
         
@@ -388,7 +420,6 @@
           </div>
 
           <div class="lock-body">
-            <!-- ផ្នែកខាងឆ្វេង៖ រូបភាព QR Code អាចចុចដើម្បីពង្រីកបាន -->
             <div class="qr-column">
               <div class="qr-wrapper" onclick="openQrModal()">
                 <img id="mainQrImg" src="../xianni/khqr.jpg" class="qr-image" alt="KHQR Payment" onerror="this.src='../khqr.jpg'">
@@ -396,7 +427,6 @@
               <span class="qr-hint" onclick="openQrModal()">🔍 ចុចលើរូប QR ដើម្បីពង្រីក</span>
             </div>
 
-            <!-- ផ្នែកខាងស្តាំ៖ ប៊ូតុង និងប្រអប់ APV -->
             <div class="action-column">
               <p>សូមផ្ញើវិក្កយបត្រ ABA ទៅកាន់ Telegram Bot ឬ Group ដើម្បីទទួលបានលេខ APV ៦ ខ្ទង់ដោះសោរ ២៤ ម៉ោង។</p>
 
@@ -417,7 +447,7 @@
     </div>
 
     <div class="video-details">
-      <h2 id="currentEpTitle">ភាគ ១០៦</h2>
+      <h2 id="currentEpTitle">ភាគ ១១៩</h2>
       <p>ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal / Xian Ni សម្រាយរឿង</p>
     </div>
 
@@ -427,7 +457,6 @@
     </div>
   </main>
 
-  <!-- ផ្ទាំង Lightbox Pop-up ពេលចុចលើ QR Code -->
   <div class="qr-modal" id="qrModal" onclick="closeQrModal(event)">
     <div class="qr-modal-content">
       <span class="qr-modal-close" onclick="closeQrModal()">&times;</span>
@@ -437,11 +466,69 @@
     </div>
   </div>
 
-  <script src="episodes.js"></script>
-
   <script>
+    // =========================================================================
+    // បញ្ជីទិន្នន័យភាគទាំងអស់ (ដាក់ក្នុង HTML ផ្ទាល់ដើម្បីធានាដំណើរការ ១០០%)
+    // =========================================================================
+    const episodesData = [
+      { ep: 'ភាគ ១០៦', title: 'ភាគ ១០៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: true },
+      { ep: 'ភាគ ១០៧', title: 'ភាគ ១០៧៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: true },
+      { ep: 'ភាគ ១០៨', title: 'ភាគ ១០៨៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: true },
+      { ep: 'ភាគ ១០៩', title: 'ភាគ ១០៩៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: true },
+      { ep: 'ភាគ ១១០', title: 'ភាគ ១១០៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: true },
+      { ep: 'ភាគ ១១១', title: 'ភាគ ១១១៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: true },
+      { ep: 'ភាគ ១១២', title: 'ភាគ ១១២៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: true },
+      { ep: 'ភាគ ១១៣', title: 'ភាគ ១១៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: true },
+      { ep: 'ភាគ ១១៤', title: 'ភាគ ១១៤៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: true },
+      { ep: 'ភាគ ១១៥', title: 'ភាគ ១១៥៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: true },
+      { ep: 'ភាគ ១១៦', title: 'ភាគ ១១៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: true },
+      { ep: 'ភាគ ១១៧', title: 'ភាគ ១១៧៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: true },
+      { ep: 'ភាគ ១១៨', title: 'ភាគ ១១៨៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: true },
+      
+      // ភាគឥតគិតថ្លៃដែលមានវីដេអូ
+      { ep: 'ភាគ ១១៩', title: 'ភាគ ១១៩៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: 'https://www.youtube.com/embed/isVDi2G5gw4', isFree: true },
+      { ep: 'ភាគ ១២០', title: 'ភាគ ១២០៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: 'https://www.youtube.com/embed/t8r1HAIBXII', isFree: true },
+      { ep: 'ភាគ ១២១', title: 'ភាគ ១២១៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: 'https://www.youtube.com/embed/1ZylXVaeBn4', isFree: true },
+      { ep: 'ភាគ ១២២', title: 'ភាគ ១២២៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: 'https://t.me/samnakeo/3127?embed=1', isFree: true },
+      
+      // ភាគចាប់ពី ១២៣ ឡើងទៅត្រូវចាក់សោរ Paywall
+      { ep: 'ភាគ ១២៣', title: 'ភាគ ១២៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១២៤', title: 'ភាគ ១២៤៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១២៥', title: 'ភាគ ១២៥៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១២៦', title: 'ភាគ ១២៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១២៧', title: 'ភាគ ១២៧៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១២៨', title: 'ភាគ ១២៨៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១២៩', title: 'ភាគ ១២៩៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៣០', title: 'ភាគ ១៣០៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៣១', title: 'ភាគ ១៣១៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៣២', title: 'ភាគ ១៣២៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៣៣', title: 'ភាគ ១៣៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៣៤', title: 'ភាគ ១ prosecution១៣៤៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៣៥', title: 'ភាគ ១៣៥៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៣៦', title: 'ភាគ ១៣៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៣៧', title: 'ភាគ ១៣៧៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៣៨', title: 'ភាគ ១៣៨៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៣៩', title: 'ភាគ ១៣៩៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៤០', title: 'ភាគ ១៤០៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៤១', title: 'ភាគ ១៤១៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៤២', title: 'ភាគ ១៤២៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៤៣', title: 'ភាគ ១៤៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៤៤', title: 'ភាគ ១៤៤៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៤៥', title: 'ភាគ ១៤៥៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៤៦', title: 'ភាគ ១៤៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៤៧', title: 'ភាគ ១៤៧៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៤៨', title: 'ភាគ ១៤៨៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៤៩', title: 'ភាគ ១៤៩៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៥០', title: 'ភាគ ១៥០៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៥១', title: 'ភាគ ១៥១៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៥២', title: 'ភាគ ១៥២៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៥៣', title: 'ភាគ ១៥៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៥៤', title: 'ភាគ ១៥៤៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
+      { ep: 'ភាគ ១៥៥', title: 'ភាគ ១៥៥៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false }
+    ];
+
     const API_VERIFY_URL = 'https://understanding-contracts-con-adapted.trycloudflare.com/api/verify-payment';
-    let currentSelectedEp = 0; // លំនាំដើមភាគ ១០៦ (Index 0)
+    let currentSelectedEp = 13; // ចាប់ផ្តើមត្រង់ភាគ ១១៩ (Index 13)
 
     function openQrModal() {
       const modal = document.getElementById('qrModal');
@@ -476,8 +563,6 @@
       const container = document.getElementById('playlistContainer');
       container.innerHTML = '';
 
-      if (typeof episodesData === 'undefined' || !episodesData) return;
-
       episodesData.forEach((item, index) => {
         const btn = document.createElement('div');
         btn.className = `ep-card ${index === currentSelectedEp ? 'active' : ''}`;
@@ -492,7 +577,6 @@
 
     function selectEpisode(index, updateUrl = true) {
       currentSelectedEp = index;
-      if (typeof episodesData === 'undefined' || !episodesData[index]) return;
       const target = episodesData[index];
 
       const khmerNumerals = { '០':'0', '១':'1', '២':'2', '៣':'3', '៤':'4', '៥':'5', '៦':'6', '៧':'7', '៨':'8', '៩':'9' };
@@ -512,21 +596,43 @@
 
       const iframe = document.getElementById('activeVideoFrame');
       const lockView = document.getElementById('lockView');
+      const upcomingView = document.getElementById('upcomingView');
+      const upcomingText = document.getElementById('upcomingText');
 
-      if (target.isFree === true || isSubscriptionValid()) {
+      // ១. ករណីភាគ Free (ភាគ ១០៦ - ១២២)
+      if (target.isFree === true) {
         lockView.style.display = 'none';
         if (target.url && target.url.trim() !== '') {
+          upcomingView.style.display = 'none';
           iframe.src = target.url;
           iframe.style.display = 'block';
         } else {
           iframe.src = '';
           iframe.style.display = 'none';
-          alert('⏳ វីដេអូភាគនេះនឹងមកដល់ឆាប់ៗ!');
+          upcomingText.innerText = `⏳ ${target.ep} (ឥតគិតថ្លៃ) នឹងមកដល់ឆាប់ៗ`;
+          upcomingView.style.display = 'flex';
         }
-      } else {
-        iframe.src = '';
-        iframe.style.display = 'none';
-        lockView.style.display = 'flex';
+      } 
+      // ២. ករណីភាគបង់ប្រាក់ (ភាគ ១២៣ ឡើងទៅ)
+      else {
+        if (isSubscriptionValid()) {
+          lockView.style.display = 'none';
+          if (target.url && target.url.trim() !== '') {
+            upcomingView.style.display = 'none';
+            iframe.src = target.url;
+            iframe.style.display = 'block';
+          } else {
+            iframe.src = '';
+            iframe.style.display = 'none';
+            upcomingText.innerText = `⏳ ${target.ep} នឹងមកដល់ឆាប់ៗ`;
+            upcomingView.style.display = 'flex';
+          }
+        } else {
+          iframe.src = '';
+          iframe.style.display = 'none';
+          upcomingView.style.display = 'none';
+          lockView.style.display = 'flex';
+        }
       }
     }
 
@@ -573,9 +679,9 @@
       const params = new URLSearchParams(window.location.search);
       const epParam = params.get('ep');
 
-      let initialIndex = 0;
+      let initialIndex = 13; // លំនាំដើមភាគ ១១៩ (Index 13)
 
-      if (epParam && typeof episodesData !== 'undefined') {
+      if (epParam) {
         const khmerNumerals = { '០':'0', '១':'1', '២':'2', '៣':'3', '៤':'4', '៥':'5', '៦':'6', '៧':'7', '៨':'8', '៩':'9' };
         const foundIndex = episodesData.findIndex(item => {
           const itemNum = item.ep.replace(/[^០-៩0-9]/g, '').replace(/[០-៩]/g, d => khmerNumerals[d]);
