@@ -82,7 +82,8 @@
       display: none;
     }
 
-    .thumbnail-placeholder {
+    /* ផ្ទាំងចាក់សោរវីដេអូ (Video Paywall View) */
+    .lock-view {
       width: 100%;
       height: 100%;
       position: relative;
@@ -91,25 +92,89 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
+      padding: 20px;
+      text-align: center;
     }
-    .thumbnail-placeholder img {
+    .lock-view img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0.6;
+      opacity: 0.3;
       position: absolute;
       top: 0; left: 0;
     }
-    .placeholder-badge {
+    .lock-card {
       position: relative;
       z-index: 2;
-      background: rgba(0, 0, 0, 0.75);
+      background: rgba(20, 20, 20, 0.92);
       border: 1px solid #28a745;
-      padding: 8px 18px;
-      border-radius: 50px;
+      border-radius: 12px;
+      padding: 22px 20px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.8);
+      backdrop-filter: blur(6px);
+    }
+    .lock-card h3 {
+      font-size: 16px;
+      color: #28a745;
+      margin-bottom: 8px;
+    }
+    .lock-card p {
+      font-size: 12.5px;
+      color: #bbb;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+    .telegram-actions {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .tg-btn {
+      flex: 1;
+      padding: 8px 0;
+      border-radius: 6px;
       color: #fff;
-      font-size: 14px;
+      text-decoration: none;
+      font-size: 12.5px;
       font-weight: bold;
+      display: block;
+    }
+    .tg-bot { background-color: #0088cc; }
+    .tg-group { background-color: #229ED9; }
+
+    .apv-input-box {
+      width: 100%;
+      padding: 9px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      background: #121212;
+      color: #fff;
+      font-size: 15px;
+      text-align: center;
+      margin-bottom: 10px;
+      font-weight: bold;
+      letter-spacing: 2px;
+    }
+    .unlock-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'Battambang';
+      font-size: 13.5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .unlock-btn:hover { background-color: #218838; }
+    .status-alert {
+      margin-top: 8px;
+      font-size: 12.5px;
+      font-weight: bold;
+      min-height: 18px;
     }
 
     .video-details {
@@ -181,11 +246,26 @@
   <main class="container">
 
     <div class="player-container">
-      <div class="thumbnail-placeholder" id="placeholderView">
+      <!-- ផ្ទាំងចាក់សោរវីដេអូ Lock Modal -->
+      <div class="lock-view" id="lockView">
         <img src="../xianni/Cover.jpg" alt="Poster Thumbnail" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
-        <div class="placeholder-badge" id="placeholderText">⏳ វីដេអូភាគនេះនឹងមកដល់ឆាប់ៗ</div>
+        
+        <div class="lock-card">
+          <h3>🔒 វីដេអូនេះត្រូវបានចាក់សោរ</h3>
+          <p>សូមផ្ញើវិក្កយបត្រ ABA ទៅកាន់ Telegram Bot ឬ Group ដើម្បីទទួលបានលេខ APV ៦ ខ្ទង់ដោះសោរ ២៤ ម៉ោង។</p>
+
+          <div class="telegram-actions">
+            <a href="https://t.me/KSN_APV_Bot" target="_blank" class="tg-btn tg-bot">🤖 ផ្ញើទៅ Bot</a>
+            <a href="https://t.me/your_telegram_group" target="_blank" class="tg-btn tg-group">👥 ចូល Group</a>
+          </div>
+
+          <input type="text" id="apvInput" maxlength="6" class="apv-input-box" placeholder="បញ្ចូលលេខ APV ៦ ខ្ទង់...">
+          <button class="unlock-btn" onclick="submitApvCode()">🔓 ដោះសោរទស្សនាភ្លាមៗ</button>
+          <div id="apvStatusMessage" class="status-alert"></div>
+        </div>
       </div>
 
+      <!-- Video Player Frame -->
       <iframe id="activeVideoFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>
 
@@ -202,7 +282,9 @@
   </main>
 
   <script>
-    // បញ្ជីទិន្នន័យ Playlist ភាគ ១០៦ ដល់ ១៥៥ (បានបំប្លែង Embed Links ភាគ ១១៩, ១២០, ១២១)
+    // អាសយដ្ឋាន Server API Backend
+    const API_VERIFY_URL = 'https://understanding-contracts-con-adapted.trycloudflare.com/api/verify-payment';
+
     const episodesData = [
       { ep: 'ភាគ ១០៦', title: 'ភាគ ១០៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
       { ep: 'ភាគ ១០៧', title: 'ភាគ ១០៧៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
@@ -251,30 +333,26 @@
       { ep: 'ភាគ ១៥០', title: 'ភាគ ១៥០៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
       { ep: 'ភាគ ១៥១', title: 'ភាគ ១៥១៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
       { ep: 'ភាគ ១៥២', title: 'ភាគ ១៥២៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
-      { ep: 'ភាគ ១៥៣', title: 'ភាគ ១ esprit១៥៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+      { ep: 'ភាគ ១៥៣', title: 'ភាគ ១៥៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
       { ep: 'ភាគ ១៥៤', title: 'ភាគ ១៥៤៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
       { ep: 'ភាគ ១៥៥', title: 'ភាគ ១៥៥៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' }
     ];
 
-    let currentSelectedEp = 13; // កំណត់ឱ្យចាប់ផ្តើមត្រង់ភាគ ១១៩ ភ្លាមៗ
+    let currentSelectedEp = 13; // ចាប់ផ្តើមត្រង់ភាគ ១១៩
 
-    function formatVideoEmbedUrl(rawUrl) {
-      if (!rawUrl || rawUrl.trim() === '') return '';
-      let url = rawUrl.trim();
+    function getOrCreateDeviceId() {
+      let devId = localStorage.getItem('device_uuid');
+      if (!devId) {
+        devId = 'DEV-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+        localStorage.setItem('device_uuid', devId);
+      }
+      return devId;
+    }
 
-      if (url.includes('youtube.com/watch?v=')) {
-        const videoId = url.split('watch?v=')[1].split('&')[0];
-        return `https://www.youtube.com/embed/${videoId}`;
-      }
-      if (url.includes('youtu.be/')) {
-        const videoId = url.split('youtu.be/')[1].split('?')[0];
-        return `https://www.youtube.com/embed/${videoId}`;
-      }
-      if (url.includes('youtube.com/live/')) {
-        const videoId = url.split('youtube.com/live/')[1].split('?')[0];
-        return `https://www.youtube.com/embed/${videoId}`;
-      }
-      return url;
+    function isSubscriptionValid() {
+      const expiresAt = localStorage.getItem('apv_expires_at');
+      if (!expiresAt) return false;
+      return Date.now() < parseInt(expiresAt);
     }
 
     function renderPlaylist() {
@@ -298,26 +376,73 @@
       renderPlaylist();
 
       const iframe = document.getElementById('activeVideoFrame');
-      const placeholder = document.getElementById('placeholderView');
+      const lockView = document.getElementById('lockView');
 
-      const formattedUrl = formatVideoEmbedUrl(target.url);
-
-      if (formattedUrl !== '') {
-        iframe.src = formattedUrl;
-        iframe.style.display = 'block';
-        placeholder.style.display = 'none';
+      // ពិនិត្យមើលថាតើឧបករណ៍នេះបានដោះសោរហើយឬនៅ
+      if (isSubscriptionValid()) {
+        lockView.style.display = 'none';
+        if (target.url && target.url.trim() !== '') {
+          iframe.src = target.url;
+          iframe.style.display = 'block';
+        } else {
+          iframe.src = '';
+          iframe.style.display = 'none';
+          alert('⏳ វីដេអូភាគនេះនឹងមកដល់ឆាប់ៗ!');
+        }
       } else {
+        // បើមិនទាន់ដោះសោរ បង្ហាញផ្ទាំងចាក់សោរ Paywall
         iframe.src = '';
         iframe.style.display = 'none';
-        placeholder.style.display = 'flex';
-        document.getElementById('placeholderText').innerText = `⏳ ${target.ep} នឹងមកដល់ឆាប់ៗ`;
+        lockView.style.display = 'flex';
+      }
+    }
+
+    async function submitApvCode() {
+      const code = document.getElementById('apvInput').value.trim();
+      const statusMsg = document.getElementById('apvStatusMessage');
+      const deviceId = getOrCreateDeviceId();
+
+      if (code.length !== 6 || isNaN(code)) {
+        statusMsg.style.color = '#dc3545';
+        statusMsg.innerText = '❌ សូមបញ្ចូលលេខ APV ឱ្យបានត្រឹមត្រូវ ៦ ខ្ទង់!';
+        return;
+      }
+
+      statusMsg.style.color = '#ffc107';
+      statusMsg.innerText = '⏳ កំពុងផ្ទៀងផ្ទាត់ទិន្នន័យ...';
+
+      try {
+        const res = await fetch(API_VERIFY_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code, deviceId: deviceId })
+        });
+
+        const data = await res.json();
+
+        if (data.status === 'SUCCESS') {
+          statusMsg.style.color = '#28a745';
+          statusMsg.innerText = '✅ ' + data.message;
+          localStorage.setItem('apv_unlocked_code', code);
+          localStorage.setItem('apv_expires_at', data.expiresAt);
+          
+          setTimeout(() => {
+            selectEpisode(currentSelectedEp);
+          }, 1200);
+        } else {
+          statusMsg.style.color = '#dc3545';
+          statusMsg.innerText = '❌ ' + data.message;
+        }
+      } catch (err) {
+        statusMsg.style.color = '#dc3545';
+        statusMsg.innerText = '❌ មិនអាចភ្ជាប់ទៅកាន់ Server បានទេ!';
       }
     }
 
     document.addEventListener('contextmenu', e => e.preventDefault(), true);
     window.onload = () => {
       renderPlaylist();
-      selectEpisode(13); // បើកមកចាក់ភាគ ១១៩ មុនគេបង្អស់
+      selectEpisode(13);
     };
   </script>
 
