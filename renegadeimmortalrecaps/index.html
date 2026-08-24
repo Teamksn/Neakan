@@ -69,12 +69,12 @@
       gap: 16px; 
     }
 
-    /* កំណត់កម្ពស់ឱ្យត្រូវជាមួយទំហំទូរស័ព្ទដៃ */
+    /* ប្រអប់ Player Container */
     .player-container { 
       width: 100%; 
-      min-height: 490px; 
+      min-height: 480px; 
       background-color: #000; 
-      border-radius: 10px; 
+      border-radius: 12px; 
       overflow: hidden; 
       border: 1px solid #333; 
       position: relative; 
@@ -83,22 +83,22 @@
     .player-container iframe { 
       width: 100%; 
       height: 100%; 
-      min-height: 490px;
+      min-height: 480px; 
       border: none; 
       display: none; 
     }
 
+    /* ផ្ទាំងចាក់សោរ Paywall */
     .lock-view { 
       width: 100%; 
-      min-height: 490px; 
+      min-height: 480px; 
       position: relative; 
-      background-color: #1a1a1a; 
+      background-color: #141414; 
       display: flex; 
       flex-direction: column; 
       align-items: center; 
       justify-content: center; 
-      padding: 15px; 
-      text-align: center; 
+      padding: 16px; 
     }
     .lock-view img.bg-poster { 
       width: 100%; 
@@ -109,93 +109,133 @@
       top: 0; 
       left: 0; 
     }
+    
+    /* កាតផ្ទាំងចាក់សោរបែប Split-View ទំនើប */
     .lock-card { 
       position: relative; 
       z-index: 2; 
-      background: rgba(20, 20, 20, 0.95); 
+      background: rgba(22, 22, 22, 0.96); 
       border: 1px solid #28a745; 
-      border-radius: 12px; 
-      padding: 16px 14px; 
-      max-width: 380px; 
+      border-radius: 14px; 
+      padding: 20px 18px; 
+      max-width: 650px; 
       width: 100%; 
-      box-shadow: 0 8px 30px rgba(0,0,0,0.8); 
-      backdrop-filter: blur(6px); 
+      box-shadow: 0 10px 40px rgba(0,0,0,0.85); 
+      backdrop-filter: blur(8px); 
     }
-    .lock-card h3 { 
-      font-size: 15px; 
+    .lock-header {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    .lock-header h3 { 
+      font-size: 16.5px; 
       color: #28a745; 
-      margin-bottom: 6px; 
-      font-weight: 900;
-    }
-    .lock-card p { 
-      font-size: 11.5px; 
-      color: #bbb; 
-      margin-bottom: 10px; 
-      line-height: 1.4; 
+      font-weight: 900; 
     }
 
-    /* កន្លែងបង្ហាញ QR Code */
-    .qr-container {
-      margin-bottom: 10px;
+    .lock-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
     }
-    .qr-image {
-      width: 135px;
-      height: 135px;
-      object-fit: contain;
-      border-radius: 8px;
-      border: 2px solid #28a745;
-      background: #fff;
-      padding: 3px;
+    @media (min-width: 600px) {
+      .lock-body {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    /* រូបភាព KHQR ធំ ច្បាស់ ស្រួលស្កេន */
+    .qr-column {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .qr-image { 
+      width: 180px; 
+      height: 180px; 
+      object-fit: contain; 
+      border-radius: 10px; 
+      border: 2.5px solid #28a745; 
+      background: #fff; 
+      padding: 4px; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    }
+    .qr-hint {
+      font-size: 11px;
+      color: #888;
+      margin-top: 6px;
+    }
+
+    /* ផ្នែកបញ្ចូលព័ត៌មាន និងប៊ូតុង */
+    .action-column {
+      flex: 1.2;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+    }
+    .action-column p { 
+      font-size: 12.5px; 
+      color: #bbb; 
+      margin-bottom: 12px; 
+      line-height: 1.45; 
+      text-align: center;
     }
 
     .telegram-actions { 
       display: flex; 
       gap: 8px; 
-      margin-bottom: 10px; 
+      margin-bottom: 12px; 
     }
     .tg-btn { 
       flex: 1; 
-      padding: 7px 0; 
+      padding: 8px 0; 
       border-radius: 6px; 
       color: #fff; 
       text-decoration: none; 
       font-size: 12px; 
       font-weight: bold; 
       display: block; 
+      text-align: center;
     }
     .tg-bot { background-color: #0088cc; }
     .tg-group { background-color: #229ED9; }
 
     .apv-input-box { 
       width: 100%; 
-      padding: 8px; 
+      padding: 10px; 
       border-radius: 6px; 
       border: 1px solid #444; 
-      background: #121212; 
+      background: #101010; 
       color: #fff; 
-      font-size: 15px; 
+      font-size: 16px; 
       text-align: center; 
-      margin-bottom: 8px; 
+      margin-bottom: 10px; 
       font-weight: bold; 
-      letter-spacing: 2px; 
+      letter-spacing: 3px; 
     }
     .unlock-btn { 
       width: 100%; 
-      padding: 9px; 
+      padding: 10px; 
       background-color: #28a745; 
       border: none; 
       border-radius: 6px; 
       color: #fff; 
-      font-size: 13px; 
+      font-size: 13.5px; 
       font-weight: bold; 
       cursor: pointer; 
+      transition: background 0.2s;
     }
     .unlock-btn:hover { background-color: #218838; }
     .status-alert { 
-      margin-top: 6px; 
+      margin-top: 8px; 
       font-size: 12px; 
       font-weight: bold; 
       min-height: 16px; 
+      text-align: center;
     }
 
     .video-details { 
@@ -208,7 +248,7 @@
       font-size: 15.5px; 
       color: #fff; 
       margin-bottom: 4px; 
-      font-weight: 700;
+      font-weight: 700; 
     }
     .video-details p { 
       font-size: 12px; 
@@ -233,8 +273,8 @@
       gap: 8px; 
     }
     @media (min-width: 600px) {
-      .playlist-grid {
-        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      .playlist-grid { 
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); 
       }
     }
     .ep-card { 
@@ -259,11 +299,11 @@
       border-color: #28a745; 
       color: #fff; 
     }
-    .ep-badge-free {
-      font-size: 9.5px;
-      color: #28a745;
-      display: block;
-      margin-top: 2px;
+    .ep-badge-free { 
+      font-size: 9.5px; 
+      color: #28a745; 
+      display: block; 
+      margin-top: 2px; 
     }
   </style>
 </head>
@@ -281,23 +321,31 @@
         <img src="../xianni/Cover.jpg" class="bg-poster" alt="Poster Thumbnail" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
         
         <div class="lock-card">
-          <h3>🔒 វីដេអូនេះត្រូវបានចាក់សោរ</h3>
-          
-          <!-- បង្ហាញរូបភាព KHQR ពី Folder xianni ឬ Root -->
-          <div class="qr-container">
-            <img src="../xianni/khqr.jpg" class="qr-image" alt="KHQR Payment" onerror="this.src='../khqr.jpg'">
+          <div class="lock-header">
+            <h3>🔒 វីដេអូនេះត្រូវបានចាក់សោរ</h3>
           </div>
 
-          <p>សូមស្កេន KHQR រួចផ្ញើវិក្កយបត្រ ABA ទៅកាន់ Telegram Bot ឬ Group ដើម្បីទទួលបានលេខ APV ៦ ខ្ទង់ដោះសោរ ២៤ ម៉ោង។</p>
+          <div class="lock-body">
+            <!-- ផ្នែកខាងឆ្វេង៖ រូបភាព QR Code ធំច្បាស់ -->
+            <div class="qr-column">
+              <img src="../xianni/khqr.jpg" class="qr-image" alt="KHQR Payment" onerror="this.src='../khqr.jpg'">
+              <span class="qr-hint">ស្កេនបង់ប្រាក់ជាមួយ ABA KHQR</span>
+            </div>
 
-          <div class="telegram-actions">
-            <a href="https://t.me/teamksnac_bot" target="_blank" class="tg-btn tg-bot">🤖 ផ្ញើទៅ Bot</a>
-            <a href="https://t.me/samnakeo" target="_blank" class="tg-btn tg-group">👥 ចូល Group</a>
+            <!-- ផ្នែកខាងស្តាំ៖ ប៊ូតុង និងប្រអប់ APV -->
+            <div class="action-column">
+              <p>សូមផ្ញើវិក្កយបត្រ ABA ទៅកាន់ Telegram Bot ឬ Group ដើម្បីទទួលបានលេខ APV ៦ ខ្ទង់ដោះសោរ ២៤ ម៉ោង។</p>
+
+              <div class="telegram-actions">
+                <a href="https://t.me/teamksnac_bot" target="_blank" class="tg-btn tg-bot">🤖 ផ្ញើទៅ Bot</a>
+                <a href="https://t.me/samnakeo" target="_blank" class="tg-btn tg-group">👥 ចូល Group</a>
+              </div>
+
+              <input type="text" id="apvInput" maxlength="6" class="apv-input-box" placeholder="បញ្ចូលលេខ APV ៦ ខ្ទង់...">
+              <button class="unlock-btn" onclick="submitApvCode()">🔓 ដោះសោរទស្សនាភ្លាមៗ</button>
+              <div id="apvStatusMessage" class="status-alert"></div>
+            </div>
           </div>
-
-          <input type="text" id="apvInput" maxlength="6" class="apv-input-box" placeholder="បញ្ចូលលេខ APV ៦ ខ្ទង់...">
-          <button class="unlock-btn" onclick="submitApvCode()">🔓 ដោះសោរទស្សនាភ្លាមៗ</button>
-          <div id="apvStatusMessage" class="status-alert"></div>
         </div>
       </div>
       
@@ -365,8 +413,8 @@
       const iframe = document.getElementById('activeVideoFrame');
       const lockView = document.getElementById('lockView');
 
-      // ប្រសិនបើជាភាគ Free (ភាគ ១០៦ - ១២២) ឬឧបករណ៍មាន APV សុពលភាព ២៤ ម៉ោង
-      if (target.isFree || isSubscriptionValid()) {
+      // បើជាភាគ Free ឬមាន APV សុពលភាព ២៤ ម៉ោង គឺចាក់វីដេអូភ្លាម
+      if (target.isFree === true || isSubscriptionValid()) {
         lockView.style.display = 'none';
         if (target.url && target.url.trim() !== '') {
           iframe.src = target.url;
@@ -377,7 +425,7 @@
           alert('⏳ វីដេអូភាគនេះនឹងមកដល់ឆាប់ៗ!');
         }
       } else {
-        // បើជាភាគបង់ប្រាក់ ហើយមិនទាន់មាន APV
+        // បើជាភាគបង់ប្រាក់ ហើយមិនទាន់ដោះសោរ បង្ហាញផ្ទាំង Lock
         iframe.src = '';
         iframe.style.display = 'none';
         lockView.style.display = 'flex';
@@ -426,7 +474,7 @@
     document.addEventListener('contextmenu', e => e.preventDefault(), true);
     window.onload = () => {
       renderPlaylist();
-      selectEpisode(13); // បើកមកចាក់ភាគ ១១៩ ភ្លាមៗ
+      selectEpisode(13); // ចាក់ភាគ ១១៩ ភ្លាមៗ
     };
   </script>
 
