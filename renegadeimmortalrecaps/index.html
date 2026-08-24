@@ -481,27 +481,31 @@
     </div>
   </div>
 
-  <!-- ហៅទិន្នន័យពី episodes.js -->
   <script src="episodes.js"></script>
 
   <script>
-    // ១. ប្រព័ន្ធការពារសន្តិសុខ (បិទ Right-Click និង F12 Shortcuts)
-    document.addEventListener('contextmenu', e => e.preventDefault(), true);
+    // ១. ប្រព័ន្ធការពារសន្តិសុខកម្រិតខ្ពស់ (បិទ F12, Right-Click, និង Shortcut ត្រួតពិនិត្យកូដទាំងអស់)
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    }, true);
 
-    document.addEventListener('keydown', e => {
+    document.addEventListener('keydown', function(e) {
       if (
-        e.keyCode === 123 || // F12
-        (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 65 || e.keyCode === 67)) || // Ctrl+U, Ctrl+S, Ctrl+A, Ctrl+C
-        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) // Ctrl+Shift+I/J/C
+        e.key === 'F12' || 
+        e.keyCode === 123 || 
+        (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.key === 'J' || e.key === 'j' || e.key === 'C' || e.key === 'c')) || 
+        (e.ctrlKey && (e.key === 'U' || e.key === 'u' || e.key === 'S' || e.key === 's' || e.key === 'A' || e.key === 'a' || e.key === 'P' || e.key === 'p'))
       ) {
         e.preventDefault();
+        e.stopPropagation();
         return false;
       }
     }, true);
 
     // ២. ការកំណត់តំណភ្ជាប់ Node.js Server API Endpoint
     const API_VERIFY_URL = 'https://neakan-backend.onrender.com/api/verify-payment';
-    let currentSelectedEp = 13; // ចាប់ផ្តើមត្រង់ភាគ ១១៩ (Index 13)
+    let currentSelectedEp = 13;
 
     function openQrModal() {
       const modal = document.getElementById('qrModal');
@@ -526,7 +530,6 @@
       return devId;
     }
 
-    // ពិនិត្យសុពលភាពជាមួយ Node.js Server រាល់ពេលបើកមើលភាគ Paywall
     async function isSubscriptionValid() {
       const savedCode = localStorage.getItem('apv_unlocked_code');
       const deviceId = getOrCreateDeviceId();
@@ -558,7 +561,6 @@
       }
     }
 
-    // មុខងាររាប់ថយក្រោយបង្ហាញលើ Video Details
     function updateCountdownDisplay() {
       const timerElement = document.getElementById('videoDetailsCountdown');
       const expiresAt = localStorage.getItem('apv_expires_at');
