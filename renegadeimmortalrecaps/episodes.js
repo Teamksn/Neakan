@@ -4,7 +4,7 @@
 // =========================================================================
 
 const episodesData = [
-  { ep: 'ភាគ ១០៦', title: 'ភាគ ១០៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១០៦', title: 'ភាគ ១០៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: 'https://t.me/samnakeo/3127?embed=1' },
   { ep: 'ភាគ ១០៧', title: 'ភាគ ១០៧៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
   { ep: 'ភាគ ១០៨', title: 'ភាគ ១០៨៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
   { ep: 'ភាគ ១០៩', title: 'ភាគ ១០៩៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
