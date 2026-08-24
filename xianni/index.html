@@ -219,20 +219,54 @@
     </div>
   </div>
 
-  <script src="chapters.js?v=2026.10"></script>
+  <script src="chapters.js?v=2026.11"></script>
   <script>
     // តំណភ្ជាប់ Cloudflare Tunnel សកម្មរបស់អ្នក
     const BACKEND_API_URL = 'https://understanding-contracts-con-adapted.trycloudflare.com';
 
     let currentChapterIndex = 0;
 
+    // អនុគមន៍បង្កើត Device ID ដោយផ្អែកលើ Hardware នៃម៉ាស៊ីន (Canvas + Screen + CPU)
     function getOrCreateDeviceId() {
-      let deviceId = localStorage.getItem('user_device_id');
-      if (!deviceId) {
-        deviceId = 'DEV-' + Math.random().toString(36).substring(2, 10) + Date.now();
-        localStorage.setItem('user_device_id', deviceId);
+      try {
+        const screenInfo = `${window.screen.width}x${window.screen.height}x${window.screen.colorDepth}`;
+        const cpuCores = navigator.hardwareConcurrency || 'cpu';
+        const platform = navigator.platform || 'platform';
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        let canvasHash = 'canvas_none';
+        if (ctx) {
+          ctx.textBaseline = "top";
+          ctx.font = "14px 'Arial'";
+          ctx.fillStyle = "#f60";
+          ctx.fillRect(125, 1, 62, 20);
+          ctx.fillStyle = "#069";
+          ctx.fillText("Neakan_Security_2026", 2, 15);
+          ctx.fillStyle = "rgba(102, 204, 0, 0.7)";
+          ctx.fillText("Neakan_Security_2026", 4, 17);
+          canvasHash = canvas.toDataURL();
+        }
+
+        const rawFingerprint = `${screenInfo}|${cpuCores}|${platform}|${timezone}|${canvasHash}`;
+        
+        let hash = 0;
+        for (let i = 0; i < rawFingerprint.length; i++) {
+          const char = rawFingerprint.charCodeAt(i);
+          hash = ((hash << 5) - hash) + char;
+          hash |= 0;
+        }
+
+        return 'DEV-HW-' + Math.abs(hash);
+      } catch (e) {
+        let fallbackId = localStorage.getItem('user_device_id');
+        if (!fallbackId) {
+          fallbackId = 'DEV-FB-' + Math.random().toString(36).substring(2, 10);
+          localStorage.setItem('user_device_id', fallbackId);
+        }
+        return fallbackId;
       }
-      return deviceId;
     }
 
     function isVipAccessActive() {
