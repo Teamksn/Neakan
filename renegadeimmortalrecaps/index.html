@@ -470,6 +470,29 @@
   <script src="episodes.js"></script>
 
   <script>
+    // ដាក់កូដការពារនៅទីនេះ (ខាងលើគេបង្អស់ក្នុង Script)
+    document.addEventListener('contextmenu', e => e.preventDefault(), true);
+
+    document.addEventListener('keydown', e => {
+      if (
+        e.keyCode === 123 || // F12
+        (e.ctrlKey && (e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 65 || e.keyCode === 67)) || // Ctrl+U, Ctrl+S, Ctrl+A, Ctrl+C
+        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) // Ctrl+Shift+I/J/C
+      ) {
+        e.preventDefault();
+        return false;
+      }
+    }, true);
+
+    // កូដ និងមុខងារដទៃទៀតនៅខាងក្រោមនេះ...
+    const API_VERIFY_URL = 'http://localhost:3000/api/verify-payment';
+    let currentSelectedEp = 13;
+    
+    // ...
+  </script>
+
+  
+  <script>
     // ភ្ជាប់ទៅកាន់ Node.js Server API Endpoint (Localhost ឬ Cloudflare Tunnel URL)
     const API_VERIFY_URL = 'http://localhost:3000/api/verify-payment';
     let currentSelectedEp = 13; // ចាប់ផ្តើមត្រង់ភាគ ១១៩ (Index 13)
