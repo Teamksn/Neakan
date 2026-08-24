@@ -36,8 +36,8 @@ app.post('/api/verify-payment', (req, res) => {
   const record = validApvCodes[code];
 
   if (!record) {
-    // ករណីសាកល្បង៖ ប្រសិនបើជាកូដទើបបង្កើតថ្មី (កំណត់សុពលភាព ២៤ ម៉ោង)
-    const expiresAt = Date.now() + (24 * 60 * 60 * 1000);
+    // កំណត់សុពលភាពត្រឹម ២ នាទី (សម្រាប់ធ្វើតេស្តសាកល្បង)
+    const expiresAt = Date.now() + (2 * 60 * 1000);
     validApvCodes[code] = {
       expiresAt: expiresAt,
       deviceId: deviceId || null
@@ -45,7 +45,7 @@ app.post('/api/verify-payment', (req, res) => {
 
     return res.json({
       status: 'SUCCESS',
-      message: 'ដោះសោរជោគជ័យ! សុពលភាព ២៤ ម៉ោង។',
+      message: 'ដោះសោរជោគជ័យ! សុពលភាព ២ នាទី។',
       expiresAt: expiresAt
     });
   }
