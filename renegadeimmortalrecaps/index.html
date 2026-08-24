@@ -75,7 +75,7 @@
       width: 100%;
       height: 100%;
       border: none;
-      display: none; /* លាក់រហូតដល់មាន Video */
+      display: none;
     }
 
     .thumbnail-placeholder {
@@ -139,14 +139,14 @@
     }
     .playlist-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
       gap: 10px;
     }
     .ep-card {
       background-color: #242424;
       border: 1px solid #383838;
       border-radius: 6px;
-      padding: 10px;
+      padding: 10px 6px;
       text-align: center;
       cursor: pointer;
       font-size: 13px;
@@ -177,22 +177,20 @@
   <main class="container">
 
     <div class="player-container">
-      <!-- Placeholder Thumbnail ពេលមិនទាន់ដាក់ Video -->
       <div class="thumbnail-placeholder" id="placeholderView">
         <img src="../xianni/Cover.jpg" alt="Poster Thumbnail" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
         <div class="placeholder-badge" id="placeholderText">⏳ វីដេអូភាគនេះនឹងមកដល់ឆាប់ៗ</div>
       </div>
 
-      <!-- Video Player -->
       <iframe id="activeVideoFrame" src="" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
     </div>
 
     <div class="video-details">
-      <h2 id="currentEpTitle">ភាគ ០១-២០ (វគ្គទី ១)</h2>
+      <h2 id="currentEpTitle">ភាគ ១០៦</h2>
       <p>សម្រាយសាច់រឿងលម្អិតប្រលោមលោក 仙逆 (Renegade Immortal)</p>
     </div>
 
-    <!-- បញ្ជី Playlist ភាគច្រើន -->
+    <!-- បញ្ជី Playlist ភាគ ១០៦ ដល់ ១៥៥ -->
     <div class="playlist-section">
       <div class="playlist-title">🎞️ បញ្ជីភាគទាំងអស់ (Playlist)</div>
       <div class="playlist-grid" id="playlistContainer"></div>
@@ -201,23 +199,45 @@
   </main>
 
   <script>
-    // បញ្ជីទិន្នន័យ Playlist (បើមិនទាន់មានវីដេអូ ទុក url: '' នោះប្រព័ន្ធនឹងបង្ហាញតែ Thumbnail)
+    // បញ្ជីទិន្នន័យ Playlist ភាគ ១០៦ ដល់ ១៥៥
     const episodesData = [
-      {
-        ep: 'ភាគ ០១-២០',
-        title: 'ភាគ ០១-២០៖ ដំណើរចូលនិកាយហេងយៀក',
-        url: '' // ដាក់ Link Embed នៅពេលមានវីដេអូ
-      },
-      {
-        ep: 'ភាគ ២១-៤០',
-        title: 'ភាគ ២១-៤០៖ ការសងសឹកនៅដែនដីចូវ',
-        url: '' // ទុកទំនេរ ប្រព័ន្ធនឹងបង្ហាញ Thumbnail Placeholder
-      },
-      {
-        ep: 'ភាគ ៤១-៦០',
-        title: 'ភាគ ៤១-៦០៖ វិបត្តិនៅសមុទ្រអារក្ស',
-        url: ''
-      }
+      { ep: 'ភាគ ១១៩', title: 'ភាគ ១១៩៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: 'https://youtu.be/isVDi2G5gw4' },
+      { ep: 'ភាគ ១២០', title: 'ភាគ ១២០៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: 'https://youtu.be/t8r1HAIBXII' },
+      { ep: 'ភាគ ១២១', title: 'ភាគ ១២១៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: 'https://youtu.be/1ZylXVaeBn4' },
+      { ep: 'ភាគ ១២២', title: 'ភាគ ១២២៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១២៣', title: 'ភាគ ១២៣៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១២៤', title: 'ភាគ ១២៤៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១២៥', title: 'ភាគ ១២៥៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១២៦', title: 'ភាគ ១២៦៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១២៧', title: 'ភាគ ១២៧៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១២៨', title: 'ភាគ ១២៨៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១២៩', title: 'ភាគ ១២៩៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៣០', title: 'ភាគ ១៣០៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៣១', title: 'ភាគ ១៣១៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៣២', title: 'ភាគ ១៣២៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៣៣', title: 'ភាគ ១៣៣៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៣៤', title: 'ភាគ ១៣៤៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៣៥', title: 'ភាគ ១៣៥៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៣៦', title: 'ភាគ ១៣៦៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៣៧', title: 'ភាគ ១៣៧៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៣៨', title: 'ភាគ ១៣៨៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៣៩', title: 'ភាគ ១៣៩៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៤០', title: 'ភាគ ១៤០៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៤១', title: 'ភាគ ១៤១៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៤២', title: 'ភាគ ១៤២៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៤៣', title: 'ភាគ ១៤៣៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៤៤', title: 'ភាគ ១៤៤៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៤៥', title: 'ភាគ ១៤៥៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៤៦', title: 'ភាគ ១៤៦៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៤៧', title: 'ភាគ ១៤៧៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៤៨', title: 'ភាគ ១៤៨៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៤៩', title: 'ភាគ ១៤៩៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៥០', title: 'ភាគ ១៥០៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៥១', title: 'ភាគ ១៥១៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៥២', title: 'ភាគ ១៥២៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៥៣', title: 'ភាគ ១៥៣៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៥៤', title: 'ភាគ ១៥៤៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' },
+      { ep: 'ភាគ ១៥៥', title: 'ភាគ ១៥៥៖ ការសម្រាយរឿង ស៊ាននី (仙逆)', url: '' }
     ];
 
     let currentSelectedEp = 0;
