@@ -470,7 +470,7 @@
   <script src="episodes.js"></script>
 
   <script>
-    // ដាក់កូដការពារនៅទីនេះ (ខាងលើគេបង្អស់ក្នុង Script)
+    // ១. ប្រព័ន្ធការពារសន្តិសុខ (បិទ Right-Click និង F12 Shortcuts)
     document.addEventListener('contextmenu', e => e.preventDefault(), true);
 
     document.addEventListener('keydown', e => {
@@ -484,16 +484,7 @@
       }
     }, true);
 
-    // កូដ និងមុខងារដទៃទៀតនៅខាងក្រោមនេះ...
-    const API_VERIFY_URL = 'http://localhost:3000/api/verify-payment';
-    let currentSelectedEp = 13;
-    
-    // ...
-  </script>
-
-  
-  <script>
-    // ភ្ជាប់ទៅកាន់ Node.js Server API Endpoint (Localhost ឬ Cloudflare Tunnel URL)
+    // ២. ការកំណត់តំណភ្ជាប់ Node.js Server API Endpoint
     const API_VERIFY_URL = 'http://localhost:3000/api/verify-payment';
     let currentSelectedEp = 13; // ចាប់ផ្តើមត្រង់ភាគ ១១៩ (Index 13)
 
@@ -692,7 +683,6 @@
       }
     };
 
-    document.addEventListener('contextmenu', e => e.preventDefault(), true);
     window.onload = () => {
       renderPlaylist();
       initEpisodeFromUrl();
