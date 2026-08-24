@@ -11,6 +11,26 @@
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* បិទការ Highlight / Select អត្ថបទលើគ្រប់ Elements ទាំងអស់ */
+    *, *::before, *::after {
+      -webkit-user-select: none !important;
+      -moz-user-select: none !important;
+      -ms-user-select: none !important;
+      user-select: none !important;
+      -webkit-touch-callout: none !important;
+    }
+
+    /* ហាមទាញអូសរូបភាព */
+    img {
+      -webkit-user-drag: none !important;
+      -khtml-user-drag: none !important;
+      -moz-user-drag: none !important;
+      -o-user-drag: none !important;
+      user-drag: none !important;
+      pointer-events: none;
+    }
+
     body {
       background-color: #f7f4ed;
       font-family: 'Battambang', sans-serif;
@@ -125,6 +145,7 @@
       margin-bottom: 20px;
       cursor: pointer;
       transition: transform 0.2s ease;
+      pointer-events: auto;
     }
     .khqr-frame:hover { transform: scale(1.02); }
     .khqr-img { width: 280px; height: 370px; object-fit: contain; display: block; border-radius: 8px; }
@@ -219,12 +240,30 @@
     </div>
   </div>
 
-  <script src="chapters.js?v=2026.12"></script>
+  <script src="chapters.js?v=2026.15"></script>
   <script>
     // តំណភ្ជាប់ Cloudflare Tunnel សកម្មរបស់អ្នក
     const BACKEND_API_URL = 'https://understanding-contracts-con-adapted.trycloudflare.com';
 
     let currentChapterIndex = 0;
+
+    // ប្រព័ន្ធការពារសន្តិសុខទិន្នន័យ (Disable Copy, Select, Shortcuts, ContextMenu)
+    document.addEventListener('contextmenu', e => e.preventDefault(), true);
+    document.addEventListener('copy', e => { e.preventDefault(); return false; }, true);
+    document.addEventListener('cut', e => { e.preventDefault(); return false; }, true);
+    document.addEventListener('selectstart', e => { e.preventDefault(); return false; }, true);
+    document.addEventListener('dragstart', e => { e.preventDefault(); return false; }, true);
+
+    document.addEventListener('keydown', e => {
+      if (
+        e.keyCode === 123 || // F12
+        (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 65)) || // Ctrl+C, Ctrl+U, Ctrl+S, Ctrl+A
+        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) // Ctrl+Shift+I, Ctrl+Shift+J
+      ) {
+        e.preventDefault();
+        return false;
+      }
+    }, true);
 
     function getOrCreateDeviceId() {
       try {
@@ -268,7 +307,6 @@
       }
     }
 
-    // ពិនិត្យមើលស្ថានភាពជាមួយ Server ផ្ទាល់ (កាត់សិទ្ធិភ្លាមៗបើត្រូវ Reset)
     async function checkServerVipStatus() {
       const savedCode = localStorage.getItem('user_saved_apv');
       if (!savedCode) return false;
@@ -288,12 +326,10 @@
         if (data.status === 'SUCCESS') {
           return true;
         } else {
-          // ប្រសិនបើ Server ប្រាប់ថា EXPIRED, NOT_FOUND ឬ DEVICE_BLOCKED
           localStorage.removeItem('user_saved_apv');
           return false;
         }
       } catch (e) {
-        // បើដាច់ Network អនុញ្ញាតបណ្ដោះអាសន្នបើមិនទាន់ផុតម៉ោង
         return true;
       }
     }
@@ -374,7 +410,6 @@
       const isChapterVip = (chapter.isVip === true);
 
       if (isChapterVip) {
-        // បង្ហាញសញ្ញាកំពុងផ្ទុកទិន្នន័យ
         document.getElementById('displayContent').innerHTML = '<p style="text-align:center; padding: 40px 0;">⏳ កំពុងផ្ទៀងផ្ទាត់សិទ្ធិអាន...</p>';
         
         const isAllowed = await checkServerVipStatus();
@@ -407,7 +442,6 @@
         }
       }
 
-      // បង្ហាញខ្លឹមសារអត្ថបទ
       const rawContent = chapter.content || '';
       const formattedHtml = rawContent
         .split('\n\n')
@@ -449,7 +483,6 @@
         const data = await res.json();
 
         if (data.status === 'SUCCESS') {
-          // រក្សាទុកលេខ APV លើ Browser ដើម្បីផ្ទៀងផ្ទាត់ជាមួយ Server ជាប្រចាំ
           localStorage.setItem('user_saved_apv', enteredCode);
           errorEl.style.color = '#28a745';
           errorEl.innerText = '🎉 ' + data.message;
