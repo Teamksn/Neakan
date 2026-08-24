@@ -1,0 +1,60 @@
+// =========================================================================
+// ឯកសារផ្ទុកទិន្នន័យវីដេអូសុទ្ធសាធ (Episodes Data Store)
+// កម្មវិធី IDM មិនអាចទាញយកបានទេនៅពេលប្រើ Link Embed / Encrypted Stream
+// =========================================================================
+
+const episodesData = [
+  { ep: 'ភាគ ១០៦', title: 'ភាគ ១០៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១០៧', title: 'ភាគ ១០៧៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១០៨', title: 'ភាគ ១០៨៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១០៩', title: 'ភាគ ១០៩៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១១០', title: 'ភាគ ១១០៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១១១', title: 'ភាគ ១១១៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១១២', title: 'ភាគ ១១២៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១១៣', title: 'ភាគ ១១៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១១៤', title: 'ភាគ ១១៤៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១១៥', title: 'ភាគ ១១៥៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១១៦', title: 'ភាគ ១១៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១១៧', title: 'ភាគ ១១៧៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១១៨', title: 'ភាគ ១១៨៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  
+  // ភាគដែលមានវីដេអូ (ប្រើ Link Embed ដើម្បីទប់ស្កាត់ IDM ពីការចាប់យក File ផ្ទាល់)
+  { ep: 'ភាគ ១១៩', title: 'ភាគ ១១៩៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: 'https://www.youtube.com/embed/isVDi2G5gw4' },
+  { ep: 'ភាគ ១២០', title: 'ភាគ ១២០៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: 'https://www.youtube.com/embed/t8r1HAIBXII' },
+  { ep: 'ភាគ ១២១', title: 'ភាគ ១២១៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: 'https://www.youtube.com/embed/1ZylXVaeBn4' },
+  
+  { ep: 'ភាគ ១២២', title: 'ភាគ ១២២៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១២៣', title: 'ភាគ ១២៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១២៤', title: 'ភាគ ១២៤៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១២៥', title: 'ភាគ ១២៥៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១២៦', title: 'ភាគ ១២៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១២៧', title: 'ភាគ ១២៧៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១២៨', title: 'ភាគ ១២៨៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១២៩', title: 'ភាគ ១២៩៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៣០', title: 'ភាគ ១៣០៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៣១', title: 'ភាគ ១៣១៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៣២', title: 'ភាគ ១៣២៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៣៣', title: 'ភាគ ១៣៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៣៤', title: 'ភាគ ១៣៤៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៣៥', title: 'ភាគ ១៣៥៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៣៦', title: 'ភាគ ១៣៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៣៧', title: 'ភាគ ១៣៧៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៣៨', title: 'ភាគ ១៣៨៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៣៩', title: 'ភាគ ១៣៩៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៤០', title: 'ភាគ ១៤០៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៤១', title: 'ភាគ ១៤១៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៤២', title: 'ភាគ ១៤២៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៤៣', title: 'ភាគ ១៤៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៤៤', title: 'ភាគ ១៤៤៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៤៥', title: 'ភាគ ១៤៥៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៤៦', title: 'ភាគ ១៤៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៤៧', title: 'ភាគ ១៤៧៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៤៨', title: 'ភាគ ១៤៨៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៤៩', title: 'ភាគ ១៤៩៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៥០', title: 'ភាគ ១៥០៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៥១', title: 'ភាគ ១៥១៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៥២', title: 'ភាគ ១៥២៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៥៣', title: 'ភាគ ១៥៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៥៤', title: 'ភាគ ១៥៤៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' },
+  { ep: 'ភាគ ១៥៥', title: 'ភាគ ១៥៥៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '' }
+];
