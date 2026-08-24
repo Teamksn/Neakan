@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Neakan - បណ្ណាល័យប្រលោមលោក និងការសម្រាយរឿង</title>
+  <title>Neakan - ប្រលោមលោកចិនបកប្រែខ្មែរ និងការសម្រាយរឿង</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +12,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    /* ហាម Highlight អត្ថបទ និងហាមជ្រើសរើសទិន្នន័យលើទំព័រ */
+    /* ហាម Highlight អត្ថបទលើទំព័រ */
     *, *::before, *::after {
       -webkit-user-select: none !important;
       -moz-user-select: none !important;
@@ -22,21 +22,17 @@
     }
 
     body {
-      background-color: #f7f4ed;
+      background-color: #121212; /* Dark Theme បែបភាពយន្ត */
       font-family: 'Battambang', sans-serif;
-      color: #222;
+      color: #e0e0e0;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
 
-    /* ហាមទាញអូសរូបភាព */
     img {
       -webkit-user-drag: none !important;
-      -khtml-user-drag: none !important;
-      -moz-user-drag: none !important;
-      -o-user-drag: none !important;
       user-drag: none !important;
       pointer-events: none;
     }
@@ -44,84 +40,154 @@
     /* Header ខាងលើ */
     .site-header {
       width: 100%;
-      background-color: #f7f4ed;
+      background-color: #1a1a1a;
       border-bottom: 2px solid #28a745;
       padding: 15px 20px;
       text-align: center;
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
     .site-header h1 {
       font-size: 22px;
       color: #28a745;
       font-weight: 900;
+      letter-spacing: 1px;
     }
     .site-header p {
       font-size: 13px;
-      color: #666;
+      color: #999;
       margin-top: 2px;
     }
 
-    /* តំបន់មាតិកាចម្បង */
+    /* Main Container */
     .main-container {
       width: 100%;
-      max-width: 800px;
-      padding: 20px 16px 50px 16px;
+      max-width: 960px;
+      padding: 25px 16px 60px 16px;
       display: flex;
       flex-direction: column;
-      gap: 25px;
+      gap: 35px;
     }
 
-    /* កន្សោមប្រអប់ការសម្រាយរឿង (Video Section Card) */
-    .section-card {
-      background-color: #ffffff;
-      border: 1px solid #e5dfd3;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
-      padding: 16px;
-    }
-    .section-title {
-      font-size: 16.5px;
-      font-weight: 900;
-      color: #28a745;
-      margin-bottom: 12px;
+    /* Header កន្សោមចំណងជើង */
+    .section-header-bar {
       display: flex;
       align-items: center;
-      gap: 8px;
+      justify-content: space-between;
+      margin-bottom: 15px;
+      border-left: 4px solid #28a745;
+      padding-left: 10px;
+    }
+    .section-title {
+      font-size: 17px;
+      font-weight: 900;
+      color: #ffffff;
     }
 
-    .video-wrapper {
+    /* ==========================================
+       ១. បញ្ជី Poster វីដេអូសម្រាយរឿង (Horizontal Scroll)
+       ========================================== */
+    .video-poster-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 14px;
+    }
+    @media (max-width: 600px) {
+      .video-poster-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+    }
+
+    .video-card {
       position: relative;
-      width: 100%;
-      background-color: #000;
+      background-color: #1e1e1e;
       border-radius: 8px;
       overflow: hidden;
+      cursor: pointer;
+      border: 1px solid #2d2d2d;
+      transition: transform 0.25s ease, border-color 0.25s ease;
     }
-    .video-wrapper iframe {
+    .video-card:hover {
+      transform: translateY(-5px) scale(1.02);
+      border-color: #28a745;
+    }
+
+    .video-poster-box {
       width: 100%;
-      aspect-ratio: 16/9;
-      border: none;
+      aspect-ratio: 2/3;
+      position: relative;
+      background-color: #2a2a2a;
+    }
+    .video-poster-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
       display: block;
     }
 
-    /* បញ្ជីកាតប្រលោមលោក */
-    .library-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-      gap: 20px;
+    /* ប៊ូតុង Play Icon ពីលើ Poster */
+    .play-overlay {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.85;
+      transition: opacity 0.2s;
+    }
+    .video-card:hover .play-overlay {
+      opacity: 1;
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .play-circle {
+      width: 44px;
+      height: 44px;
+      background-color: #dc3545;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(220, 53, 69, 0.7);
+    }
+    .play-triangle {
+      width: 0;
+      height: 0;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 14px solid #ffffff;
+      margin-left: 3px;
     }
 
+    .video-card-title {
+      padding: 8px 6px;
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #ddd;
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ==========================================
+       ២. កាតប្រលោមលោកចិនបកប្រែខ្មែរ
+       ========================================== */
+    .novel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
     .novel-card {
-      background-color: #ffffff;
-      border: 1px solid #e5dfd3;
+      background-color: #1e1e1e;
+      border: 1px solid #2d2d2d;
       border-radius: 10px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
       text-decoration: none;
       color: inherit;
       transition: transform 0.2s, border-color 0.2s;
@@ -130,57 +196,155 @@
       transform: translateY(-4px);
       border-color: #28a745;
     }
-
-    .card-cover {
+    .novel-cover {
       width: 100%;
-      height: 320px;
-      background-color: #eee9dc;
+      height: 330px;
+      background-color: #2a2a2a;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
-    .card-cover img {
+    .novel-cover img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
     }
-
-    .card-info {
-      padding: 14px;
+    .novel-info {
+      padding: 16px;
       display: flex;
       flex-direction: column;
       flex: 1;
     }
-    .card-title {
+    .novel-title {
       font-size: 16px;
       font-weight: 700;
-      color: #111;
-      margin-bottom: 5px;
+      color: #28a745;
+      margin-bottom: 6px;
       line-height: 1.4;
     }
-    .card-author {
+    .novel-author {
       font-size: 12.5px;
-      color: #777;
+      color: #888;
       margin-bottom: 8px;
     }
-    .card-desc {
+    .novel-desc {
       font-size: 13px;
-      color: #444;
-      line-height: 1.5;
-      margin-bottom: 15px;
+      color: #bbb;
+      line-height: 1.6;
+      margin-bottom: 16px;
       flex: 1;
     }
-
-    .card-btn {
+    .novel-btn {
       width: 100%;
-      padding: 9px 0;
+      padding: 10px 0;
       background-color: #28a745;
       color: white;
       text-align: center;
       border-radius: 6px;
-      font-size: 13.5px;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    /* ==========================================
+       ៣. ផ្ទាំង Video Modal + Playlist Player
+       ========================================== */
+    .video-modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      backdrop-filter: blur(5px);
+    }
+    .video-modal-content {
+      background-color: #181818;
+      border: 1px solid #333;
+      border-radius: 12px;
+      width: 100%;
+      max-width: 850px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+      display: flex;
+      flex-direction: column;
+      animation: zoomIn 0.25s ease-out;
+    }
+    @keyframes zoomIn {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      padding: 12px 18px;
+      background-color: #222;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+    }
+    .modal-header h3 {
+      font-size: 15.5px;
+      color: #28a745;
+      font-weight: 700;
+    }
+    .modal-close-btn {
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 26px;
+      cursor: pointer;
+    }
+    .modal-close-btn:hover { color: #fff; }
+
+    .modal-player-frame {
+      width: 100%;
+      aspect-ratio: 16/9;
+      background-color: #000;
+    }
+    .modal-player-frame iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* បញ្ជី Playlist ភាគច្រើនក្នុង Modal */
+    .playlist-drawer {
+      padding: 14px 16px;
+      background-color: #141414;
+      max-height: 170px;
+      overflow-y: auto;
+    }
+    .playlist-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #888;
+      margin-bottom: 10px;
+    }
+    .playlist-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .ep-btn {
+      padding: 6px 14px;
+      background-color: #252525;
+      border: 1px solid #3a3a3a;
+      border-radius: 6px;
+      color: #ddd;
+      font-family: 'Battambang';
+      font-size: 13px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .ep-btn:hover {
+      background-color: #333;
+      border-color: #28a745;
+    }
+    .ep-btn.active {
+      background-color: #28a745;
+      border-color: #28a745;
+      color: white;
       font-weight: bold;
     }
   </style>
@@ -190,54 +354,99 @@
   <!-- Header ខាងលើ -->
   <header class="site-header">
     <h1>NEAKAN (អ្នកអាន)</h1>
-    <p>បណ្តុំប្រលោមលោក និងការសម្រាយរឿង</p>
+    <p>បណ្តុំប្រលោមលោកចិន និងការសម្រាយរឿង</p>
   </header>
 
   <main class="main-container">
 
-    <!-- កន្សោមទី ១៖ ការសម្រាយរឿង -->
-    <section class="section-card">
-      <div class="section-title">🎬 ការសម្រាយរឿង</div>
-      <div class="video-wrapper">
-        <iframe 
-          src="https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi" 
-          title="Dailymotion Video Player" 
-          allow="autoplay; fullscreen *; picture-in-picture; web-share" 
-          allowfullscreen="true"
-          webkitallowfullscreen="true" 
-          mozallowfullscreen="true">
-        </iframe>
+    <!-- ==========================================
+         កន្សោមទី ១៖ ការសម្រាយរឿង (Movie Poster Style)
+         ========================================== -->
+    <section>
+      <div class="section-header-bar">
+        <div class="section-title">🎬 ការសម្រាយរឿង (Movie Highlights)</div>
+      </div>
+
+      <div class="video-poster-grid">
+
+        <!-- វីដេអូទី ១៖ ស៊ាននី (Renegade Immortal) -->
+        <div class="video-card" onclick="openVideoModal('ស៊ាននី (仙逆) - សម្រាយរឿងពេញ', [
+          { ep: 'ភាគ ០១-២០', url: 'https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi' },
+          { ep: 'ភាគ ២១-៤០', url: 'https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi' },
+          { ep: 'ភាគ ៤១-៦០', url: 'https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi' }
+        ])">
+          <div class="video-poster-box">
+            <img src="xianni/Cover.jpg" alt="Xian Ni Poster" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
+            <div class="play-overlay">
+              <div class="play-circle"><div class="play-triangle"></div></div>
+            </div>
+          </div>
+          <div class="video-card-title">仙逆 (ប្រឆាំងនឹងអមតៈ)</div>
+        </div>
+
+        <!-- វីដេអូទី ២៖ ដាវឈិនភីងអាន (Sword of Coming) -->
+        <div class="video-card" onclick="openVideoModal('ដាវឈិនភីងអាន (剑来) - សម្រាយរឿងពេញ', [
+          { ep: 'វគ្គ ១ (ភាគ ០១-១៣)', url: 'https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi' },
+          { ep: 'វគ្គ ២ (ភាគ ១៤-២៦)', url: 'https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi' }
+        ])">
+          <div class="video-poster-box">
+            <img src="jianlai/Cover.jpg" alt="Sword of Coming Poster" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/9/90/Sword_of_Coming_poster.jpg/440px-Sword_of_Coming_poster.jpg'">
+            <div class="play-overlay">
+              <div class="play-circle"><div class="play-triangle"></div></div>
+            </div>
+          </div>
+          <div class="video-card-title">剑来 (ដាវឈិនភីងអាន)</div>
+        </div>
+
+        <!-- វីដេអូទី ៣៖ សម្ព័ន្ធមនុស្សអាក្រក់ -->
+        <div class="video-card" onclick="openVideoModal('សម្ព័ន្ធមនុស្សអាក្រក់ - សម្រាយរឿងពេញ', [
+          { ep: 'ភាគពេញ ០១', url: 'https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi' }
+        ])">
+          <div class="video-poster-box">
+            <img src="https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg" alt="Poster">
+            <div class="play-overlay">
+              <div class="play-circle"><div class="play-triangle"></div></div>
+            </div>
+          </div>
+          <div class="video-card-title">សម្ព័ន្ធមនុស្សអាក្រក់</div>
+        </div>
+
       </div>
     </section>
 
-    <!-- កន្សោមទី ២៖ បញ្ជីប្រលោមលោក -->
+    <!-- ==========================================
+         កន្សោមទី ២៖ ប្រលោមលោកចិនបកប្រែខ្មែរ
+         ========================================== -->
     <section>
-      <div class="section-title" style="margin-bottom: 15px;">📚 បណ្ណាល័យប្រលោមលោក</div>
-      <div class="library-grid">
+      <div class="section-header-bar">
+        <div class="section-title">📚 ប្រលោមលោកចិនបកប្រែខ្មែរ</div>
+      </div>
+
+      <div class="novel-grid">
 
         <!-- កាតរឿងទី ១៖ ស៊ាននី (仙逆) -->
         <a href="xianni/" class="novel-card">
-          <div class="card-cover">
+          <div class="novel-cover">
             <img src="xianni/Cover.jpg" alt="Poster 仙逆" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
           </div>
-          <div class="card-info">
-            <div class="card-title">仙逆 (ប្រឆាំងនឹងអមតៈ - Renegade Immortal)</div>
-            <div class="card-author">អ្នកនិពន្ធ: អឺកិន (耳根)</div>
-            <div class="card-desc">ស្របជាមនុស្សសាមញ្ញ ប្រឆាំងដើម្បីភាពអមតៈ។</div>
-            <div class="card-btn">ចូលអានជំពូក →</div>
+          <div class="novel-info">
+            <div class="novel-title">仙逆 (ប្រឆាំងនឹងអមតៈ - Renegade Immortal)</div>
+            <div class="novel-author">អ្នកនិពន្ធ: អឺកិន (耳根)</div>
+            <div class="novel-desc">ស្របជាមនុស្សសាមញ្ញ ប្រឆាំងដើម្បីភាពអមតៈ ដំណើរលើវិថីបណ្តុះធម៌ដ៏ស្វិតស្វាញ។</div>
+            <div class="novel-btn">ចូលអានជំពូក →</div>
           </div>
         </a>
 
         <!-- កាតរឿងទី ២៖ ដាវឈិនភីងអាន (剑来) -->
         <a href="jianlai/" class="novel-card">
-          <div class="card-cover">
+          <div class="novel-cover">
             <img src="jianlai/Cover.jpg" alt="Poster 剑来" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/9/90/Sword_of_Coming_poster.jpg/440px-Sword_of_Coming_poster.jpg'">
           </div>
-          <div class="card-info">
-            <div class="card-title">剑来 (អមតៈភាពនៃដាវឈិនភីងអាន - Sword of Coming)</div>
-            <div class="card-author">អ្នកនិពន្ធ: ហ្វុងហ័រ (烽火戏诸侯)</div>
-            <div class="card-desc">ដំណើររឿងរបស់យុវជន ឈិនភីងអាន ចេញពីទីប្រជុំជនតូចមួយ ឆ្ពោះទៅកាន់ពិភពដាវ និងការស្វែងរកសច្ចធម៌លើលោក។</div>
-            <div class="card-btn">ចូលអានជំពូក →</div>
+          <div class="novel-info">
+            <div class="novel-title">剑来 (អមតៈភាពនៃដាវឈិនភីងអាន - Sword of Coming)</div>
+            <div class="novel-author">អ្នកនិពន្ធ: ហ្វុងហ័រ (烽火戏诸侯)</div>
+            <div class="novel-desc">ដំណើររឿងរបស់យុវជន ឈិនភីងអាន ចេញពីទីប្រជុំជនតូចមួយ ឆ្ពោះទៅកាន់ពិភពដាវ និងការស្វែងរកសច្ចធម៌លើលោក។</div>
+            <div class="novel-btn">ចូលអានជំពូក →</div>
           </div>
         </a>
 
@@ -246,8 +455,64 @@
 
   </main>
 
-  <!-- ប្រព័ន្ធការពារសុវត្ថិភាពទិន្នន័យ (Disable Right-Click & Shortcuts) -->
+  <!-- ==========================================
+       ផ្ទាំង Video Player Modal (Playlist Inside)
+       ========================================== -->
+  <div class="video-modal-overlay" id="videoModalOverlay" onclick="closeVideoModal(event)">
+    <div class="video-modal-content" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h3 id="modalVideoTitle">ចំណងជើងវីដេអូ</h3>
+        <button class="modal-close-btn" onclick="closeVideoModal()">×</button>
+      </div>
+
+      <div class="modal-player-frame">
+        <iframe id="modalVideoIframe" src="" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+      </div>
+
+      <div class="playlist-drawer">
+        <div class="playlist-label">🎞️ បញ្ជីភាគ (Playlist)៖</div>
+        <div class="playlist-buttons" id="playlistButtonsContainer"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript គ្រប់គ្រង Video Player Modal & Security -->
   <script>
+    let activePlaylist = [];
+
+    function openVideoModal(title, playlist) {
+      document.getElementById('modalVideoTitle').innerText = title;
+      activePlaylist = playlist;
+
+      const container = document.getElementById('playlistButtonsContainer');
+      container.innerHTML = '';
+
+      if (playlist && playlist.length > 0) {
+        playlist.forEach((item, index) => {
+          const btn = document.createElement('button');
+          btn.className = `ep-btn ${index === 0 ? 'active' : ''}`;
+          btn.innerText = item.ep;
+          btn.onclick = () => {
+            document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('modalVideoIframe').src = item.url;
+          };
+          container.appendChild(btn);
+        });
+
+        // ចាក់ភាគទី ១ ដំបូង
+        document.getElementById('modalVideoIframe').src = playlist[0].url;
+      }
+
+      document.getElementById('videoModalOverlay').style.display = 'flex';
+    }
+
+    function closeVideoModal(e) {
+      document.getElementById('modalVideoIframe').src = '';
+      document.getElementById('videoModalOverlay').style.display = 'none';
+    }
+
+    // ប្រព័ន្ធការពារសន្តិសុខទិន្នន័យ (Disable Right-Click & Shortcuts)
     document.addEventListener('contextmenu', e => e.preventDefault(), true);
     document.addEventListener('copy', e => { e.preventDefault(); return false; }, true);
     document.addEventListener('cut', e => { e.preventDefault(); return false; }, true);
