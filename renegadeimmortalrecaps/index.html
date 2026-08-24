@@ -470,7 +470,8 @@
   <script src="episodes.js"></script>
 
   <script>
-    const API_VERIFY_URL = 'https://script.google.com/macros/s/AKfycbxxBXx5OZzFKBzEZpXRj7tcjCrXwXu5uBCKgkz-WmILONF7WOk3ppmi61WFrISc9vvu/exec';
+    // ភ្ជាប់ទៅកាន់ Node.js Server API Endpoint (Localhost ឬ Cloudflare Tunnel URL)
+    const API_VERIFY_URL = 'http://localhost:3000/api/verify-payment';
     let currentSelectedEp = 13; // ចាប់ផ្តើមត្រង់ភាគ ១១៩ (Index 13)
 
     function openQrModal() {
@@ -496,7 +497,7 @@
       return devId;
     }
 
-    // ពិនិត្យសុពលភាពជាមួយ Server រាល់ពេលបើកមើលភាគ Paywall
+    // ពិនិត្យសុពលភាពជាមួយ Node.js Server រាល់ពេលបើកមើលភាគ Paywall
     async function isSubscriptionValid() {
       const savedCode = localStorage.getItem('apv_unlocked_code');
       const deviceId = getOrCreateDeviceId();
@@ -509,19 +510,18 @@
       try {
         const res = await fetch(API_VERIFY_URL, {
           method: 'POST',
-          body: JSON.stringify({ action: 'VERIFY_APV', code: savedCode, deviceId: deviceId })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: savedCode, deviceId: deviceId })
         });
         const data = await res.json();
         if (data.status === 'SUCCESS') {
           return true;
         } else {
-          // បើ Admin Lock ឬ Code មានបញ្ហា លុបចោលភ្លាម
           localStorage.removeItem('apv_unlocked_code');
           localStorage.removeItem('apv_expires_at');
           return false;
         }
       } catch (err) {
-        // បើមានបញ្ហាអនឡាញ ផ្អែកលើ thời gian ក្នុង localStorage ជាបណ្តោះអាសន្ន
         return Date.now() < parseInt(expiresAt);
       }
     }
@@ -569,7 +569,6 @@
       const upcomingView = document.getElementById('upcomingView');
       const upcomingText = document.getElementById('upcomingText');
 
-      // ១. ករណីភាគ Free (ភាគ ១០៦ - ១២២)
       if (target.isFree === true) {
         lockView.style.display = 'none';
         if (target.url && target.url.trim() !== '') {
@@ -582,9 +581,7 @@
           upcomingText.innerText = `⏳ ${target.ep} (ឥតគិតថ្លៃ) នឹងមកដល់ឆាប់ៗ`;
           upcomingView.style.display = 'flex';
         }
-      } 
-      // ២. ករណីភាគបង់ប្រាក់ (ភាគ ១២៣ ឡើងទៅ)
-      else {
+      } else {
         const isValid = await isSubscriptionValid();
         if (isValid) {
           lockView.style.display = 'none';
@@ -624,7 +621,8 @@
       try {
         const res = await fetch(API_VERIFY_URL, {
           method: 'POST',
-          body: JSON.stringify({ action: 'VERIFY_APV', code: code, deviceId: deviceId })
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: code, deviceId: deviceId })
         });
 
         const data = await res.json();
@@ -649,7 +647,7 @@
       const params = new URLSearchParams(window.location.search);
       const epParam = params.get('ep');
 
-      let initialIndex = 13; // លំនាំដើមភាគ ១១៩ (Index 13)
+      let initialIndex = 13;
 
       if (epParam && typeof episodesData !== 'undefined') {
         const khmerNumerals = { '០':'0', '១':'1', '២':'2', '៣':'3', '៤':'4', '៥':'5', '៦':'6', '៧':'7', '៨':'8', '៩':'9' };
@@ -677,6 +675,5 @@
       initEpisodeFromUrl();
     };
   </script>
-
 </body>
 </html>
