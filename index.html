@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Neakan - បណ្ណាល័យប្រលោមលោក</title>
+  <title>Neakan - បណ្ណាល័យប្រលោមលោក និងការសម្រាយរឿង</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +13,15 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     /* ហាម Highlight អត្ថបទ និងហាមជ្រើសរើសទិន្នន័យលើទំព័រ */
-    body, html {
+    *, *::before, *::after {
+      -webkit-user-select: none !important;
+      -moz-user-select: none !important;
+      -ms-user-select: none !important;
+      user-select: none !important;
+      -webkit-touch-callout: none !important;
+    }
+
+    body {
       background-color: #f7f4ed;
       font-family: 'Battambang', sans-serif;
       color: #222;
@@ -21,22 +29,19 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      -webkit-user-select: none; /* Safari */
-      -moz-user-select: none;    /* Firefox */
-      -ms-user-select: none;     /* IE10+/Edge */
-      user-select: none;         /* ស្តង់ដារ Browsers */
-      -webkit-touch-callout: none; /* iOS Safari ហាមសង្កត់ជាប់ Pop-up */
     }
 
-    /* ហាមទាញអូសរូបភាព និងវីដេអូ (Disable Drag & Drop) */
-    img, video, iframe {
-      -webkit-user-drag: none;
-      -khtml-user-drag: none;
-      -moz-user-drag: none;
-      -o-user-drag: none;
-      user-drag: none;
+    /* ហាមទាញអូសរូបភាព */
+    img {
+      -webkit-user-drag: none !important;
+      -khtml-user-drag: none !important;
+      -moz-user-drag: none !important;
+      -o-user-drag: none !important;
+      user-drag: none !important;
+      pointer-events: none;
     }
 
+    /* Header ខាងលើ */
     .site-header {
       width: 100%;
       background-color: #f7f4ed;
@@ -59,19 +64,41 @@
       margin-top: 2px;
     }
 
-    /* ប្រអប់វីដេអូ Highlight ខាងលើ */
-    .video-section {
+    /* តំបន់មាតិកាចម្បង */
+    .main-container {
       width: 100%;
       max-width: 800px;
-      padding: 20px 16px 0 16px;
+      padding: 20px 16px 50px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
     }
+
+    /* កន្សោមប្រអប់ការសម្រាយរឿង (Video Section Card) */
+    .section-card {
+      background-color: #ffffff;
+      border: 1px solid #e5dfd3;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.04);
+      padding: 16px;
+    }
+    .section-title {
+      font-size: 16.5px;
+      font-weight: 900;
+      color: #28a745;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .video-wrapper {
       position: relative;
       width: 100%;
       background-color: #000;
       border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
     }
     .video-wrapper iframe {
       width: 100%;
@@ -80,10 +107,8 @@
       display: block;
     }
 
-    .library-container {
-      width: 100%;
-      max-width: 800px;
-      padding: 25px 16px 50px 16px;
+    /* បញ្ជីកាតប្រលោមលោក */
+    .library-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
       gap: 20px;
@@ -92,7 +117,7 @@
     .novel-card {
       background-color: #ffffff;
       border: 1px solid #e5dfd3;
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
       display: flex;
       flex-direction: column;
@@ -120,7 +145,6 @@
       height: 100%;
       object-fit: cover;
       display: block;
-      pointer-events: none;
     }
 
     .card-info {
@@ -155,7 +179,7 @@
       background-color: #28a745;
       color: white;
       text-align: center;
-      border-radius: 4px;
+      border-radius: 6px;
       font-size: 13.5px;
       font-weight: bold;
     }
@@ -166,89 +190,80 @@
   <!-- Header ខាងលើ -->
   <header class="site-header">
     <h1>NEAKAN (អ្នកអាន)</h1>
-    <p>បណ្តុំប្រលោមលោក និងការបកប្រែ</p>
+    <p>បណ្តុំប្រលោមលោក និងការសម្រាយរឿង</p>
   </header>
 
-  <!-- កន្លែងបង្ហាញវីដេអូពី Dailymotion -->
-  <section class="video-section">
-    <div class="video-wrapper">
-      <iframe 
-        src="https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi" 
-        title="Dailymotion Video Player" 
-        allow="autoplay; fullscreen *; picture-in-picture; web-share" 
-        allowfullscreen="true"
-        webkitallowfullscreen="true" 
-        mozallowfullscreen="true">
-      </iframe>
-    </div>
-  </section>
+  <main class="main-container">
 
-  <!-- បញ្ជីកាតរឿងទាំងអស់ -->
-  <main class="library-container">
+    <!-- កន្សោមទី ១៖ ការសម្រាយរឿង -->
+    <section class="section-card">
+      <div class="section-title">🎬 ការសម្រាយរឿង</div>
+      <div class="video-wrapper">
+        <iframe 
+          src="https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi" 
+          title="Dailymotion Video Player" 
+          allow="autoplay; fullscreen *; picture-in-picture; web-share" 
+          allowfullscreen="true"
+          webkitallowfullscreen="true" 
+          mozallowfullscreen="true">
+        </iframe>
+      </div>
+    </section>
 
-    <!-- កាតរឿងទី ១៖ ស៊ាននី (仙逆) -->
-    <a href="xianni/" class="novel-card">
-      <div class="card-cover">
-        <img src="xianni/Cover.jpg" alt="Poster 仙逆" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
-      </div>
-      <div class="card-info">
-        <div class="card-title">仙逆 (ប្រឆាំងនឹងអមតៈ - Renegade Immortal)</div>
-        <div class="card-author">អ្នកនិពន្ធ: អឺកិន (耳根)</div>
-        <div class="card-desc">ស្របជាមនុស្សសាមញ្ញ ប្រឆាំងដើម្បីភាពអមតៈ។</div>
-        <div class="card-btn">ចូលអានជំពូក →</div>
-      </div>
-    </a>
+    <!-- កន្សោមទី ២៖ បញ្ជីប្រលោមលោក -->
+    <section>
+      <div class="section-title" style="margin-bottom: 15px;">📚 បណ្ណាល័យប្រលោមលោក</div>
+      <div class="library-grid">
 
-    <!-- កាតរឿងទី ២៖ ដាវឈិនភីងអាន (剑来) -->
-    <a href="jianlai/" class="novel-card">
-      <div class="card-cover">
-        <img src="jianlai/Cover.jpg" alt="Poster 剑来" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/9/90/Sword_of_Coming_poster.jpg/440px-Sword_of_Coming_poster.jpg'">
+        <!-- កាតរឿងទី ១៖ ស៊ាននី (仙逆) -->
+        <a href="xianni/" class="novel-card">
+          <div class="card-cover">
+            <img src="xianni/Cover.jpg" alt="Poster 仙逆" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
+          </div>
+          <div class="card-info">
+            <div class="card-title">仙逆 (ប្រឆាំងនឹងអមតៈ - Renegade Immortal)</div>
+            <div class="card-author">អ្នកនិពន្ធ: អឺកិន (耳根)</div>
+            <div class="card-desc">ស្របជាមនុស្សសាមញ្ញ ប្រឆាំងដើម្បីភាពអមតៈ។</div>
+            <div class="card-btn">ចូលអានជំពូក →</div>
+          </div>
+        </a>
+
+        <!-- កាតរឿងទី ២៖ ដាវឈិនភីងអាន (剑来) -->
+        <a href="jianlai/" class="novel-card">
+          <div class="card-cover">
+            <img src="jianlai/Cover.jpg" alt="Poster 剑来" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/9/90/Sword_of_Coming_poster.jpg/440px-Sword_of_Coming_poster.jpg'">
+          </div>
+          <div class="card-info">
+            <div class="card-title">剑来 (អមតៈភាពនៃដាវឈិនភីងអាន - Sword of Coming)</div>
+            <div class="card-author">អ្នកនិពន្ធ: ហ្វុងហ័រ (烽火戏诸侯)</div>
+            <div class="card-desc">ដំណើររឿងរបស់យុវជន ឈិនភីងអាន ចេញពីទីប្រជុំជនតូចមួយ ឆ្ពោះទៅកាន់ពិភពដាវ និងការស្វែងរកសច្ចធម៌លើលោក។</div>
+            <div class="card-btn">ចូលអានជំពូក →</div>
+          </div>
+        </a>
+
       </div>
-      <div class="card-info">
-        <div class="card-title">剑来 (អមតៈភាពនៃដាវឈិនភីងអាន - Sword of Coming)</div>
-        <div class="card-author">អ្នកនិពន្ធ: ហ្វុងហ័រ (烽火戏诸侯)</div>
-        <div class="card-desc">ដំណើររឿងរបស់យុវជន ឈិនភីងអាន ចេញពីទីប្រជុំជនតូចមួយ ឆ្ពោះទៅកាន់ពិភពដាវ និងការស្វែងរកសច្ចធម៌លើលោក។</div>
-        <div class="card-btn">ចូលអានជំពូក →</div>
-      </div>
-    </a>
+    </section>
 
   </main>
 
   <!-- ប្រព័ន្ធការពារសុវត្ថិភាពទិន្នន័យ (Disable Right-Click & Shortcuts) -->
   <script>
-    // ១. ហាមឃាត់ការចុចម៉ៅស្តាំ
-    document.addEventListener('contextmenu', function(e) {
-      e.preventDefault();
-    }, false);
+    document.addEventListener('contextmenu', e => e.preventDefault(), true);
+    document.addEventListener('copy', e => { e.preventDefault(); return false; }, true);
+    document.addEventListener('cut', e => { e.preventDefault(); return false; }, true);
+    document.addEventListener('selectstart', e => { e.preventDefault(); return false; }, true);
+    document.addEventListener('dragstart', e => { e.preventDefault(); return false; }, true);
 
-    // ២. ហាមឃាត់ Shortcut Keys (Ctrl+C, Ctrl+U, Ctrl+S, F12, Ctrl+Shift+I)
-    document.addEventListener('keydown', function(e) {
-      // ហាម F12
-      if (e.keyCode === 123) {
+    document.addEventListener('keydown', e => {
+      if (
+        e.keyCode === 123 || 
+        (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 65)) || 
+        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74))
+      ) {
         e.preventDefault();
         return false;
       }
-      // ហាម Ctrl+U (View Source)
-      if (e.ctrlKey && e.keyCode === 85) {
-        e.preventDefault();
-        return false;
-      }
-      // ហាម Ctrl+C (Copy)
-      if (e.ctrlKey && e.keyCode === 67) {
-        e.preventDefault();
-        return false;
-      }
-      // ហាម Ctrl+S (Save Page)
-      if (e.ctrlKey && e.keyCode === 83) {
-        e.preventDefault();
-        return false;
-      }
-      // ហាម Ctrl+Shift+I ឬ Ctrl+Shift+J (Inspect Tool)
-      if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) {
-        e.preventDefault();
-        return false;
-      }
-    }, false);
+    }, true);
   </script>
 
 </body>
