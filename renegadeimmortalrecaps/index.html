@@ -284,7 +284,7 @@
       border: 1px solid #282828; 
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 4px; 
     }
     .video-details h2 { 
       font-size: 15.5px; 
@@ -484,7 +484,7 @@
   <script src="episodes.js"></script>
 
   <script>
-    // ១. ប្រព័ន្ធការពារសន្តិសុខកម្រិតខ្ពស់ (បិទ F12, Right-Click, និង Shortcut ត្រួតពិនិត្យកូដទាំងអស់)
+    // ១. ប្រព័ន្ធការពារសន្តិសុខកម្រិតខ្ពស់ (បិទ F12, Right-Click, និង Shortcuts)
     document.addEventListener('contextmenu', function(e) {
       e.preventDefault();
       return false;
@@ -503,7 +503,24 @@
       }
     }, true);
 
-    // ២. ការកំណត់តំណភ្ជាប់ Node.js Server API Endpoint
+    // ២. មុខងារកំណត់សម្គាល់ប្រភេទឧបករណ៍ (Device Detection)
+    function getDeviceType() {
+      const ua = navigator.userAgent;
+      if (/iPad|Macintosh/i.test(ua) && 'ontouchend' in document) {
+        return '📱 iPad';
+      } else if (/iPhone/i.test(ua)) {
+        return '📱 iPhone';
+      } else if (/Android/i.test(ua)) {
+        return '📱 Android';
+      } else if (/Windows/i.test(ua)) {
+        return '💻 Windows PC';
+      } else if (/Mac/i.test(ua)) {
+        return '💻 Mac';
+      }
+      return '💻 PC';
+    }
+
+    // ៣. ការកំណត់តំណភ្ជាប់ Node.js Server API Endpoint
     const API_VERIFY_URL = 'https://neakan-backend.onrender.com/api/verify-payment';
     let currentSelectedEp = 13;
 
@@ -530,6 +547,7 @@
       return devId;
     }
 
+    // ពិនិត្យសុពលភាពជាមួយ Node.js Server រាល់ពេលបើកមើលភាគ Paywall
     async function isSubscriptionValid() {
       const savedCode = localStorage.getItem('apv_unlocked_code');
       const deviceId = getOrCreateDeviceId();
@@ -546,7 +564,11 @@
             'Content-Type': 'application/json',
             'Bypass-Tunnel-Reminder': 'true'
           },
-          body: JSON.stringify({ code: savedCode, deviceId: deviceId })
+          body: JSON.stringify({ 
+            code: savedCode, 
+            deviceId: deviceId,
+            deviceType: getDeviceType() 
+          })
         });
         const data = await res.json();
         if (data.status === 'SUCCESS') {
@@ -684,7 +706,11 @@
             'Content-Type': 'application/json',
             'Bypass-Tunnel-Reminder': 'true'
           },
-          body: JSON.stringify({ code: code, deviceId: deviceId })
+          body: JSON.stringify({ 
+            code: code, 
+            deviceId: deviceId,
+            deviceType: getDeviceType() 
+          })
         });
 
         const data = await res.json();
