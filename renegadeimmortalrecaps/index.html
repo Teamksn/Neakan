@@ -524,7 +524,10 @@
       try {
         const res = await fetch(API_VERIFY_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Bypass-Tunnel-Reminder': 'true'
+          },
           body: JSON.stringify({ code: savedCode, deviceId: deviceId })
         });
         const data = await res.json();
@@ -635,7 +638,10 @@
       try {
         const res = await fetch(API_VERIFY_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 
+            'Content-Type': 'application/json',
+            'Bypass-Tunnel-Reminder': 'true'
+          },
           body: JSON.stringify({ code: code, deviceId: deviceId })
         });
 
