@@ -102,8 +102,11 @@
     </div>
   </div>
 
-  <script src="chapters.js?v=2026.5"></script>
+  <script src="chapters.js?v=2026.6"></script>
   <script>
+    // បិទភ្ជាប់តំណ HTTPS Cloudflare Tunnel របស់អ្នកនៅទីនេះ (ឧ. https://abc-xyz.trycloudflare.com)
+    const BACKEND_API_URL = 'https://random-words-abc.trycloudflare.com';
+
     let currentChapterIndex = 0;
 
     function getOrCreateDeviceId() {
@@ -115,7 +118,6 @@
       return deviceId;
     }
 
-    // អនុគមន៍ពិនិត្យ និងផ្ទុកជំពូកតាម URL (?chap=759 ឬ #759)
     function initWebsite() {
       if (!window.chaptersData || window.chaptersData.length === 0) {
         document.getElementById('displayContent').innerText = "មិនមានទិន្នន័យជំពូកឡើយ។";
@@ -141,7 +143,6 @@
       currentChapterIndex = index;
       const chapter = window.chaptersData[index];
 
-      // កែប្រែ URL លើ Browser ដោយមិនចាំបាច់ Reload ទំព័រ
       if (updateUrl && chapter.id) {
         const newUrl = `${window.location.pathname}?chap=${chapter.id}`;
         window.history.pushState({ path: newUrl }, '', newUrl);
@@ -164,7 +165,7 @@
             <div class="vip-lock-title">🔒 ជំពូក VIP (តម្លៃ $0.10)</div>
             <div class="vip-lock-desc">
               ១. សូមស្កេន KHQR ខាងក្រោមដើម្បីបង់ប្រាក់<br>
-              ២. ផ្ញើវិក្កយបត្រ ឬលេខ <b>APV (៦ ខ្ទង់)</b> ទៅកាន់ Bot <a href="https://t.me/Teamksnac_bot" target="_blank" style="color:#28a745; font-weight:bold;">@Teamksn AC</a>
+              ២. ផ្ញើវិក្កយបត្រ ឬលេខ <b>APV (៦ ខ្ទង់)</b> ទៅកាន់ Bot <a href="https://t.me/Teamksn_bot" target="_blank" style="color:#28a745; font-weight:bold;">@Teamksn AC</a>
             </div>
             <img src="khqr.jpg" alt="Bakong KHQR" class="khqr-img" onerror="this.onerror=null; this.src='khqr.png';">
             <input type="text" id="apvInput" class="passcode-input" placeholder="បញ្ចូលលេខ APV (ឧ. 484595)">
@@ -205,7 +206,7 @@
       errorEl.innerText = '⏳ កំពុងផ្ទៀងផ្ទាត់ជាមួយ Server...';
 
       try {
-        const res = await fetch('http://localhost:3000/api/verify-payment', {
+        const res = await fetch(`${BACKEND_API_URL}/api/verify-payment`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -228,7 +229,7 @@
         }
       } catch (err) {
         errorEl.style.color = '#d9534f';
-        errorEl.innerText = '⚠️ មិនអាចភ្ជាប់ទៅកាន់ Server (Port 3000) បានទេ!';
+        errorEl.innerText = '⚠️ មិនអាចភ្ជាប់ទៅកាន់ Server បានទេ!';
       }
     }
 
@@ -239,7 +240,6 @@
       }
     }
 
-    // អនុញ្ញាតឱ្យចុចប៊ូតុង Back / Forward លើ Browser ដំណើរការធម្មតា
     window.onpopstate = function() {
       initWebsite();
     };
