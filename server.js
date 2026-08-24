@@ -11,8 +11,7 @@ app.use(cors({
 
 app.use(express.json());
 
-// បញ្ជីលេខកូដ APV និងស្ថានភាព
-// ស្ថានភាពអាចជា៖ 'ACTIVE' (កំពុងប្រើ), 'UNUSED' (ទំនេរ), 'LOCKED' (ត្រូវបានចាក់សោរ)
+// បញ្ជីផ្ទុកទិន្នន័យ APV
 let apvDatabase = {
   '103992': { status: 'UNUSED', deviceId: null, expiresAt: null },
   '111111': { status: 'UNUSED', deviceId: null, expiresAt: null },
@@ -28,10 +27,9 @@ app.get('/', (req, res) => {
   res.send('Neakan API Server is running successfully!');
 });
 
-// API សម្រាប់ទាញទិន្នន័យបង្ហាញលើផ្ទាំង Dashboard
+// API Dashboard សម្រាប់ទាញយកបញ្ជីកូដ
 app.get('/api/dashboard', (req, res) => {
   const now = Date.now();
-  // ត្រួតពិនិត្យ និងសម្អាតកូដដែលផុតកំណត់ដោយស្វ័យប្រវត្តិ
   Object.keys(apvDatabase).forEach(code => {
     if (apvDatabase[code].status === 'ACTIVE' && apvDatabase[code].expiresAt && now >= apvDatabase[code].expiresAt) {
       apvDatabase[code].status = 'UNUSED';
@@ -41,7 +39,7 @@ app.get('/api/dashboard', (req, res) => {
   res.json({ status: 'SUCCESS', data: apvDatabase });
 });
 
-// API សម្រាប់ចុច Lock ឧបករណ៍ជាក់លាក់ណាមួយ ឬ Lock ទាំងអស់ (Kick User)
+// API Admin Action សម្រាប់ Lock ឬ Reset
 app.post('/api/admin-action', (req, res) => {
   const { action, code } = req.body;
 
@@ -61,15 +59,10 @@ app.post('/api/admin-action', (req, res) => {
     return res.json({ status: 'SUCCESS', message: 'បាន Reset/Lock ឧបករណ៍ទាំងអស់ជោគជ័យ!' });
   }
 
-  if (action === 'DELETE_CODE' && code) {
-    delete apvDatabase[code];
-    return res.json({ status: 'SUCCESS', message: `បានលុបកូដ ${code}!` });
-  }
-
   res.status(400).json({ status: 'FAILED', message: 'សកម្មភាពមិនត្រឹមត្រូវ!' });
 });
 
-// API សម្រាប់ផ្ទៀងផ្ទាត់ និងដោះសោរវីដេអូ
+// API ផ្ទៀងផ្ទាត់ការទូទាត់ និងដោះសោរ
 app.post('/api/verify-payment', (req, res) => {
   const { code, deviceId } = req.body;
 
@@ -89,9 +82,8 @@ app.post('/api/verify-payment', (req, res) => {
 
   const now = Date.now();
 
-  // ករណីកូដទំនេរ (ដោះសោរលើកដំបូង)
   if (record.status === 'UNUSED' || !record.expiresAt || now >= record.expiresAt) {
-    const expiresAt = now + (2 * 60 * 1000); // កំណត់ ២ នាទី (ឬ ២៤ ម៉ោង)
+    const expiresAt = now + (2 * 60 * 1000); // កំណត់ ២ នាទី
     apvDatabase[code] = {
       status: 'ACTIVE',
       deviceId: deviceId || 'DEV-UNKNOWN',
@@ -104,7 +96,6 @@ app.post('/api/verify-payment', (req, res) => {
     });
   }
 
-  // ករណីកំពុង ACTIVE ប៉ុន្តែឧបករណ៍ផ្សេងយកទៅប្រើ
   if (record.deviceId && record.deviceId !== deviceId) {
     return res.status(400).json({
       status: 'FAILED',
@@ -112,7 +103,6 @@ app.post('/api/verify-payment', (req, res) => {
     });
   }
 
-  // ករណីឧបករណ៍ដដែលចូលមើលក្នុងពេលមានសុពលភាព
   return res.json({
     status: 'SUCCESS',
     message: 'ការផ្ទៀងផ្ទាត់ជោគជ័យ!',
