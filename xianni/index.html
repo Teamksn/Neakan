@@ -1,210 +1,56 @@
-<!DOCTYPE html>
-<html lang="km">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Neakan - អានប្រលោមលោក</title>
+// អនុគមន៍បង្កើត និងទាញយក Device ID ផ្តាច់មុខសម្រាប់ឧបករណ៍នីមួយៗ
+function getOrCreateDeviceId() {
+  let deviceId = localStorage.getItem('user_device_id');
+  if (!deviceId) {
+    deviceId = 'DEV-' + Math.random().toString(36).substring(2, 10) + Date.now();
+    localStorage.setItem('user_device_id', deviceId);
+  }
+  return deviceId;
+}
+
+async function verifyApvCode(chapId) {
+  const inputEl = document.getElementById('apvInput');
+  const errorEl = document.getElementById('errorAlert');
+  if (!inputEl) return;
   
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700;900&display=swap" rel="stylesheet">
+  const enteredCode = inputEl.value.trim();
+  if (!enteredCode) {
+    errorEl.style.display = 'block';
+    errorEl.style.color = '#d9534f';
+    errorEl.innerText = 'សូមបញ្ចូលលេខ APV ជាមុនសិន!';
+    return;
+  }
 
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background-color: #f7f4ed;
-      font-family: 'Battambang', sans-serif;
-      color: #1a1a1a;
-      display: flex;
-      justify-content: center;
-      min-height: 100vh;
+  const currentDeviceId = getOrCreateDeviceId();
+
+  errorEl.style.display = 'block';
+  errorEl.style.color = '#e67e22';
+  errorEl.innerText = '⏳ កំពុងផ្ទៀងផ្ទាត់ជាមួយ Server...';
+
+  try {
+    const res = await fetch('http://localhost:3000/api/verify-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        code: enteredCode,
+        deviceId: currentDeviceId
+      })
+    });
+    const data = await res.json();
+
+    if (data.status === 'SUCCESS') {
+      sessionStorage.setItem('vip_unlocked_' + chapId, 'true');
+      errorEl.style.color = '#28a745';
+      errorEl.innerText = '🎉 ' + data.message;
+      setTimeout(() => {
+        loadChapter(currentChapterIndex);
+      }, 800);
+    } else {
+      errorEl.style.color = '#d9534f';
+      errorEl.innerText = '❌ ' + data.message;
     }
-    .app-container {
-      width: 100%;
-      max-width: 800px;
-      min-height: 100vh;
-      background-color: #f7f4ed;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
-    .top-header {
-      position: sticky;
-      top: 0; left: 0; width: 100%; height: 50px;
-      background-color: #f7f4ed;
-      border-bottom: 1.5px solid #28a745;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 15px;
-      z-index: 100;
-    }
-    .header-btn {
-      background: none; border: none; font-size: 22px; color: #28a745;
-      cursor: pointer; font-weight: bold; display: flex; align-items: center;
-      justify-content: center; width: 35px; height: 35px; text-decoration: none;
-    }
-    .header-title {
-      font-size: 15px; color: #28a745; font-weight: 700;
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%;
-    }
-    .content-canvas { flex: 1; padding: 20px 18px 40px 18px; }
-    .volume-header { font-size: 18px; font-weight: 900; color: #111; text-align: center; margin-bottom: 5px; }
-    .chapter-main-title { font-size: 17px; font-weight: 700; color: #28a745; text-align: center; margin-bottom: 25px; }
-    .novel-text p { font-size: 18px; line-height: 2.1; color: #1a1a1a; margin-bottom: 20px; text-align: justify; }
-
-    /* ផ្ទាំងចាក់សោរ Paywall KHQR */
-    .vip-lock-card {
-      background: #ffffff;
-      border: 2px dashed #28a745;
-      border-radius: 12px;
-      padding: 25px 15px;
-      text-align: center;
-      margin: 15px 0;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-    }
-    .vip-lock-title { font-size: 17px; font-weight: bold; color: #d9534f; margin-bottom: 8px; }
-    .vip-lock-desc { font-size: 13.5px; color: #555; margin-bottom: 15px; line-height: 1.6; }
-    .khqr-img { width: 200px; height: 200px; object-fit: contain; margin: 0 auto 15px auto; display: block; border-radius: 8px; border: 1px solid #eee; }
-    .passcode-input { padding: 10px 12px; border: 1.5px solid #28a745; border-radius: 6px; font-family: 'Battambang'; outline: none; width: 200px; text-align: center; margin-bottom: 10px; font-size: 15px; }
-    .unlock-btn { padding: 10px 18px; background-color: #28a745; color: white; border: none; border-radius: 6px; font-family: 'Battambang'; font-weight: bold; cursor: pointer; font-size: 14px; }
-    .error-msg { font-size: 13.5px; margin-top: 10px; font-weight: bold; }
-
-    .bottom-pagination {
-      display: flex; justify-content: space-between; gap: 10px;
-      padding: 20px 18px 60px 18px; border-top: 1px solid #e2ddd2;
-    }
-    .page-btn {
-      flex: 1; padding: 10px; border: 1px solid #d5cec0; background-color: #eee9dc;
-      border-radius: 4px; font-family: 'Battambang'; font-size: 14px; font-weight: bold; color: #333; cursor: pointer;
-    }
-    .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-  </style>
-</head>
-<body>
-
-  <div class="app-container">
-    <header class="top-header">
-      <a href="../" class="header-btn" title="ទំព័រដើម">‹</a>
-      <div class="header-title" id="topHeaderTitle">កំពុងដំណើរការ...</div>
-      <div></div>
-    </header>
-
-    <main class="content-canvas">
-      <div class="volume-header" id="displayVolume"></div>
-      <div class="chapter-main-title" id="displayTitle"></div>
-      <div class="novel-text" id="displayContent"></div>
-    </main>
-
-    <div class="bottom-pagination">
-      <button class="page-btn" id="prevBtn" onclick="navigateChapter(-1)">‹ ជំពូកមុន</button>
-      <button class="page-btn" id="nextBtn" onclick="navigateChapter(1)">ជំពូកបន្ទាប់ ›</button>
-    </div>
-  </div>
-
-  <script src="chapters.js?v=2026.1"></script>
-  <script>
-    let currentChapterIndex = 0;
-
-    function initWebsite() {
-      if (window.chaptersData && window.chaptersData.length > 0) {
-        loadChapter(0);
-      } else {
-        document.getElementById('displayContent').innerText = "មិនមានទិន្នន័យជំពូកឡើយ។";
-      }
-    }
-
-    function loadChapter(index) {
-      if (!window.chaptersData || index < 0 || index >= window.chaptersData.length) return;
-      currentChapterIndex = index;
-      const chapter = window.chaptersData[index];
-
-      document.getElementById('topHeaderTitle').innerText = chapter.title || '';
-      document.getElementById('displayVolume').innerText = chapter.volume || '';
-      document.getElementById('displayTitle').innerText = chapter.title || '';
-
-      document.getElementById('prevBtn').disabled = (currentChapterIndex === 0);
-      document.getElementById('nextBtn').disabled = (currentChapterIndex === window.chaptersData.length - 1);
-
-      const chapId = chapter.id || (index + 1);
-      const isUnlocked = sessionStorage.getItem('vip_unlocked_' + chapId);
-
-      // លក្ខខណ្ឌជំពូក VIP
-      const isChapterVip = (index > 0) && (chapter.isVip === true);
-
-      if (isChapterVip && !isUnlocked) {
-        document.getElementById('displayContent').innerHTML = `
-          <div class="vip-lock-card">
-            <div class="vip-lock-title">🔒 ជំពូក VIP (តម្លៃ $0.10)</div>
-            <div class="vip-lock-desc">
-              ១. សូមស្កេន KHQR ខាងក្រោមដើម្បីបង់ប្រាក់<br>
-              ២. ផ្ញើវិក្កយបត្រ ឬលេខ <b>APV (៦ ខ្ទង់)</b> ទៅកាន់ Bot <a href="https://t.me/Teamksn_bot" target="_blank" style="color:#28a745; font-weight:bold;">@Teamksn AC</a>
-            </div>
-            <img src="khqr.jpg" alt="Bakong KHQR" class="khqr-img" onerror="this.onerror=null; this.src='khqr.png';">
-            <input type="text" id="apvInput" class="passcode-input" placeholder="បញ្ចូលលេខ APV (ឧ. 484595)">
-            <br>
-            <button class="unlock-btn" onclick="verifyApvCode(${chapId})">ដោះសោរអាន</button>
-            <div id="errorAlert" class="error-msg" style="display: none;"></div>
-          </div>
-        `;
-      } else {
-        const rawContent = chapter.content || '';
-        const formattedHtml = rawContent
-          .split('\n\n')
-          .filter(p => p.trim() !== '')
-          .map(p => `<p>${p.trim()}</p>`)
-          .join('');
-        document.getElementById('displayContent').innerHTML = formattedHtml || '<p>មិនមានខ្លឹមសារអត្ថបទឡើយ។</p>';
-      }
-      window.scrollTo(0, 0);
-    }
-
-    async function verifyApvCode(chapId) {
-      const inputEl = document.getElementById('apvInput');
-      const errorEl = document.getElementById('errorAlert');
-      if (!inputEl) return;
-      
-      const enteredCode = inputEl.value.trim();
-      if (!enteredCode) {
-        errorEl.style.display = 'block';
-        errorEl.style.color = '#d9534f';
-        errorEl.innerText = 'សូមបញ្ចូលលេខ APV ជាមុនសិន!';
-        return;
-      }
-
-      errorEl.style.display = 'block';
-      errorEl.style.color = '#e67e22';
-      errorEl.innerText = '⏳ កំពុងផ្ទៀងផ្ទាត់ជាមួយ Server...';
-
-      try {
-        const res = await fetch(`http://localhost:3000/api/check-payment/${enteredCode}`);
-        const data = await res.json();
-
-        if (data.status === 'PAID') {
-          sessionStorage.setItem('vip_unlocked_' + chapId, 'true');
-          errorEl.style.color = '#28a745';
-          errorEl.innerText = '🎉 ការទូទាត់ត្រឹមត្រូវ! កំពុងបើកមាតិកា...';
-          setTimeout(() => {
-            loadChapter(currentChapterIndex);
-          }, 800);
-        } else {
-          errorEl.style.color = '#d9534f';
-          errorEl.innerText = '❌ មិនទាន់ទទួលបានការទូទាត់សម្រាប់លេខ APV នេះទេ! សូមប្រាកដថាអ្នកបានផ្ញើទៅ Bot រួចរាល់។';
-        }
-      } catch (err) {
-        errorEl.style.color = '#d9534f';
-        errorEl.innerText = '⚠️ មិនអាចភ្ជាប់ទៅកាន់ Server (Port 3000) បានទេ!';
-      }
-    }
-
-    function navigateChapter(direction) {
-      const newIndex = currentChapterIndex + direction;
-      if (newIndex >= 0 && newIndex < window.chaptersData.length) {
-        loadChapter(newIndex);
-      }
-    }
-
-    window.onload = initWebsite;
-  </script>
-</body>
-</html>
+  } catch (err) {
+    errorEl.style.color = '#d9534f';
+    errorEl.innerText = '⚠️ មិនអាចភ្ជាប់ទៅកាន់ Server (Port 3000) បានទេ!';
+  }
+}
