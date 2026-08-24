@@ -87,12 +87,46 @@
       display: none; 
     }
 
+    /* ផ្ទាំងរង់ចាំវីដេអូសម្រាប់ភាគ Free ដែលមិនទាន់មាន Link (Upcoming View) */
+    .upcoming-view {
+      width: 100%;
+      height: 100%;
+      min-height: 480px;
+      position: relative;
+      background-color: #1a1a1a;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .upcoming-view img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.45;
+      position: absolute;
+      top: 0; left: 0;
+    }
+    .upcoming-badge {
+      position: relative;
+      z-index: 2;
+      background: rgba(0, 0, 0, 0.85);
+      border: 1.5px solid #28a745;
+      padding: 10px 22px;
+      border-radius: 50px;
+      color: #fff;
+      font-size: 14.5px;
+      font-weight: bold;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    }
+
+    /* ផ្ទាំងចាក់សោរ Paywall Lock */
     .lock-view { 
       width: 100%; 
       min-height: 480px; 
       position: relative; 
       background-color: #141414; 
-      display: flex; 
+      display: none; 
       flex-direction: column; 
       align-items: center; 
       justify-content: center; 
@@ -150,6 +184,15 @@
       flex-direction: column; 
       align-items: center; 
     }
+    .qr-wrapper {
+      position: relative;
+      cursor: pointer;
+      display: inline-block;
+      transition: transform 0.2s ease;
+    }
+    .qr-wrapper:hover {
+      transform: scale(1.03);
+    }
     .qr-image { 
       width: 180px; 
       height: 180px; 
@@ -159,11 +202,14 @@
       background: #fff; 
       padding: 4px; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.5); 
+      display: block;
     }
     .qr-hint { 
-      font-size: 11px; 
-      color: #888; 
+      font-size: 11.5px; 
+      color: #28a745; 
       margin-top: 6px; 
+      font-weight: bold;
+      cursor: pointer;
     }
 
     .action-column { 
@@ -300,6 +346,56 @@
       display: block; 
       margin-top: 2px; 
     }
+
+    .qr-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0, 0, 0, 0.88);
+      z-index: 99999;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      backdrop-filter: blur(5px);
+    }
+    .qr-modal-content {
+      background: #1e1e1e;
+      border: 2px solid #28a745;
+      border-radius: 14px;
+      padding: 20px;
+      text-align: center;
+      max-width: 340px;
+      width: 100%;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+      position: relative;
+    }
+    .qr-modal-content img {
+      width: 100%;
+      max-width: 280px;
+      border-radius: 10px;
+      background: #fff;
+      padding: 6px;
+      margin-bottom: 14px;
+    }
+    .qr-modal-close {
+      position: absolute;
+      top: 8px; right: 12px;
+      font-size: 24px;
+      color: #fff;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .qr-download-btn {
+      display: block;
+      background: #28a745;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 0;
+      border-radius: 6px;
+      font-weight: bold;
+      font-size: 13.5px;
+    }
   </style>
 </head>
 <body>
@@ -312,6 +408,14 @@
 
   <main class="container">
     <div class="player-container">
+      
+      <!-- ១. ផ្ទាំងរង់ចាំវីដេអូសម្រាប់ភាគ Free ដែលមិនទាន់មាន Link (Upcoming Placeholder) -->
+      <div class="upcoming-view" id="upcomingView">
+        <img src="../xianni/Cover.jpg" alt="Poster Thumbnail" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
+        <div class="upcoming-badge" id="upcomingText">⏳ ភាគ ១០៧ ឥតគិតថ្លៃ នឹងមកដល់ឆាប់ៗ</div>
+      </div>
+
+      <!-- ២. ផ្ទាំងចាក់សោរ Paywall Lock (សម្រាប់តែភាគបង់ប្រាក់ និងគ្មាន APV) -->
       <div class="lock-view" id="lockView">
         <img src="../xianni/Cover.jpg" class="bg-poster" alt="Poster Thumbnail" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
         
@@ -322,8 +426,10 @@
 
           <div class="lock-body">
             <div class="qr-column">
-              <img src="../xianni/khqr.jpg" class="qr-image" alt="KHQR Payment" onerror="this.src='../khqr.jpg'">
-              <span class="qr-hint">ស្កេនបង់ប្រាក់ជាមួយ ABA KHQR</span>
+              <div class="qr-wrapper" onclick="openQrModal()">
+                <img id="mainQrImg" src="../xianni/khqr.jpg" class="qr-image" alt="KHQR Payment" onerror="this.src='../khqr.jpg'">
+              </div>
+              <span class="qr-hint" onclick="openQrModal()">🔍 ចុចលើរូប QR ដើម្បីពង្រីក</span>
             </div>
 
             <div class="action-column">
@@ -342,11 +448,12 @@
         </div>
       </div>
       
+      <!-- ៣. ប្រអប់ចាក់វីដេអូ Video Player -->
       <iframe id="activeVideoFrame" src="" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
     </div>
 
     <div class="video-details">
-      <h2 id="currentEpTitle">ភាគ ១០៦</h2>
+      <h2 id="currentEpTitle">ភាគ ១១៩</h2>
       <p>ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal / Xian Ni សម្រាយរឿង</p>
     </div>
 
@@ -356,11 +463,34 @@
     </div>
   </main>
 
+  <div class="qr-modal" id="qrModal" onclick="closeQrModal(event)">
+    <div class="qr-modal-content">
+      <span class="qr-modal-close" onclick="closeQrModal()">&times;</span>
+      <h4 style="color:#28a745; margin-bottom:10px; font-size:15px;">ABA KHQR Scan</h4>
+      <img id="modalQrImg" src="../xianni/khqr.jpg" alt="KHQR Large" onerror="this.src='../khqr.jpg'">
+      <a href="../xianni/khqr.jpg" id="qrDownloadLink" download="ABA_KHQR.jpg" class="qr-download-btn">💾 ទាញយករូបភាព QR Code</a>
+    </div>
+  </div>
+
   <script src="episodes.js"></script>
 
   <script>
     const API_VERIFY_URL = 'https://understanding-contracts-con-adapted.trycloudflare.com/api/verify-payment';
-    let currentSelectedEp = 0; // លំនាំដើមភាគ ១០៦ (Index 0)
+    let currentSelectedEp = 13; // ចាប់ផ្តើមត្រង់ភាគ ១១៩
+
+    function openQrModal() {
+      const modal = document.getElementById('qrModal');
+      const mainImgSrc = document.getElementById('mainQrImg').src;
+      document.getElementById('modalQrImg').src = mainImgSrc;
+      document.getElementById('qrDownloadLink').href = mainImgSrc;
+      modal.style.display = 'flex';
+    }
+
+    function closeQrModal(e) {
+      if (!e || e.target.id === 'qrModal' || e.target.classList.contains('qr-modal-close')) {
+        document.getElementById('qrModal').style.display = 'none';
+      }
+    }
 
     function getOrCreateDeviceId() {
       let devId = localStorage.getItem('device_uuid');
@@ -395,17 +525,14 @@
       });
     }
 
-    // អនុគមន៍ជ្រើសរើសភាគ និងផ្លាស់ប្តូរ URL លើ Browser Address Bar ដោយស្វ័យប្រវត្តិ
     function selectEpisode(index, updateUrl = true) {
       currentSelectedEp = index;
       if (typeof episodesData === 'undefined' || !episodesData[index]) return;
       const target = episodesData[index];
 
-      // ស្រង់លេខភាគចេញពីអក្សរ (ឧ. "ភាគ ១០៦" -> "106", "ភាគ ១២២" -> "122")
       const khmerNumerals = { '០':'0', '១':'1', '២':'2', '៣':'3', '៤':'4', '៥':'5', '៦':'6', '៧':'7', '៨':'8', '៩':'9' };
       const epNum = target.ep.replace(/[^០-៩0-9]/g, '').replace(/[០-៩]/g, d => khmerNumerals[d]);
 
-      // Dynamic URL Push State
       if (updateUrl) {
         const baseUrl = window.location.pathname.split('?')[0];
         if (epNum === '106') {
@@ -420,21 +547,47 @@
 
       const iframe = document.getElementById('activeVideoFrame');
       const lockView = document.getElementById('lockView');
+      const upcomingView = document.getElementById('upcomingView');
+      const upcomingText = document.getElementById('upcomingText');
 
-      if (target.isFree === true || isSubscriptionValid()) {
-        lockView.style.display = 'none';
+      // ១. ករណីភាគ Free (ភាគ ១០៦ - ១២២)
+      if (target.isFree === true) {
+        lockView.style.display = 'none'; // បិទ Lock Card ចោលជានិច្ច
         if (target.url && target.url.trim() !== '') {
+          // បើមាន URL វីដេអូ គឺចាក់ភ្លាម
+          upcomingView.style.display = 'none';
           iframe.src = target.url;
           iframe.style.display = 'block';
         } else {
+          // បើមិនទាន់មាន URL បង្ហាញផ្ទាំងរង់ចាំ (មិនចាក់សោរទេ)
           iframe.src = '';
           iframe.style.display = 'none';
-          alert('⏳ វីដេអូភាគនេះនឹងមកដល់ឆាប់ៗ!');
+          upcomingText.innerText = `⏳ ${target.ep} (ឥតគិតថ្លៃ) នឹងមកដល់ឆាប់ៗ`;
+          upcomingView.style.display = 'flex';
         }
-      } else {
-        iframe.src = '';
-        iframe.style.display = 'none';
-        lockView.style.display = 'flex';
+      } 
+      // ២. ករណីភាគបង់ប្រាក់ (ភាគ ១២៣ ឡើងទៅ)
+      else {
+        if (isSubscriptionValid()) {
+          // បើមាន APV សុពលភាព ២៤ ម៉ោង
+          lockView.style.display = 'none';
+          if (target.url && target.url.trim() !== '') {
+            upcomingView.style.display = 'none';
+            iframe.src = target.url;
+            iframe.style.display = 'block';
+          } else {
+            iframe.src = '';
+            iframe.style.display = 'none';
+            upcomingText.innerText = `⏳ ${target.ep} នឹងមកដល់ឆាប់ៗ`;
+            upcomingView.style.display = 'flex';
+          }
+        } else {
+          // បើគ្មាន APV បង្ហាញ Lock Card + QR
+          iframe.src = '';
+          iframe.style.display = 'none';
+          upcomingView.style.display = 'none';
+          lockView.style.display = 'flex';
+        }
       }
     }
 
@@ -477,12 +630,11 @@
       }
     }
 
-    // ត្រួតពិនិត្យ URL Parameters នៅពេលបើកគេហទំព័រដំបូង
     function initEpisodeFromUrl() {
       const params = new URLSearchParams(window.location.search);
       const epParam = params.get('ep');
 
-      let initialIndex = 0; // លំនាំដើមភាគ ១០៦ (Index 0)
+      let initialIndex = 13; // លំនាំដើមភាគ ១១៩ (Index 13)
 
       if (epParam && typeof episodesData !== 'undefined') {
         const khmerNumerals = { '០':'0', '១':'1', '២':'2', '៣':'3', '៤':'4', '៥':'5', '៦':'6', '៧':'7', '៨':'8', '៩':'9' };
@@ -496,7 +648,6 @@
       selectEpisode(initialIndex, false);
     }
 
-    // គាំទ្រការចុច Back/Forward ប៊ូតុងលើ Browser
     window.onpopstate = (event) => {
       if (event.state && typeof event.state.epIndex !== 'undefined') {
         selectEpisode(event.state.epIndex, false);
