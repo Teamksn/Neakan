@@ -54,7 +54,6 @@
       padding: 5px 10px; cursor: pointer; display: flex; align-items: center; gap: 4px;
     }
 
-    /* របារបញ្ជាជំពូកខាងលើ និងខាងក្រោម */
     .chapter-nav-bar {
       display: flex; justify-content: space-between; gap: 10px;
       padding: 12px 18px;
@@ -72,9 +71,7 @@
       border-radius: 6px; font-family: 'Battambang'; font-size: 13.5px; font-weight: bold;
       color: #333; cursor: pointer; transition: background 0.2s;
     }
-    .page-btn:hover:not(:disabled) {
-      background-color: #e0d8c7;
-    }
+    .page-btn:hover:not(:disabled) { background-color: #e0d8c7; }
     .page-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .content-canvas { flex: 1; padding: 20px 18px 30px 18px; }
@@ -82,7 +79,7 @@
     .chapter-main-title { font-size: 17px; font-weight: 700; color: #28a745; text-align: center; margin-bottom: 25px; }
     .novel-text p { font-size: 18px; line-height: 2.1; color: #1a1a1a; margin-bottom: 20px; text-align: justify; }
 
-    /* ផ្ទាំង Paywall KHQR ធំ និងស្រស់ស្អាត */
+    /* ផ្ទាំង Paywall KHQR */
     .vip-lock-card {
       background: #ffffff;
       border: 1.5px solid #d4edda;
@@ -130,9 +127,7 @@
       transition: transform 0.2s ease;
     }
     .khqr-frame:hover { transform: scale(1.02); }
-    .khqr-img {
-      width: 280px; height: 370px; object-fit: contain; display: block; border-radius: 8px;
-    }
+    .khqr-img { width: 280px; height: 370px; object-fit: contain; display: block; border-radius: 8px; }
     @media (max-width: 480px) {
       .khqr-img { width: 240px; height: 320px; }
       .vip-lock-card { padding: 22px 14px; }
@@ -153,7 +148,7 @@
     }
     .error-msg { font-size: 14px; margin-top: 14px; font-weight: 700; line-height: 1.5; }
 
-    /* ផ្ទាំងរុញមាតិកា (Table of Contents Modal) */
+    /* Modal មាតិកា */
     .toc-modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: rgba(0,0,0,0.5); z-index: 200; display: none;
@@ -197,7 +192,6 @@
       <button class="toc-trigger-btn" onclick="openTocModal()">☰ មាតិកា</button>
     </header>
 
-    <!-- របារជំពូកផ្នែកខាងលើ -->
     <div class="chapter-nav-bar top-bar">
       <button class="page-btn" id="prevBtnTop" onclick="navigateChapter(-1)">‹ ជំពូកមុន</button>
       <button class="page-btn" id="nextBtnTop" onclick="navigateChapter(1)">ជំពូកបន្ទាប់ ›</button>
@@ -209,14 +203,12 @@
       <div class="novel-text" id="displayContent"></div>
     </main>
 
-    <!-- របារជំពូកផ្នែកខាងក្រោម -->
     <div class="chapter-nav-bar bottom-bar">
       <button class="page-btn" id="prevBtnBottom" onclick="navigateChapter(-1)">‹ ជំពូកមុន</button>
       <button class="page-btn" id="nextBtnBottom" onclick="navigateChapter(1)">ជំពូកបន្ទាប់ ›</button>
     </div>
   </div>
 
-  <!-- ផ្ទាំងតារាងមាតិកា Drawer Modal -->
   <div class="toc-modal-overlay" id="tocOverlay" onclick="closeTocModal(event)">
     <div class="toc-modal-container" onclick="event.stopPropagation()">
       <div class="toc-modal-header">
@@ -227,9 +219,9 @@
     </div>
   </div>
 
-  <script src="chapters.js?v=2026.8"></script>
+  <script src="chapters.js?v=2026.9"></script>
   <script>
-    // បិទភ្ជាប់ URL Cloudflare Tunnel របស់អ្នកនៅត្រង់នេះ
+    // បិទភ្ជាប់ URL Cloudflare Tunnel របស់អ្នក
     const BACKEND_API_URL = 'https://understanding-contracts-con-adapted.trycloudflare.com';
 
     let currentChapterIndex = 0;
@@ -241,6 +233,20 @@
         localStorage.setItem('user_device_id', deviceId);
       }
       return deviceId;
+    }
+
+    // ពិនិត្យមើលថាតើឧបករណ៍នេះមានសំបុត្រ VIP ២៤ ម៉ោងដែលនៅមានសុពលភាពឬទេ
+    function isVipAccessActive() {
+      const expiresAt = localStorage.getItem('vip_pass_expires_at');
+      if (!expiresAt) return false;
+
+      const now = Date.now();
+      if (now < parseInt(expiresAt, 10)) {
+        return true; // នៅមានសុពលភាព
+      } else {
+        localStorage.removeItem('vip_pass_expires_at'); // ផុតកំណត់ ២៤ ម៉ោង
+        return false;
+      }
     }
 
     function initWebsite() {
@@ -268,12 +274,14 @@
     function renderTocList() {
       const tocContainer = document.getElementById('tocListBody');
       tocContainer.innerHTML = '';
+      const hasVipPass = isVipAccessActive();
 
       window.chaptersData.forEach((chap, idx) => {
         const btn = document.createElement('button');
         btn.className = `toc-item-btn ${idx === currentChapterIndex ? 'active' : ''}`;
         
-        const lockHtml = chap.isVip ? '<span class="toc-lock-icon">🔒 VIP</span>' : '';
+        // ប្រសិនបើមានសំបុត្រ VIP Pass រួចហើយ មិនបាច់បង្ហាញរូបចាក់សោរទៀតទេ
+        const lockHtml = (chap.isVip && !hasVipPass) ? '<span class="toc-lock-icon">🔒 VIP</span>' : '';
         btn.innerHTML = `<span>${chap.title || ('ជំពូក ' + (idx + 1))}</span> ${lockHtml}`;
         
         btn.onclick = () => {
@@ -315,19 +323,19 @@
       document.getElementById('prevBtnBottom').disabled = isFirst;
       document.getElementById('nextBtnBottom').disabled = isLast;
 
-      const chapId = chapter.id || (index + 1);
-      const isUnlocked = sessionStorage.getItem('vip_unlocked_' + chapId);
+      const isVipPassActive = isVipAccessActive();
       const isChapterVip = (chapter.isVip === true);
 
-      if (isChapterVip && !isUnlocked) {
+      // ប្រសិនបើជាជំពូក VIP ហើយគ្មានសំបុត្រ VIP ២៤ ម៉ោង
+      if (isChapterVip && !isVipPassActive) {
         document.getElementById('displayContent').innerHTML = `
           <div class="vip-lock-card">
-            <div class="vip-lock-badge">🔒 ជំពូក VIP (តម្លៃ $0.10)</div>
+            <div class="vip-lock-badge">🔒 សំបុត្រ VIP ២៤ ម៉ោង ($0.10)</div>
             
             <div class="vip-lock-steps">
               <b>ជំហានទី ១៖</b> ស្កេន KHQR ខាងក្រោមដើម្បីបង់ប្រាក់ $0.10<br>
-              <b>ជំហានទី ២៖</b> ផ្ញើរូបវិក្កយបត្រទៅកាន់ Bot <a href="https://t.me/Teamksnac_bot" target="_blank" style="color:#28a745; font-weight:900; text-decoration: underline;">@Teamksn AC</a><br>
-              <b>ជំហានទី ៣៖</b> យកលេខ <b>APV (៦ ខ្ទង់)</b> មកបំពេញខាងក្រោម
+              <b>ជំហានទី ២៖</b> ផ្ញើរូបវិក្កយបត្រទៅកាន់ Bot <a href="https://t.me/Teamksn_bot" target="_blank" style="color:#28a745; font-weight:900; text-decoration: underline;">@Teamksn AC</a><br>
+              <b>ជំហានទី ៣៖</b> យកលេខ <b>APV (៦ ខ្ទង់)</b> មកបំពេញដើម្បីអាន<b>គ្រប់ជំពូកទាំងអស់</b>រយៈពេល ១ ថ្ងៃពេញ
             </div>
 
             <div class="khqr-frame" title="ចុចដើម្បីមើលរូបភាពធំ" onclick="window.open('khqr.jpg', '_blank')">
@@ -336,7 +344,7 @@
 
             <div class="input-action-group">
               <input type="text" id="apvInput" class="passcode-input" placeholder="បញ្ចូលលេខ APV (ឧ. 484595)">
-              <button class="unlock-btn" onclick="verifyApvCode(${chapId})">ដោះសោរអានភ្លាមៗ</button>
+              <button class="unlock-btn" onclick="verifyApvCode()">ដោះសោរអានគ្រប់ជំពូក</button>
             </div>
             
             <div id="errorAlert" class="error-msg" style="display: none;"></div>
@@ -354,7 +362,7 @@
       window.scrollTo(0, 0);
     }
 
-    async function verifyApvCode(chapId) {
+    async function verifyApvCode() {
       const inputEl = document.getElementById('apvInput');
       const errorEl = document.getElementById('errorAlert');
       if (!inputEl) return;
@@ -385,10 +393,12 @@
         const data = await res.json();
 
         if (data.status === 'SUCCESS') {
-          sessionStorage.setItem('vip_unlocked_' + chapId, 'true');
+          // រក្សាទុកកាលបរិច្ឆេទផុតកំណត់ ២៤ ម៉ោងលើ Browser
+          localStorage.setItem('vip_pass_expires_at', data.expiresAt);
           errorEl.style.color = '#28a745';
           errorEl.innerText = '🎉 ' + data.message;
           setTimeout(() => {
+            renderTocList();
             loadChapter(currentChapterIndex, false);
           }, 800);
         } else {
