@@ -79,7 +79,7 @@
     .chapter-main-title { font-size: 17px; font-weight: 700; color: #28a745; text-align: center; margin-bottom: 25px; }
     .novel-text p { font-size: 18px; line-height: 2.1; color: #1a1a1a; margin-bottom: 20px; text-align: justify; }
 
-    /* ផ្ទាំង Paywall KHQR ធំ និងស្រស់ស្អាត */
+    /* ផ្ទាំង Paywall KHQR */
     .vip-lock-card {
       background: #ffffff;
       border: 1.5px solid #d4edda;
@@ -219,14 +219,13 @@
     </div>
   </div>
 
-  <script src="chapters.js?v=2026.11"></script>
+  <script src="chapters.js?v=2026.12"></script>
   <script>
     // តំណភ្ជាប់ Cloudflare Tunnel សកម្មរបស់អ្នក
     const BACKEND_API_URL = 'https://understanding-contracts-con-adapted.trycloudflare.com';
 
     let currentChapterIndex = 0;
 
-    // អនុគមន៍បង្កើត Device ID ដោយផ្អែកលើ Hardware នៃម៉ាស៊ីន (Canvas + Screen + CPU)
     function getOrCreateDeviceId() {
       try {
         const screenInfo = `${window.screen.width}x${window.screen.height}x${window.screen.colorDepth}`;
@@ -269,20 +268,37 @@
       }
     }
 
-    function isVipAccessActive() {
-      const expiresAt = localStorage.getItem('vip_pass_expires_at');
-      if (!expiresAt) return false;
+    // ពិនិត្យមើលស្ថានភាពជាមួយ Server ផ្ទាល់ (កាត់សិទ្ធិភ្លាមៗបើត្រូវ Reset)
+    async function checkServerVipStatus() {
+      const savedCode = localStorage.getItem('user_saved_apv');
+      if (!savedCode) return false;
 
-      const now = Date.now();
-      if (now < parseInt(expiresAt, 10)) {
+      try {
+        const currentDeviceId = getOrCreateDeviceId();
+        const res = await fetch(`${BACKEND_API_URL}/api/verify-payment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            code: savedCode,
+            deviceId: currentDeviceId
+          })
+        });
+        const data = await res.json();
+
+        if (data.status === 'SUCCESS') {
+          return true;
+        } else {
+          // ប្រសិនបើ Server ប្រាប់ថា EXPIRED, NOT_FOUND ឬ DEVICE_BLOCKED
+          localStorage.removeItem('user_saved_apv');
+          return false;
+        }
+      } catch (e) {
+        // បើដាច់ Network អនុញ្ញាតបណ្ដោះអាសន្នបើមិនទាន់ផុតម៉ោង
         return true;
-      } else {
-        localStorage.removeItem('vip_pass_expires_at');
-        return false;
       }
     }
 
-    function initWebsite() {
+    async function initWebsite() {
       if (!window.chaptersData || window.chaptersData.length === 0) {
         document.getElementById('displayContent').innerText = "មិនមានទិន្នន័យជំពូកឡើយ។";
         return;
@@ -301,19 +317,19 @@
         }
       }
 
-      loadChapter(targetIndex, false);
+      await loadChapter(targetIndex, false);
     }
 
     function renderTocList() {
       const tocContainer = document.getElementById('tocListBody');
       tocContainer.innerHTML = '';
-      const hasVipPass = isVipAccessActive();
+      const hasSavedCode = !!localStorage.getItem('user_saved_apv');
 
       window.chaptersData.forEach((chap, idx) => {
         const btn = document.createElement('button');
         btn.className = `toc-item-btn ${idx === currentChapterIndex ? 'active' : ''}`;
         
-        const lockHtml = (chap.isVip && !hasVipPass) ? '<span class="toc-lock-icon">🔒 VIP</span>' : '';
+        const lockHtml = (chap.isVip && !hasSavedCode) ? '<span class="toc-lock-icon">🔒 VIP</span>' : '';
         btn.innerHTML = `<span>${chap.title || ('ជំពូក ' + (idx + 1))}</span> ${lockHtml}`;
         
         btn.onclick = () => {
@@ -333,7 +349,7 @@
       document.getElementById('tocOverlay').style.display = 'none';
     }
 
-    function loadChapter(index, updateUrl = true) {
+    async function loadChapter(index, updateUrl = true) {
       if (!window.chaptersData || index < 0 || index >= window.chaptersData.length) return;
       currentChapterIndex = index;
       const chapter = window.chaptersData[index];
@@ -355,41 +371,50 @@
       document.getElementById('prevBtnBottom').disabled = isFirst;
       document.getElementById('nextBtnBottom').disabled = isLast;
 
-      const isVipPassActive = isVipAccessActive();
       const isChapterVip = (chapter.isVip === true);
 
-      if (isChapterVip && !isVipPassActive) {
-        document.getElementById('displayContent').innerHTML = `
-          <div class="vip-lock-card">
-            <div class="vip-lock-badge">🔒 សំបុត្រ VIP ២៤ ម៉ោង ($0.10)</div>
-            
-            <div class="vip-lock-steps">
-              <b>ជំហានទី ១៖</b> ស្កេន KHQR ខាងក្រោមដើម្បីបង់ប្រាក់ $0.10<br>
-              <b>ជំហានទី ២៖</b> ផ្ញើរូបវិក្កយបត្រទៅកាន់ Bot <a href="https://t.me/Teamksn_bot" target="_blank" style="color:#28a745; font-weight:900; text-decoration: underline;">@Teamksn AC</a><br>
-              <b>ជំហានទី ៣៖</b> យកលេខ <b>APV (៦ ខ្ទង់)</b> មកបំពេញដើម្បីអាន<b>គ្រប់ជំពូកទាំងអស់</b>រយៈពេល ១ ថ្ងៃពេញ
-            </div>
+      if (isChapterVip) {
+        // បង្ហាញសញ្ញាកំពុងផ្ទុកទិន្នន័យ
+        document.getElementById('displayContent').innerHTML = '<p style="text-align:center; padding: 40px 0;">⏳ កំពុងផ្ទៀងផ្ទាត់សិទ្ធិអាន...</p>';
+        
+        const isAllowed = await checkServerVipStatus();
 
-            <div class="khqr-frame" title="ចុចដើម្បីមើលរូបភាពធំ" onclick="window.open('khqr.jpg', '_blank')">
-              <img src="khqr.jpg" alt="Bakong KHQR" class="khqr-img" onerror="this.onerror=null; this.src='khqr.png';">
-            </div>
+        if (!isAllowed) {
+          document.getElementById('displayContent').innerHTML = `
+            <div class="vip-lock-card">
+              <div class="vip-lock-badge">🔒 សំបុត្រ VIP ២៤ ម៉ោង ($0.10)</div>
+              
+              <div class="vip-lock-steps">
+                <b>ជំហានទី ១៖</b> ស្កេន KHQR ខាងក្រោមដើម្បីបង់ប្រាក់ $0.10<br>
+                <b>ជំហានទី ២៖</b> ផ្ញើរូបវិក្កយបត្រទៅកាន់ Bot <a href="https://t.me/Teamksn_bot" target="_blank" style="color:#28a745; font-weight:900; text-decoration: underline;">@Teamksn AC</a><br>
+                <b>ជំហានទី ៣៖</b> យកលេខ <b>APV (៦ ខ្ទង់)</b> មកបំពេញដើម្បីអាន<b>គ្រប់ជំពូកទាំងអស់</b>រយៈពេល ១ ថ្ងៃពេញ
+              </div>
 
-            <div class="input-action-group">
-              <input type="text" id="apvInput" class="passcode-input" placeholder="បញ្ចូលលេខ APV (ឧ. 484595)">
-              <button class="unlock-btn" onclick="verifyApvCode()">ដោះសោរអានគ្រប់ជំពូក</button>
+              <div class="khqr-frame" title="ចុចដើម្បីមើលរូបភាពធំ" onclick="window.open('khqr.jpg', '_blank')">
+                <img src="khqr.jpg" alt="Bakong KHQR" class="khqr-img" onerror="this.onerror=null; this.src='khqr.png';">
+              </div>
+
+              <div class="input-action-group">
+                <input type="text" id="apvInput" class="passcode-input" placeholder="បញ្ចូលលេខ APV (ឧ. 484595)">
+                <button class="unlock-btn" onclick="verifyApvCode()">ដោះសោរអានគ្រប់ជំពូក</button>
+              </div>
+              
+              <div id="errorAlert" class="error-msg" style="display: none;"></div>
             </div>
-            
-            <div id="errorAlert" class="error-msg" style="display: none;"></div>
-          </div>
-        `;
-      } else {
-        const rawContent = chapter.content || '';
-        const formattedHtml = rawContent
-          .split('\n\n')
-          .filter(p => p.trim() !== '')
-          .map(p => `<p>${p.trim()}</p>`)
-          .join('');
-        document.getElementById('displayContent').innerHTML = formattedHtml || '<p>មិនមានខ្លឹមសារអត្ថបទឡើយ។</p>';
+          `;
+          window.scrollTo(0, 0);
+          return;
+        }
       }
+
+      // បង្ហាញខ្លឹមសារអត្ថបទ
+      const rawContent = chapter.content || '';
+      const formattedHtml = rawContent
+        .split('\n\n')
+        .filter(p => p.trim() !== '')
+        .map(p => `<p>${p.trim()}</p>`)
+        .join('');
+      document.getElementById('displayContent').innerHTML = formattedHtml || '<p>មិនមានខ្លឹមសារអត្ថបទឡើយ។</p>';
       window.scrollTo(0, 0);
     }
 
@@ -424,7 +449,8 @@
         const data = await res.json();
 
         if (data.status === 'SUCCESS') {
-          localStorage.setItem('vip_pass_expires_at', data.expiresAt);
+          // រក្សាទុកលេខ APV លើ Browser ដើម្បីផ្ទៀងផ្ទាត់ជាមួយ Server ជាប្រចាំ
+          localStorage.setItem('user_saved_apv', enteredCode);
           errorEl.style.color = '#28a745';
           errorEl.innerText = '🎉 ' + data.message;
           setTimeout(() => {
