@@ -3,7 +3,6 @@ const cors = require('cors');
 
 const app = express();
 
-// អនុញ្ញាត CORS សម្រាប់គ្រប់ឧបករណ៍ (PC, iOS, Android)
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -12,54 +11,100 @@ app.use(cors({
 
 app.use(express.json());
 
-// កន្លែងផ្ទុកទិន្នន័យបណ្តោះអាសន្នសម្រាប់ APV Codes
-// រចនាសម្ព័ន្ធ៖ { '123456': { expiresAt: 1700000000000, deviceId: 'DEV-XXXX' } }
-const validApvCodes = {};
+// បញ្ជីលេខកូដ APV និងស្ថានភាព
+// ស្ថានភាពអាចជា៖ 'ACTIVE' (កំពុងប្រើ), 'UNUSED' (ទំនេរ), 'LOCKED' (ត្រូវបានចាក់សោរ)
+let apvDatabase = {
+  '103992': { status: 'UNUSED', deviceId: null, expiresAt: null },
+  '111111': { status: 'UNUSED', deviceId: null, expiresAt: null },
+  '200101': { status: 'UNUSED', deviceId: null, expiresAt: null },
+  '222222': { status: 'UNUSED', deviceId: null, expiresAt: null },
+  '242134': { status: 'UNUSED', deviceId: null, expiresAt: null },
+  '242756': { status: 'UNUSED', deviceId: null, expiresAt: null },
+  '471140': { status: 'UNUSED', deviceId: null, expiresAt: null }
+};
 
-// Root Route សម្រាប់តេស្តមើលដំណើរការ Server
+// Root Route
 app.get('/', (req, res) => {
   res.send('Neakan API Server is running successfully!');
 });
 
-// API Endpoint សម្រាប់ផ្ទៀងផ្ទាត់លេខកូដ APV
+// API សម្រាប់ទាញទិន្នន័យបង្ហាញលើផ្ទាំង Dashboard
+app.get('/api/dashboard', (req, res) => {
+  const now = Date.now();
+  // ត្រួតពិនិត្យ និងសម្អាតកូដដែលផុតកំណត់ដោយស្វ័យប្រវត្តិ
+  Object.keys(apvDatabase).forEach(code => {
+    if (apvDatabase[code].status === 'ACTIVE' && apvDatabase[code].expiresAt && now >= apvDatabase[code].expiresAt) {
+      apvDatabase[code].status = 'UNUSED';
+      apvDatabase[code].deviceId = null;
+    }
+  });
+  res.json({ status: 'SUCCESS', data: apvDatabase });
+});
+
+// API សម្រាប់ចុច Lock ឧបករណ៍ជាក់លាក់ណាមួយ ឬ Lock ទាំងអស់ (Kick User)
+app.post('/api/admin-action', (req, res) => {
+  const { action, code } = req.body;
+
+  if (action === 'LOCK_ONE' && code && apvDatabase[code]) {
+    apvDatabase[code].status = 'LOCKED';
+    apvDatabase[code].deviceId = 'BLOCKED';
+    apvDatabase[code].expiresAt = Date.now();
+    return res.json({ status: 'SUCCESS', message: `បាន Lock កូដ ${code} រួចរាល់!` });
+  }
+
+  if (action === 'LOCK_ALL' || action === 'RESET_ALL') {
+    Object.keys(apvDatabase).forEach(c => {
+      apvDatabase[c].status = 'UNUSED';
+      apvDatabase[c].deviceId = null;
+      apvDatabase[c].expiresAt = null;
+    });
+    return res.json({ status: 'SUCCESS', message: 'បាន Reset/Lock ឧបករណ៍ទាំងអស់ជោគជ័យ!' });
+  }
+
+  if (action === 'DELETE_CODE' && code) {
+    delete apvDatabase[code];
+    return res.json({ status: 'SUCCESS', message: `បានលុបកូដ ${code}!` });
+  }
+
+  res.status(400).json({ status: 'FAILED', message: 'សកម្មភាពមិនត្រឹមត្រូវ!' });
+});
+
+// API សម្រាប់ផ្ទៀងផ្ទាត់ និងដោះសោរវីដេអូ
 app.post('/api/verify-payment', (req, res) => {
   const { code, deviceId } = req.body;
 
   if (!code || code.length !== 6) {
-    return res.status(400).json({
-      status: 'FAILED',
-      message: 'លេខកូដ APV មិនត្រឹមត្រូវ (ត្រូវមាន ៦ ខ្ទង់)!'
-    });
+    return res.status(400).json({ status: 'FAILED', message: 'លេខកូដ APV មិនត្រឹមត្រូវ!' });
   }
 
-  // ពិនិត្យមើលថាតើលេខកូដមានក្នុងប្រព័ន្ធ ឬនៅ
-  const record = validApvCodes[code];
+  const record = apvDatabase[code];
 
   if (!record) {
-    // កំណត់សុពលភាពត្រឹម ២ នាទី (សម្រាប់ធ្វើតេស្តសាកល្បង)
-    const expiresAt = Date.now() + (2 * 60 * 1000);
-    validApvCodes[code] = {
-      expiresAt: expiresAt,
-      deviceId: deviceId || null
-    };
+    return res.status(400).json({ status: 'FAILED', message: 'លេខកូដ APV នេះមិនមានក្នុងប្រព័ន្ធទេ!' });
+  }
 
+  if (record.status === 'LOCKED') {
+    return res.status(400).json({ status: 'FAILED', message: 'លេខកូដនេះត្រូវបាន Lock ដោយ Admin!' });
+  }
+
+  const now = Date.now();
+
+  // ករណីកូដទំនេរ (ដោះសោរលើកដំបូង)
+  if (record.status === 'UNUSED' || !record.expiresAt || now >= record.expiresAt) {
+    const expiresAt = now + (2 * 60 * 1000); // កំណត់ ២ នាទី (ឬ ២៤ ម៉ោង)
+    apvDatabase[code] = {
+      status: 'ACTIVE',
+      deviceId: deviceId || 'DEV-UNKNOWN',
+      expiresAt: expiresAt
+    };
     return res.json({
       status: 'SUCCESS',
-      message: 'ដោះសោរជោគជ័យ! សុពលភាព ២ នាទី។',
+      message: 'ដោះសោរជោគជ័យ!',
       expiresAt: expiresAt
     });
   }
 
-  // ករណីលេខកូដផុតកំណត់
-  if (Date.now() > record.expiresAt) {
-    delete validApvCodes[code];
-    return res.status(400).json({
-      status: 'FAILED',
-      message: 'លេខកូដ APV នេះបានផុតកំណត់ហើយ!'
-    });
-  }
-
-  // ករណីលេខកូដជាប់សោរជាមួយឧបករណ៍ផ្សេង
+  // ករណីកំពុង ACTIVE ប៉ុន្តែឧបករណ៍ផ្សេងយកទៅប្រើ
   if (record.deviceId && record.deviceId !== deviceId) {
     return res.status(400).json({
       status: 'FAILED',
@@ -67,7 +112,7 @@ app.post('/api/verify-payment', (req, res) => {
     });
   }
 
-  // ប្រសិនបើត្រឹមត្រូវទាំងអស់
+  // ករណីឧបករណ៍ដដែលចូលមើលក្នុងពេលមានសុពលភាព
   return res.json({
     status: 'SUCCESS',
     message: 'ការផ្ទៀងផ្ទាត់ជោគជ័យ!',
@@ -75,17 +120,10 @@ app.post('/api/verify-payment', (req, res) => {
   });
 });
 
-// កំណត់ Port សម្រាប់ Render Cloud និង Localhost
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 Server កំពុងដំណើរការលើ Port ${PORT}`);
 });
 
-// ការពារកុំឱ្យ Server រលត់ពេលមាន Error ផ្សេងៗ
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err.message);
-});
-
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection:', reason);
-});
+process.on('uncaughtException', (err) => console.error('Uncaught Exception:', err.message));
+process.on('unhandledRejection', (reason) => console.error('Unhandled Rejection:', reason));
