@@ -496,10 +496,34 @@
       return devId;
     }
 
-    function isSubscriptionValid() {
+    // ពិនិត្យសុពលភាពជាមួយ Server រាល់ពេលបើកមើលភាគ Paywall
+    async function isSubscriptionValid() {
+      const savedCode = localStorage.getItem('apv_unlocked_code');
+      const deviceId = getOrCreateDeviceId();
       const expiresAt = localStorage.getItem('apv_expires_at');
-      if (!expiresAt) return false;
-      return Date.now() < parseInt(expiresAt);
+
+      if (!savedCode || !expiresAt || Date.now() >= parseInt(expiresAt)) {
+        return false;
+      }
+
+      try {
+        const res = await fetch(API_VERIFY_URL, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'VERIFY_APV', code: savedCode, deviceId: deviceId })
+        });
+        const data = await res.json();
+        if (data.status === 'SUCCESS') {
+          return true;
+        } else {
+          // បើ Admin Lock ឬ Code មានបញ្ហា លុបចោលភ្លាម
+          localStorage.removeItem('apv_unlocked_code');
+          localStorage.removeItem('apv_expires_at');
+          return false;
+        }
+      } catch (err) {
+        // បើមានបញ្ហាអនឡាញ ផ្អែកលើ thời gian ក្នុង localStorage ជាបណ្តោះអាសន្ន
+        return Date.now() < parseInt(expiresAt);
+      }
     }
 
     function renderPlaylist() {
@@ -520,12 +544,12 @@
       });
     }
 
-    function selectEpisode(index, updateUrl = true) {
+    async function selectEpisode(index, updateUrl = true) {
       currentSelectedEp = index;
       if (typeof episodesData === 'undefined' || !episodesData[index]) return;
       const target = episodesData[index];
 
-      const khmerNumerals = { '០':'0', '១':'1', '២':'2', '៣':'3', '۴':'4', '៥':'5', '៦':'6', '៧':'7', '៨':'8', '៩':'9' };
+      const khmerNumerals = { '០':'0', '១':'1', '២':'2', '៣':'3', '៤':'4', '៥':'5', '៦':'6', '៧':'7', '៨':'8', '៩':'9' };
       const epNum = target.ep.replace(/[^០-៩0-9]/g, '').replace(/[០-៩]/g, d => khmerNumerals[d]);
 
       if (updateUrl) {
@@ -561,7 +585,8 @@
       } 
       // ២. ករណីភាគបង់ប្រាក់ (ភាគ ១២៣ ឡើងទៅ)
       else {
-        if (isSubscriptionValid()) {
+        const isValid = await isSubscriptionValid();
+        if (isValid) {
           lockView.style.display = 'none';
           if (target.url && target.url.trim() !== '') {
             upcomingView.style.display = 'none';
@@ -599,8 +624,7 @@
       try {
         const res = await fetch(API_VERIFY_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ code: code, deviceId: deviceId })
+          body: JSON.stringify({ action: 'VERIFY_APV', code: code, deviceId: deviceId })
         });
 
         const data = await res.json();
