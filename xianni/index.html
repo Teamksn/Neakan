@@ -102,7 +102,7 @@
     </div>
   </div>
 
-  <script src="chapters.js?v=2026.3"></script>
+  <script src="chapters.js?v=2026.5"></script>
   <script>
     let currentChapterIndex = 0;
 
@@ -115,18 +115,37 @@
       return deviceId;
     }
 
+    // អនុគមន៍ពិនិត្យ និងផ្ទុកជំពូកតាម URL (?chap=759 ឬ #759)
     function initWebsite() {
-      if (window.chaptersData && window.chaptersData.length > 0) {
-        loadChapter(0);
-      } else {
+      if (!window.chaptersData || window.chaptersData.length === 0) {
         document.getElementById('displayContent').innerText = "មិនមានទិន្នន័យជំពូកឡើយ។";
+        return;
       }
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const chapQuery = urlParams.get('chap') || window.location.hash.replace('#', '');
+      
+      let targetIndex = 0;
+      if (chapQuery) {
+        const foundIndex = window.chaptersData.findIndex(c => String(c.id) === String(chapQuery));
+        if (foundIndex !== -1) {
+          targetIndex = foundIndex;
+        }
+      }
+
+      loadChapter(targetIndex, false);
     }
 
-    function loadChapter(index) {
+    function loadChapter(index, updateUrl = true) {
       if (!window.chaptersData || index < 0 || index >= window.chaptersData.length) return;
       currentChapterIndex = index;
       const chapter = window.chaptersData[index];
+
+      // កែប្រែ URL លើ Browser ដោយមិនចាំបាច់ Reload ទំព័រ
+      if (updateUrl && chapter.id) {
+        const newUrl = `${window.location.pathname}?chap=${chapter.id}`;
+        window.history.pushState({ path: newUrl }, '', newUrl);
+      }
 
       document.getElementById('topHeaderTitle').innerText = chapter.title || '';
       document.getElementById('displayVolume').innerText = chapter.volume || '';
@@ -137,8 +156,6 @@
 
       const chapId = chapter.id || (index + 1);
       const isUnlocked = sessionStorage.getItem('vip_unlocked_' + chapId);
-
-      // លក្ខខណ្ឌជំពូក VIP (ផ្អែកលើ isVip: true ក្នុង chapters.js)
       const isChapterVip = (chapter.isVip === true);
 
       if (isChapterVip && !isUnlocked) {
@@ -203,7 +220,7 @@
           errorEl.style.color = '#28a745';
           errorEl.innerText = '🎉 ' + data.message;
           setTimeout(() => {
-            loadChapter(currentChapterIndex);
+            loadChapter(currentChapterIndex, false);
           }, 800);
         } else {
           errorEl.style.color = '#d9534f';
@@ -218,9 +235,14 @@
     function navigateChapter(direction) {
       const newIndex = currentChapterIndex + direction;
       if (newIndex >= 0 && newIndex < window.chaptersData.length) {
-        loadChapter(newIndex);
+        loadChapter(newIndex, true);
       }
     }
+
+    // អនុញ្ញាតឱ្យចុចប៊ូតុង Back / Forward លើ Browser ដំណើរការធម្មតា
+    window.onpopstate = function() {
+      initWebsite();
+    };
 
     window.onload = initWebsite;
   </script>
