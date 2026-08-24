@@ -242,8 +242,8 @@
 
   <script src="chapters.js?v=2026.15"></script>
   <script>
-    // តំណភ្ជាប់ Cloudflare Tunnel សកម្មរបស់អ្នក
-    const BACKEND_API_URL = 'https://understanding-contracts-con-adapted.trycloudflare.com';
+    // ដាក់ Google Apps Script Web App URL របស់អ្នកនៅទីនេះ
+    const BACKEND_API_URL = 'https://script.google.com/macros/s/AKfycbxxBXx5OZzFKBzEZpXRj7tcjCrXwXu5uBCKgkz-WmILONF7WOk3ppmi61WFrISc9vvu/exec';
 
     let currentChapterIndex = 0;
 
@@ -313,10 +313,10 @@
 
       try {
         const currentDeviceId = getOrCreateDeviceId();
-        const res = await fetch(`${BACKEND_API_URL}/api/verify-payment`, {
+        const res = await fetch(BACKEND_API_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            action: 'VERIFY_APV',
             code: savedCode,
             deviceId: currentDeviceId
           })
@@ -330,7 +330,7 @@
           return false;
         }
       } catch (e) {
-        return true;
+        return false;
       }
     }
 
@@ -365,7 +365,7 @@
         const btn = document.createElement('button');
         btn.className = `toc-item-btn ${idx === currentChapterIndex ? 'active' : ''}`;
         
-        const lockHtml = (chap.isVip && !hasSavedCode) ? '<span class="toc-lock-icon">🔒 VIP</span>' : '';
+        let lockHtml = (chap.isVip && !hasSavedCode) ? '<span class="toc-lock-icon">🔒 VIP</span>' : '';
         btn.innerHTML = `<span>${chap.title || ('ជំពូក ' + (idx + 1))}</span> ${lockHtml}`;
         
         btn.onclick = () => {
@@ -417,11 +417,11 @@
         if (!isAllowed) {
           document.getElementById('displayContent').innerHTML = `
             <div class="vip-lock-card">
-              <div class="vip-lock-badge">🔒 សំបុត្រ VIP ២៤ ម៉ោង ($0.10)</div>
+              <div class="vip-lock-badge">🔒 សំបុត្រ VIP ២៤ ម៉ោង</div>
               
               <div class="vip-lock-steps">
-                <b>ជំហានទី ១៖</b> ស្កេន KHQR ខាងក្រោមដើម្បីបង់ប្រាក់ $0.10<br>
-                <b>ជំហានទី ២៖</b> ផ្ញើរូបវិក្កយបត្រទៅកាន់ Bot <a href="https://t.me/Teamksn_bot" target="_blank" style="color:#28a745; font-weight:900; text-decoration: underline;">@Teamksn AC</a><br>
+                <b>ជំហានទី ១៖</b> ស្កេន KHQR ខាងក្រោមដើម្បីបង់ប្រាក់<br>
+                <b>ជំហានទី ២៖</b> ផ្ើរូបវិក្កយបត្រទៅកាន់ Bot Telegram<br>
                 <b>ជំហានទី ៣៖</b> យកលេខ <b>APV (៦ ខ្ទង់)</b> មកបំពេញដើម្បីអាន<b>គ្រប់ជំពូកទាំងអស់</b>រយៈពេល ១ ថ្ងៃពេញ
               </div>
 
@@ -430,7 +430,7 @@
               </div>
 
               <div class="input-action-group">
-                <input type="text" id="apvInput" class="passcode-input" placeholder="បញ្ចូលលេខ APV (ឧ. 484595)">
+                <input type="text" id="apvInput" class="passcode-input" placeholder="បញ្ចូលលេខ APV ៦ ខ្ទង់">
                 <button class="unlock-btn" onclick="verifyApvCode()">ដោះសោរអានគ្រប់ជំពូក</button>
               </div>
               
@@ -472,10 +472,10 @@
       errorEl.innerText = '⏳ កំពុងផ្ទៀងផ្ទាត់ជាមួយ Server...';
 
       try {
-        const res = await fetch(`${BACKEND_API_URL}/api/verify-payment`, {
+        const res = await fetch(BACKEND_API_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            action: 'VERIFY_APV',
             code: enteredCode,
             deviceId: currentDeviceId
           })
