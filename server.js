@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const TelegramBot = require('node-telegram-bot-api');
 
 const app = express();
 
@@ -11,7 +12,18 @@ app.use(cors({
 
 app.use(express.json());
 
-// មូលដ្ឋានទិន្នន័យ APV
+// 🔑 Telegram Bot Token ផ្លូវការរបស់អ្នក
+const BOT_TOKEN = '8896128281:AAFRVb54PhIdWess78ucaKZgXFX3obqmzy0';
+let bot;
+
+try {
+  bot = new TelegramBot(BOT_TOKEN, { polling: true });
+  console.log('🤖 Telegram Bot ត្រូវបានភ្ជាប់ដំណើរការដោយជោគជ័យ!');
+} catch (e) {
+  console.error('Telegram Bot Error:', e.message);
+}
+
+// មូលដ្ឋានទិន្នន័យ APV រួមគ្នារវាង Server, Bot និង Dashboard
 let apvDatabase = {
   '103992': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null },
   '111111': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null },
@@ -23,10 +35,42 @@ let apvDatabase = {
   '471140': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null }
 };
 
-// Root Route
-app.get('/', (req, res) => {
-  res.send('Neakan API Server is running successfully!');
-});
+// 🤖 មុខងារ Telegram Bot ឆ្លើយតប និងបញ្ជូនលេខកូដចូល Dashboard ស្វ័យប្រវត្តិ
+if (bot) {
+  bot.on('message', (msg) => {
+    const chatId = msg.chat.id;
+    const text = msg.text ? msg.text.trim() : '';
+
+    // ករណី Admin ឬ User ផ្ញើលេខ ៦ ខ្ទង់
+    if (text.length === 6 && !isNaN(text)) {
+      const customCode = text;
+      
+      apvDatabase[customCode] = {
+        status: 'UNUSED',
+        deviceId: null,
+        deviceType: null,
+        loginAt: null,
+        expiresAt: null
+      };
+
+      bot.sendMessage(chatId, `🎉 ការទូទាត់ត្រូវបានអនុម័ត!\n🔑 លេខកូដ APV: ${customCode}\n⏱️ សុពលភាព: ២ នាទី (Test)`);
+    } 
+    // ករណី User ផ្ញើរូបភាពវិក្កយបត្រ ABA
+    else if (msg.photo) {
+      const autoCode = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      apvDatabase[autoCode] = {
+        status: 'UNUSED',
+        deviceId: null,
+        deviceType: null,
+        loginAt: null,
+        expiresAt: null
+      };
+
+      bot.sendMessage(chatId, `🎉 ផ្ទៀងផ្ទាត់ជោគជ័យ!\n🔑 លេខកូដ APV: ${autoCode}\n⏱️ សុពលភាព: ២ នាទី (Test)`);
+    }
+  });
+}
 
 // API Dashboard សម្រាប់ទាញទិន្នន័យ
 app.get('/api/dashboard', (req, res) => {
@@ -43,7 +87,7 @@ app.get('/api/dashboard', (req, res) => {
   res.json({ status: 'SUCCESS', data: apvDatabase });
 });
 
-// API Admin Action (ចុច Lock ឬ Reset)
+// API Admin Action
 app.post('/api/admin-action', (req, res) => {
   const { action, code } = req.body;
 
@@ -93,13 +137,12 @@ app.post('/api/verify-payment', (req, res) => {
 
   const now = Date.now();
 
-  // ករណីដោះសោរថ្មី
   if (record.status === 'UNUSED' || !record.expiresAt || now >= record.expiresAt) {
-    const expiresAt = now + (2 * 60 * 1000); // កំណត់ ២ នាទី (ឬ ២៤ ម៉ោង)
+    const expiresAt = now + (2 * 60 * 1000); // ២ នាទី
     apvDatabase[code] = {
       status: 'ACTIVE',
       deviceId: deviceId || 'DEV-UNKNOWN',
-      deviceType: deviceType || 'Unknown Device',
+      deviceType: deviceType || 'PC',
       loginAt: now,
       expiresAt: expiresAt
     };
@@ -110,7 +153,6 @@ app.post('/api/verify-payment', (req, res) => {
     });
   }
 
-  // ករណីឧបករណ៍ផ្សេងលួចចូល
   if (record.deviceId && record.deviceId !== deviceId) {
     return res.status(400).json({
       status: 'FAILED',
