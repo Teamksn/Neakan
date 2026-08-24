@@ -53,22 +53,127 @@
     .chapter-main-title { font-size: 17px; font-weight: 700; color: #28a745; text-align: center; margin-bottom: 25px; }
     .novel-text p { font-size: 18px; line-height: 2.1; color: #1a1a1a; margin-bottom: 20px; text-align: justify; }
 
-    /* ផ្ទាំងចាក់សោរ Paywall KHQR */
+    /* =========================================================
+       រចនាបថថ្មី៖ ផ្ទាំង Paywall KHQR ធំ ស្រស់ស្អាត (PC & Phone)
+       ========================================================= */
     .vip-lock-card {
       background: #ffffff;
-      border: 2px dashed #28a745;
-      border-radius: 12px;
-      padding: 25px 15px;
+      border: 1.5px solid #d4edda;
+      border-radius: 16px;
+      padding: 30px 20px;
       text-align: center;
-      margin: 15px 0;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+      margin: 25px auto;
+      max-width: 520px;
+      box-shadow: 0 10px 30px rgba(40, 167, 69, 0.08), 0 4px 12px rgba(0, 0, 0, 0.03);
     }
-    .vip-lock-title { font-size: 17px; font-weight: bold; color: #d9534f; margin-bottom: 8px; }
-    .vip-lock-desc { font-size: 13.5px; color: #555; margin-bottom: 15px; line-height: 1.6; }
-    .khqr-img { width: 200px; height: 200px; object-fit: contain; margin: 0 auto 15px auto; display: block; border-radius: 8px; border: 1px solid #eee; }
-    .passcode-input { padding: 10px 12px; border: 1.5px solid #28a745; border-radius: 6px; font-family: 'Battambang'; outline: none; width: 200px; text-align: center; margin-bottom: 10px; font-size: 15px; }
-    .unlock-btn { padding: 10px 18px; background-color: #28a745; color: white; border: none; border-radius: 6px; font-family: 'Battambang'; font-weight: bold; cursor: pointer; font-size: 14px; }
-    .error-msg { font-size: 13.5px; margin-top: 10px; font-weight: bold; }
+    .vip-lock-badge {
+      display: inline-block;
+      background-color: #fff3cd;
+      color: #856404;
+      font-weight: 900;
+      font-size: 16px;
+      padding: 6px 18px;
+      border-radius: 50px;
+      margin-bottom: 14px;
+      border: 1px solid #ffeeba;
+    }
+    .vip-lock-steps {
+      background-color: #fbfbf8;
+      border: 1px solid #eee8db;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #444;
+      line-height: 1.7;
+      text-align: left;
+      margin: 0 auto 20px auto;
+      max-width: 440px;
+    }
+    .vip-lock-steps b { color: #111; }
+
+    /* ប្រអប់បង្ហាញរូប KHQR ធំច្បាស់ */
+    .khqr-frame {
+      background: #ffffff;
+      border: 2px solid #28a745;
+      border-radius: 14px;
+      padding: 12px;
+      display: inline-block;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .khqr-frame:hover {
+      transform: scale(1.02);
+      box-shadow: 0 8px 25px rgba(40, 167, 69, 0.18);
+    }
+    .khqr-img {
+      width: 280px;
+      height: 370px;
+      object-fit: contain;
+      display: block;
+      border-radius: 8px;
+    }
+    @media (max-width: 480px) {
+      .khqr-img {
+        width: 240px;
+        height: 320px;
+      }
+      .vip-lock-card {
+        padding: 22px 14px;
+      }
+    }
+
+    .input-action-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      max-width: 360px;
+      margin: 0 auto;
+    }
+    .passcode-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #28a745;
+      border-radius: 10px;
+      font-family: 'Battambang', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      background: #faf9f5;
+      transition: all 0.2s ease;
+    }
+    .passcode-input:focus {
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.15);
+    }
+    .unlock-btn {
+      width: 100%;
+      padding: 13px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Battambang', sans-serif;
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+      transition: all 0.2s ease;
+    }
+    .unlock-btn:hover {
+      background-color: #218838;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(40, 167, 69, 0.4);
+    }
+    .error-msg {
+      font-size: 14px;
+      margin-top: 14px;
+      font-weight: 700;
+      line-height: 1.5;
+    }
 
     .bottom-pagination {
       display: flex; justify-content: space-between; gap: 10px;
@@ -102,7 +207,7 @@
     </div>
   </div>
 
-  <script src="chapters.js?v=2026.6"></script>
+  <script src="chapters.js?v=2026.7"></script>
   <script>
     // បិទភ្ជាប់តំណ HTTPS Cloudflare Tunnel របស់អ្នកនៅទីនេះ (ឧ. https://abc-xyz.trycloudflare.com)
     const BACKEND_API_URL = 'https://random-words-abc.trycloudflare.com';
@@ -162,15 +267,23 @@
       if (isChapterVip && !isUnlocked) {
         document.getElementById('displayContent').innerHTML = `
           <div class="vip-lock-card">
-            <div class="vip-lock-title">🔒 ជំពូក VIP (តម្លៃ $0.10)</div>
-            <div class="vip-lock-desc">
-              ១. សូមស្កេន KHQR ខាងក្រោមដើម្បីបង់ប្រាក់<br>
-              ២. ផ្ញើវិក្កយបត្រ ឬលេខ <b>APV (៦ ខ្ទង់)</b> ទៅកាន់ Bot <a href="https://t.me/Teamksn_bot" target="_blank" style="color:#28a745; font-weight:bold;">@Teamksn AC</a>
+            <div class="vip-lock-badge">🔒 ជំពូក VIP (តម្លៃ $0.10)</div>
+            
+            <div class="vip-lock-steps">
+              <b>ជំហានទី ១៖</b> ស្កេន KHQR ខាងក្រោមដើម្បីបង់ប្រាក់ $0.10<br>
+              <b>ជំហានទី ២៖</b> ផ្ញើរូបវិក្កយបត្រទៅកាន់ Bot <a href="https://t.me/Teamksn_bot" target="_blank" style="color:#28a745; font-weight:900; text-decoration: underline;">@Teamksn AC</a><br>
+              <b>ជំហានទី ៣៖</b> យកលេខ <b>APV (៦ ខ្ទង់)</b> មកបំពេញខាងក្រោម
             </div>
-            <img src="khqr.jpg" alt="Bakong KHQR" class="khqr-img" onerror="this.onerror=null; this.src='khqr.png';">
-            <input type="text" id="apvInput" class="passcode-input" placeholder="បញ្ចូលលេខ APV (ឧ. 484595)">
-            <br>
-            <button class="unlock-btn" onclick="verifyApvCode(${chapId})">ដោះសោរអាន</button>
+
+            <div class="khqr-frame" title="ចុចដើម្បីមើលរូបភាពដើម" onclick="window.open('khqr.jpg', '_blank')">
+              <img src="khqr.jpg" alt="Bakong KHQR" class="khqr-img" onerror="this.onerror=null; this.src='khqr.png';">
+            </div>
+
+            <div class="input-action-group">
+              <input type="text" id="apvInput" class="passcode-input" placeholder="បញ្ចូលលេខ APV (ឧ. 484595)">
+              <button class="unlock-btn" onclick="verifyApvCode(${chapId})">ដោះសោរអានភ្លាមៗ</button>
+            </div>
+            
             <div id="errorAlert" class="error-msg" style="display: none;"></div>
           </div>
         `;
