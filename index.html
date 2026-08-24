@@ -10,6 +10,41 @@
   <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700;900&display=swap" rel="stylesheet">
 
   <style>
+    /* ហាម Highlight អត្ថបទ និងហាមជ្រើសរើសទិន្នន័យលើទំព័រ */
+body, html {
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* IE10+/Edge */
+  user-select: none;         /* ស្តង់ដារ Browsers */
+  -webkit-touch-callout: none; /* iOS Safari ហាមសង្កត់ជាប់ Pop-up */
+}
+
+/* ហាមទាញអូសរូបភាព និងវីដេអូ (Disable Drag & Drop) */
+img, video {
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  pointer-events: auto;
+}
+
+/* ស្រទាប់ថ្លាការពារពីលើ Video ដើម្បីកុំឱ្យ Extension IDM ចាប់ Button ផ្ទាល់ */
+.video-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+.video-overlay-shield {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  z-index: 10;
+  pointer-events: none; /* ទុកឱ្យចុច Play/Mute បាន */
+}
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
