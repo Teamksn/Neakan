@@ -1,10 +1,10 @@
 {
-  "name": "neakan-server",
+  "name": "neakan-backend",
   "version": "1.0.0",
   "main": "server.js",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.19.2",
-    "tesseract.js": "^5.1.0"
+    "node-telegram-bot-api": "^0.66.0"
   }
 }
