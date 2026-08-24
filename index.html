@@ -12,7 +12,6 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    /* ហាម Highlight អត្ថបទលើទំព័រ */
     *, *::before, *::after {
       -webkit-user-select: none !important;
       -moz-user-select: none !important;
@@ -22,7 +21,7 @@
     }
 
     body {
-      background-color: #121212; /* Dark Theme បែបភាពយន្ត */
+      background-color: #121212;
       font-family: 'Battambang', sans-serif;
       color: #e0e0e0;
       min-height: 100vh;
@@ -37,7 +36,6 @@
       pointer-events: none;
     }
 
-    /* Header ខាងលើ */
     .site-header {
       width: 100%;
       background-color: #1a1a1a;
@@ -61,7 +59,6 @@
       margin-top: 2px;
     }
 
-    /* Main Container */
     .main-container {
       width: 100%;
       max-width: 960px;
@@ -71,7 +68,6 @@
       gap: 35px;
     }
 
-    /* Header កន្សោមចំណងជើង */
     .section-header-bar {
       display: flex;
       align-items: center;
@@ -86,9 +82,7 @@
       color: #ffffff;
     }
 
-    /* ==========================================
-       ១. បញ្ជី Poster វីដេអូសម្រាយរឿង (Horizontal Scroll)
-       ========================================== */
+    /* បញ្ជី Poster វីដេអូសម្រាយរឿង */
     .video-poster-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -106,8 +100,10 @@
       background-color: #1e1e1e;
       border-radius: 8px;
       overflow: hidden;
-      cursor: pointer;
       border: 1px solid #2d2d2d;
+      text-decoration: none;
+      color: inherit;
+      display: block;
       transition: transform 0.25s ease, border-color 0.25s ease;
     }
     .video-card:hover {
@@ -128,7 +124,6 @@
       display: block;
     }
 
-    /* ប៊ូតុង Play Icon ពីលើ Poster */
     .play-overlay {
       position: absolute;
       top: 0; left: 0; width: 100%; height: 100%;
@@ -173,9 +168,7 @@
       text-overflow: ellipsis;
     }
 
-    /* ==========================================
-       ២. កាតប្រលោមលោកចិនបកប្រែខ្មែរ
-       ========================================== */
+    /* បញ្ជីប្រលោមលោកចិនបកប្រែខ្មែរ */
     .novel-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -243,115 +236,10 @@
       font-size: 14px;
       font-weight: 900;
     }
-
-    /* ==========================================
-       ៣. ផ្ទាំង Video Modal + Playlist Player
-       ========================================== */
-    .video-modal-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 1000;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 15px;
-      backdrop-filter: blur(5px);
-    }
-    .video-modal-content {
-      background-color: #181818;
-      border: 1px solid #333;
-      border-radius: 12px;
-      width: 100%;
-      max-width: 850px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-      display: flex;
-      flex-direction: column;
-      animation: zoomIn 0.25s ease-out;
-    }
-    @keyframes zoomIn {
-      from { transform: scale(0.92); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-
-    .modal-header {
-      padding: 12px 18px;
-      background-color: #222;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid #333;
-    }
-    .modal-header h3 {
-      font-size: 15.5px;
-      color: #28a745;
-      font-weight: 700;
-    }
-    .modal-close-btn {
-      background: none;
-      border: none;
-      color: #aaa;
-      font-size: 26px;
-      cursor: pointer;
-    }
-    .modal-close-btn:hover { color: #fff; }
-
-    .modal-player-frame {
-      width: 100%;
-      aspect-ratio: 16/9;
-      background-color: #000;
-    }
-    .modal-player-frame iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    /* បញ្ជី Playlist ភាគច្រើនក្នុង Modal */
-    .playlist-drawer {
-      padding: 14px 16px;
-      background-color: #141414;
-      max-height: 170px;
-      overflow-y: auto;
-    }
-    .playlist-label {
-      font-size: 13px;
-      font-weight: 700;
-      color: #888;
-      margin-bottom: 10px;
-    }
-    .playlist-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-    .ep-btn {
-      padding: 6px 14px;
-      background-color: #252525;
-      border: 1px solid #3a3a3a;
-      border-radius: 6px;
-      color: #ddd;
-      font-family: 'Battambang';
-      font-size: 13px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .ep-btn:hover {
-      background-color: #333;
-      border-color: #28a745;
-    }
-    .ep-btn.active {
-      background-color: #28a745;
-      border-color: #28a745;
-      color: white;
-      font-weight: bold;
-    }
   </style>
 </head>
 <body>
 
-  <!-- Header ខាងលើ -->
   <header class="site-header">
     <h1>NEAKAN (អ្នកអាន)</h1>
     <p>បណ្តុំប្រលោមលោកចិន និងការសម្រាយរឿង</p>
@@ -359,9 +247,7 @@
 
   <main class="main-container">
 
-    <!-- ==========================================
-         កន្សោមទី ១៖ ការសម្រាយរឿង (Movie Poster Style)
-         ========================================== -->
+    <!-- ផ្នែកទី ១៖ ការសម្រាយរឿង -->
     <section>
       <div class="section-header-bar">
         <div class="section-title">🎬 ការសម្រាយរឿង (Movie Highlights)</div>
@@ -369,54 +255,32 @@
 
       <div class="video-poster-grid">
 
-        <!-- វីដេអូទី ១៖ ស៊ាននី (Renegade Immortal) -->
-        <div class="video-card" onclick="openVideoModal('ស៊ាននី (仙逆) - សម្រាយរឿងពេញ', [
-          { ep: 'ភាគ ០១-២០', url: 'https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi' },
-          { ep: 'ភាគ ២១-៤០', url: 'https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi' },
-          { ep: 'ភាគ ៤១-៦០', url: 'https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi' }
-        ])">
+        <!-- តំណភ្ជាប់ទៅកាន់ទំព័រសម្រាយរឿង ស៊ាននី -->
+        <a href="renegadeimmortalrecaps/" class="video-card">
           <div class="video-poster-box">
-            <img src="xianni/Cover.jpg" alt="Xian Ni Poster" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
+            <img src="xianni/Cover.jpg" alt="Poster 仙逆" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
             <div class="play-overlay">
               <div class="play-circle"><div class="play-triangle"></div></div>
             </div>
           </div>
           <div class="video-card-title">仙逆 (ប្រឆាំងនឹងអមតៈ)</div>
-        </div>
+        </a>
 
-        <!-- វីដេអូទី ២៖ ដាវឈិនភីងអាន (Sword of Coming) -->
-        <div class="video-card" onclick="openVideoModal('ដាវឈិនភីងអាន (剑来) - សម្រាយរឿងពេញ', [
-          { ep: 'វគ្គ ១ (ភាគ ០១-១៣)', url: 'https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi' },
-          { ep: 'វគ្គ ២ (ភាគ ១៤-២៦)', url: 'https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi' }
-        ])">
+        <!-- តំណភ្ជាប់ទៅកាន់ទំព័រសម្រាយរឿង 剑来 -->
+        <a href="swordofcomingrecaps/" class="video-card">
           <div class="video-poster-box">
-            <img src="jianlai/Cover.jpg" alt="Sword of Coming Poster" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/9/90/Sword_of_Coming_poster.jpg/440px-Sword_of_Coming_poster.jpg'">
+            <img src="jianlai/Cover.jpg" alt="Poster 剑来" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/9/90/Sword_of_Coming_poster.jpg/440px-Sword_of_Coming_poster.jpg'">
             <div class="play-overlay">
               <div class="play-circle"><div class="play-triangle"></div></div>
             </div>
           </div>
           <div class="video-card-title">剑来 (ដាវឈិនភីងអាន)</div>
-        </div>
-
-        <!-- វីដេអូទី ៣៖ សម្ព័ន្ធមនុស្សអាក្រក់ -->
-        <div class="video-card" onclick="openVideoModal('សម្ព័ន្ធមនុស្សអាក្រក់ - សម្រាយរឿងពេញ', [
-          { ep: 'ភាគពេញ ០១', url: 'https://www.dailymotion.com/embed/video/k3ihd6VZZZVKDSJ0uWi' }
-        ])">
-          <div class="video-poster-box">
-            <img src="https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg" alt="Poster">
-            <div class="play-overlay">
-              <div class="play-circle"><div class="play-triangle"></div></div>
-            </div>
-          </div>
-          <div class="video-card-title">សម្ព័ន្ធមនុស្សអាក្រក់</div>
-        </div>
+        </a>
 
       </div>
     </section>
 
-    <!-- ==========================================
-         កន្សោមទី ២៖ ប្រលោមលោកចិនបកប្រែខ្មែរ
-         ========================================== -->
+    <!-- ផ្នែកទី ២៖ ប្រលោមលោកចិនបកប្រែខ្មែរ -->
     <section>
       <div class="section-header-bar">
         <div class="section-title">📚 ប្រលោមលោកចិនបកប្រែខ្មែរ</div>
@@ -424,7 +288,6 @@
 
       <div class="novel-grid">
 
-        <!-- កាតរឿងទី ១៖ ស៊ាននី (仙逆) -->
         <a href="xianni/" class="novel-card">
           <div class="novel-cover">
             <img src="xianni/Cover.jpg" alt="Poster 仙逆" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/4/41/Renegade_Immortal_poster.jpg/440px-Renegade_Immortal_poster.jpg'">
@@ -437,7 +300,6 @@
           </div>
         </a>
 
-        <!-- កាតរឿងទី ២៖ ដាវឈិនភីងអាន (剑来) -->
         <a href="jianlai/" class="novel-card">
           <div class="novel-cover">
             <img src="jianlai/Cover.jpg" alt="Poster 剑来" onerror="this.src='https://upload.wikimedia.org/wikipedia/zh/thumb/9/90/Sword_of_Coming_poster.jpg/440px-Sword_of_Coming_poster.jpg'">
@@ -455,80 +317,10 @@
 
   </main>
 
-  <!-- ==========================================
-       ផ្ទាំង Video Player Modal (Playlist Inside)
-       ========================================== -->
-  <div class="video-modal-overlay" id="videoModalOverlay" onclick="closeVideoModal(event)">
-    <div class="video-modal-content" onclick="event.stopPropagation()">
-      <div class="modal-header">
-        <h3 id="modalVideoTitle">ចំណងជើងវីដេអូ</h3>
-        <button class="modal-close-btn" onclick="closeVideoModal()">×</button>
-      </div>
-
-      <div class="modal-player-frame">
-        <iframe id="modalVideoIframe" src="" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
-      </div>
-
-      <div class="playlist-drawer">
-        <div class="playlist-label">🎞️ បញ្ជីភាគ (Playlist)៖</div>
-        <div class="playlist-buttons" id="playlistButtonsContainer"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- JavaScript គ្រប់គ្រង Video Player Modal & Security -->
   <script>
-    let activePlaylist = [];
-
-    function openVideoModal(title, playlist) {
-      document.getElementById('modalVideoTitle').innerText = title;
-      activePlaylist = playlist;
-
-      const container = document.getElementById('playlistButtonsContainer');
-      container.innerHTML = '';
-
-      if (playlist && playlist.length > 0) {
-        playlist.forEach((item, index) => {
-          const btn = document.createElement('button');
-          btn.className = `ep-btn ${index === 0 ? 'active' : ''}`;
-          btn.innerText = item.ep;
-          btn.onclick = () => {
-            document.querySelectorAll('.ep-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('modalVideoIframe').src = item.url;
-          };
-          container.appendChild(btn);
-        });
-
-        // ចាក់ភាគទី ១ ដំបូង
-        document.getElementById('modalVideoIframe').src = playlist[0].url;
-      }
-
-      document.getElementById('videoModalOverlay').style.display = 'flex';
-    }
-
-    function closeVideoModal(e) {
-      document.getElementById('modalVideoIframe').src = '';
-      document.getElementById('videoModalOverlay').style.display = 'none';
-    }
-
-    // ប្រព័ន្ធការពារសន្តិសុខទិន្នន័យ (Disable Right-Click & Shortcuts)
     document.addEventListener('contextmenu', e => e.preventDefault(), true);
     document.addEventListener('copy', e => { e.preventDefault(); return false; }, true);
-    document.addEventListener('cut', e => { e.preventDefault(); return false; }, true);
     document.addEventListener('selectstart', e => { e.preventDefault(); return false; }, true);
-    document.addEventListener('dragstart', e => { e.preventDefault(); return false; }, true);
-
-    document.addEventListener('keydown', e => {
-      if (
-        e.keyCode === 123 || 
-        (e.ctrlKey && (e.keyCode === 67 || e.keyCode === 85 || e.keyCode === 83 || e.keyCode === 65)) || 
-        (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74))
-      ) {
-        e.preventDefault();
-        return false;
-      }
-    }, true);
   </script>
 
 </body>
