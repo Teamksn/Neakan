@@ -79,7 +79,7 @@
     .chapter-main-title { font-size: 17px; font-weight: 700; color: #28a745; text-align: center; margin-bottom: 25px; }
     .novel-text p { font-size: 18px; line-height: 2.1; color: #1a1a1a; margin-bottom: 20px; text-align: justify; }
 
-    /* ផ្ទាំង Paywall KHQR */
+    /* ផ្ទាំង Paywall KHQR ធំ និងស្រស់ស្អាត */
     .vip-lock-card {
       background: #ffffff;
       border: 1.5px solid #d4edda;
@@ -219,9 +219,9 @@
     </div>
   </div>
 
-  <script src="chapters.js?v=2026.9"></script>
+  <script src="chapters.js?v=2026.10"></script>
   <script>
-    // បិទភ្ជាប់ URL Cloudflare Tunnel របស់អ្នក
+    // តំណភ្ជាប់ Cloudflare Tunnel សកម្មរបស់អ្នក
     const BACKEND_API_URL = 'https://understanding-contracts-con-adapted.trycloudflare.com';
 
     let currentChapterIndex = 0;
@@ -235,16 +235,15 @@
       return deviceId;
     }
 
-    // ពិនិត្យមើលថាតើឧបករណ៍នេះមានសំបុត្រ VIP ២៤ ម៉ោងដែលនៅមានសុពលភាពឬទេ
     function isVipAccessActive() {
       const expiresAt = localStorage.getItem('vip_pass_expires_at');
       if (!expiresAt) return false;
 
       const now = Date.now();
       if (now < parseInt(expiresAt, 10)) {
-        return true; // នៅមានសុពលភាព
+        return true;
       } else {
-        localStorage.removeItem('vip_pass_expires_at'); // ផុតកំណត់ ២៤ ម៉ោង
+        localStorage.removeItem('vip_pass_expires_at');
         return false;
       }
     }
@@ -280,7 +279,6 @@
         const btn = document.createElement('button');
         btn.className = `toc-item-btn ${idx === currentChapterIndex ? 'active' : ''}`;
         
-        // ប្រសិនបើមានសំបុត្រ VIP Pass រួចហើយ មិនបាច់បង្ហាញរូបចាក់សោរទៀតទេ
         const lockHtml = (chap.isVip && !hasVipPass) ? '<span class="toc-lock-icon">🔒 VIP</span>' : '';
         btn.innerHTML = `<span>${chap.title || ('ជំពូក ' + (idx + 1))}</span> ${lockHtml}`;
         
@@ -326,7 +324,6 @@
       const isVipPassActive = isVipAccessActive();
       const isChapterVip = (chapter.isVip === true);
 
-      // ប្រសិនបើជាជំពូក VIP ហើយគ្មានសំបុត្រ VIP ២៤ ម៉ោង
       if (isChapterVip && !isVipPassActive) {
         document.getElementById('displayContent').innerHTML = `
           <div class="vip-lock-card">
@@ -393,7 +390,6 @@
         const data = await res.json();
 
         if (data.status === 'SUCCESS') {
-          // រក្សាទុកកាលបរិច្ឆេទផុតកំណត់ ២៤ ម៉ោងលើ Browser
           localStorage.setItem('vip_pass_expires_at', data.expiresAt);
           errorEl.style.color = '#28a745';
           errorEl.innerText = '🎉 ' + data.message;
