@@ -25,7 +25,7 @@ const episodesData = [
   { ep: 'ភាគ ១២២', title: 'ភាគ ១២២៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: 'https://t.me/samnakeo/3127?embed=1', isFree: true },
   
   // ភាគចាប់ពី ១២៣ ឡើងទៅត្រូវចាក់សោរ Paywall (isFree: false)
-  { ep: 'ភាគ ១២៣', title: 'ភាគ ១២៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: 'https://youtu.be/embed/yYibKpV2gNs?si=ohRIFAeA1h4CxoeU', isFree: false },
+  { ep: 'ភាគ ១២៣', title: 'ភាគ ១២៣៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: 'https://www.youtube.com/embed/yYibKpV2gNs', isFree: false },
   { ep: 'ភាគ ១២៤', title: 'ភាគ ១២៤៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
   { ep: 'ភាគ ១២៥', title: 'ភាគ ១២៥៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
   { ep: 'ភាគ ១២៦', title: 'ភាគ ១២៦៖ ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal', url: '', isFree: false },
