@@ -10,44 +10,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700;900&display=swap" rel="stylesheet">
 
   <style>
-    /* ហាម Highlight អត្ថបទ និងហាមជ្រើសរើសទិន្នន័យលើទំព័រ */
-body, html {
-  -webkit-user-select: none; /* Safari */
-  -moz-user-select: none;    /* Firefox */
-  -ms-user-select: none;     /* IE10+/Edge */
-  user-select: none;         /* ស្តង់ដារ Browsers */
-  -webkit-touch-callout: none; /* iOS Safari ហាមសង្កត់ជាប់ Pop-up */
-}
-
-/* ហាមទាញអូសរូបភាព និងវីដេអូ (Disable Drag & Drop) */
-img, video {
-  -webkit-user-drag: none;
-  -khtml-user-drag: none;
-  -moz-user-drag: none;
-  -o-user-drag: none;
-  user-drag: none;
-  pointer-events: auto;
-}
-
-/* ស្រទាប់ថ្លាការពារពីលើ Video ដើម្បីកុំឱ្យ Extension IDM ចាប់ Button ផ្ទាល់ */
-.video-wrapper {
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-.video-overlay-shield {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  z-index: 10;
-  pointer-events: none; /* ទុកឱ្យចុច Play/Mute បាន */
-}
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
-    body {
+    /* ហាម Highlight អត្ថបទ និងហាមជ្រើសរើសទិន្នន័យលើទំព័រ */
+    body, html {
       background-color: #f7f4ed;
       font-family: 'Battambang', sans-serif;
       color: #222;
@@ -55,6 +21,20 @@ img, video {
       display: flex;
       flex-direction: column;
       align-items: center;
+      -webkit-user-select: none; /* Safari */
+      -moz-user-select: none;    /* Firefox */
+      -ms-user-select: none;     /* IE10+/Edge */
+      user-select: none;         /* ស្តង់ដារ Browsers */
+      -webkit-touch-callout: none; /* iOS Safari ហាមសង្កត់ជាប់ Pop-up */
+    }
+
+    /* ហាមទាញអូសរូបភាព និងវីដេអូ (Disable Drag & Drop) */
+    img, video, iframe {
+      -webkit-user-drag: none;
+      -khtml-user-drag: none;
+      -moz-user-drag: none;
+      -o-user-drag: none;
+      user-drag: none;
     }
 
     .site-header {
@@ -86,6 +66,7 @@ img, video {
       padding: 20px 16px 0 16px;
     }
     .video-wrapper {
+      position: relative;
       width: 100%;
       background-color: #000;
       border-radius: 8px;
@@ -118,7 +99,7 @@ img, video {
       box-shadow: 0 3px 10px rgba(0,0,0,0.04);
       text-decoration: none;
       color: inherit;
-      transition: transform 0.2s;
+      transition: transform 0.2s, border-color 0.2s;
     }
     .novel-card:hover {
       transform: translateY(-4px);
@@ -139,6 +120,7 @@ img, video {
       height: 100%;
       object-fit: cover;
       display: block;
+      pointer-events: none;
     }
 
     .card-info {
@@ -200,6 +182,7 @@ img, video {
       </iframe>
     </div>
   </section>
+
   <!-- បញ្ជីកាតរឿងទាំងអស់ -->
   <main class="library-container">
 
@@ -230,6 +213,43 @@ img, video {
     </a>
 
   </main>
+
+  <!-- ប្រព័ន្ធការពារសុវត្ថិភាពទិន្នន័យ (Disable Right-Click & Shortcuts) -->
+  <script>
+    // ១. ហាមឃាត់ការចុចម៉ៅស្តាំ
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+    }, false);
+
+    // ២. ហាមឃាត់ Shortcut Keys (Ctrl+C, Ctrl+U, Ctrl+S, F12, Ctrl+Shift+I)
+    document.addEventListener('keydown', function(e) {
+      // ហាម F12
+      if (e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+      }
+      // ហាម Ctrl+U (View Source)
+      if (e.ctrlKey && e.keyCode === 85) {
+        e.preventDefault();
+        return false;
+      }
+      // ហាម Ctrl+C (Copy)
+      if (e.ctrlKey && e.keyCode === 67) {
+        e.preventDefault();
+        return false;
+      }
+      // ហាម Ctrl+S (Save Page)
+      if (e.ctrlKey && e.keyCode === 83) {
+        e.preventDefault();
+        return false;
+      }
+      // ហាម Ctrl+Shift+I ឬ Ctrl+Shift+J (Inspect Tool)
+      if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) {
+        e.preventDefault();
+        return false;
+      }
+    }, false);
+  </script>
 
 </body>
 </html>
