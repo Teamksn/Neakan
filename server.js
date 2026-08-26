@@ -40,15 +40,15 @@ let apvDatabase = {
 // 📚 មូលដ្ឋានទិន្នន័យជំពូកប្រលោមលោក និងវីដេអូ
 let chaptersDatabase = {
   xianni: [
-    { ep: 'ភាគ ១០៦', title: 'ភាគ ១០៦ (ឥតគិតថ្លៃ)', url: 'https://ok.ru/videoembed/8982337718990', isFree: true },
-    { ep: 'ភាគ ១១៩', title: 'ភាគ ១១៩', url: 'https://ok.ru/videoembed/8982337718990', isFree: false }
+    { ep: 'ភាគ ១០៦', title: 'ភាគ ១០៦ (ឥតគិតថ្លៃ)', url: 'https://ok.ru/videoembed/8982337718990', content: '', isFree: true },
+    { ep: 'ភាគ ១១៩', title: 'ភាគ ១១៩', url: 'https://ok.ru/videoembed/8982337718990', content: '', isFree: false }
   ],
   jianlai: [
-    { ep: 'ភាគ ១', title: 'ភាគ ១៖ យុវជនក្រុងភក់', url: '', isFree: true }
+    { ep: 'ភាគ ១', title: 'ភាគ ១៖ យុវជនក្រុងភក់', url: '', content: 'ខ្លឹមសាររឿងជំពូកទី ១...', isFree: true }
   ],
   bigbrother: [
-    { ep: 'ជំពូក ១', title: 'ជំពូក ១៖ ភ្នំព្រះអាទិត្យនិងព្រះច័ន្ទ', url: 'chapter1.html', isFree: true },
-    { ep: 'ជំពូក ២', title: 'ជំពូក ២៖ ការប្រុងប្រយ័ត្នជាចម្បង', url: 'chapter2.html', isFree: true }
+    { ep: 'ជំពូក ១', title: 'ជំពូក ១៖ ភ្នំព្រះអាទិត្យនិងព្រះច័ន្ទ', url: 'chapter1.html', content: '', isFree: true },
+    { ep: 'ជំពូក ២', title: 'ជំពូក ២៖ ការប្រុងប្រយ័ត្នជាចម្បង', url: 'chapter2.html', content: '', isFree: true }
   ]
 };
 
@@ -99,7 +99,7 @@ app.get('/api/chapters/:novelId', (req, res) => {
 
 // 💾 API សម្រាប់ Admin បន្ថែមជំពូកថ្មី
 app.post('/api/chapters/add', (req, res) => {
-  const { novelId, ep, title, url, isFree } = req.body;
+  const { novelId, ep, title, url, content, isFree } = req.body;
   if (!novelId || !ep || !title) {
     return res.status(400).json({ status: 'FAILED', message: 'សូមបំពេញលេខភាគ និងចំណងជើង!' });
   }
@@ -112,6 +112,7 @@ app.post('/api/chapters/add', (req, res) => {
     ep: ep.trim(),
     title: title.trim(),
     url: url ? url.trim() : '',
+    content: content ? content.trim() : '',
     isFree: Boolean(isFree)
   });
 
@@ -394,16 +395,16 @@ app.get('/admin/manage-chapters', (req, res) => {
   <style>
     * { box-sizing: border-box; font-family: 'Battambang', sans-serif; margin: 0; padding: 0; }
     body { background: #121212; color: #fff; padding: 25px 15px; display: flex; flex-direction: column; align-items: center; }
-    .header { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .header { width: 100%; max-width: 900px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
     .btn-back { background: #0088cc; color: #fff; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; }
-    .cms-container { width: 100%; max-width: 800px; display: grid; grid-template-columns: 1fr; gap: 20px; }
-    @media(min-width: 768px) { .cms-container { grid-template-columns: 350px 1fr; } }
+    .cms-container { width: 100%; max-width: 900px; display: grid; grid-template-columns: 1fr; gap: 20px; }
+    @media(min-width: 768px) { .cms-container { grid-template-columns: 420px 1fr; } }
     .cms-card { background: #1e1e1e; border: 1px solid #28a745; border-radius: 10px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
     h2 { color: #28a745; margin-bottom: 15px; font-size: 16px; }
     .form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
     label { font-size: 12px; color: #aaa; }
-    input, select { background: #101010; border: 1px solid #444; color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 13px; outline: none; }
-    input:focus, select:focus { border-color: #28a745; }
+    input, select, textarea { background: #101010; border: 1px solid #444; color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 13px; outline: none; }
+    input:focus, select:focus, textarea:focus { border-color: #28a745; }
     .btn-submit { background: #28a745; border: none; color: #fff; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; margin-top: 8px; }
     .btn-submit:hover { background: #218838; }
     .alert-msg { margin-top: 10px; text-align: center; font-size: 12px; min-height: 18px; font-weight: bold; }
@@ -438,8 +439,12 @@ app.get('/admin/manage-chapters', (req, res) => {
         <input type="text" id="title" placeholder="ឧ. ភាគ ១២០៖ សម្រេចជោគជ័យ">
       </div>
       <div class="form-group">
-        <label>Link វីដេអូ ឬ HTML Link៖</label>
-        <input type="text" id="url" placeholder="https://... ឬ chapter1.html">
+        <label>Link វីដេអូ ឬ Iframe URL (ទុកទំនេរបាន ប្រសិនបើជាអត្ថបទ)៖</label>
+        <input type="text" id="url" placeholder="https://...">
+      </div>
+      <div class="form-group">
+        <label>ខ្លឹមសារសាច់រឿង (Story Content / Novel Text)៖</label>
+        <textarea id="content" rows="6" placeholder="បិទភ្ជាប់ (Paste) អត្ថបទសាច់រឿងនៅទីនេះ..."></textarea>
       </div>
       <div class="form-group">
         <label>ស្ថានភាពបង់ប្រាក់៖</label>
@@ -499,6 +504,7 @@ app.get('/admin/manage-chapters', (req, res) => {
         ep: document.getElementById('ep').value,
         title: document.getElementById('title').value,
         url: document.getElementById('url').value,
+        content: document.getElementById('content').value,
         isFree: document.getElementById('isFree').value === 'true'
       };
 
@@ -524,6 +530,7 @@ app.get('/admin/manage-chapters', (req, res) => {
           document.getElementById('ep').value = '';
           document.getElementById('title').value = '';
           document.getElementById('url').value = '';
+          document.getElementById('content').value = '';
           loadChaptersList();
         } else {
           msg.style.color = '#dc3545';
