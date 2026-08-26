@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>អានប្រលោមលោក - 剑来</title>
+  <title>អានប្រលោមលោក - 剑来 (Sword of Coming)</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -202,7 +202,7 @@
   <div class="toc-overlay" id="tocOverlay" onclick="toggleTOC()"></div>
 
   <div class="toc-drawer" id="tocDrawer">
-    <div class="drawer-novel-title" id="drawerNovelName">មាតិការឿង</div>
+    <div class="drawer-novel-title" id="drawerNovelName">剑来 (ដាវឈិនភីងអាន)</div>
     <input type="text" id="searchInput" class="toc-search-box" placeholder="ស្វែងរកជំពូក..." onkeyup="filterChapters()">
     <ul class="toc-items-container" id="tocContainer"></ul>
   </div>
@@ -210,7 +210,7 @@
   <div class="app-container">
     <header class="top-header">
       <a href="../" class="header-btn" title="ត្រឡប់ទៅទំព័រដើម">‹</a>
-      <div class="header-title" id="topHeaderTitle">កំពុងដំណើរការ...</div>
+      <div class="header-title" id="topHeaderTitle">កំពុងផ្ទុក...</div>
       <button class="header-btn" onclick="toggleTOC()">☰</button>
     </header>
 
@@ -238,29 +238,39 @@
     </div>
   </div>
 
-  <script src="chapters.js?v=1.0"></script>
-
   <script>
+    let chaptersData = [];
     let currentChapterIndex = 0;
     let currentFontSize = 18;
 
-    function initWebsite() {
-      if (typeof window.novelInfo !== 'undefined') {
-        document.getElementById('drawerNovelName').innerText = window.novelInfo.title;
-      }
-      renderSidebarTOC();
-      if (typeof window.chaptersData !== 'undefined' && window.chaptersData.length > 0) {
-        loadChapter(0);
+    async function loadDynamicChapters() {
+      try {
+        const res = await fetch('https://neakan-backend.onrender.com/api/chapters/jianlai');
+        const result = await res.json();
+        if (result.status === 'SUCCESS' && result.data && result.data.length > 0) {
+          chaptersData = result.data;
+          renderSidebarTOC();
+          loadChapter(0);
+        } else {
+          document.getElementById('topHeaderTitle').innerText = 'មិនទាន់មានជំពូក';
+          document.getElementById('displayTitle').innerText = 'មិនទាន់មានជំពូកនៅឡើយទេ';
+          document.getElementById('displayContent').innerHTML = '<p style="text-align:center;">សូមរង់ចាំការ Update ជំពូកថ្មីៗ...</p>';
+        }
+      } catch (err) {
+        console.error('Failed to load chapters:', err);
+        document.getElementById('topHeaderTitle').innerText = 'បរាជ័យ';
+        document.getElementById('displayTitle').innerText = 'មិនអាចភ្ជាប់ទៅកាន់ Server បានទេ';
       }
     }
 
     function renderSidebarTOC() {
       const container = document.getElementById('tocContainer');
       container.innerHTML = '';
-      if (typeof window.chaptersData === 'undefined') return;
-      window.chaptersData.forEach((chap, idx) => {
+      if (!chaptersData || chaptersData.length === 0) return;
+
+      chaptersData.forEach((chap, idx) => {
         const li = document.createElement('li');
-        li.innerText = chap.title;
+        li.innerText = chap.title || chap.ep;
         li.id = 'toc-item-' + idx;
         li.onclick = () => {
           loadChapter(idx);
@@ -271,15 +281,16 @@
     }
 
     function loadChapter(index) {
-      if (typeof window.chaptersData === 'undefined' || index < 0 || index >= window.chaptersData.length) return;
+      if (!chaptersData || index < 0 || index >= chaptersData.length) return;
       currentChapterIndex = index;
-      const chapter = window.chaptersData[index];
+      const chapter = chaptersData[index];
 
-      document.getElementById('topHeaderTitle').innerText = chapter.title;
-      document.getElementById('displayVolume').innerText = chapter.volume || '';
-      document.getElementById('displayTitle').innerText = chapter.title;
+      document.getElementById('topHeaderTitle').innerText = chapter.title || chapter.ep;
+      document.getElementById('displayVolume').innerText = chapter.ep || '';
+      document.getElementById('displayTitle').innerText = chapter.title || '';
 
-      const formattedHtml = chapter.content
+      const rawText = chapter.url || chapter.content || 'មិនមានអត្ថបទឡើយ';
+      const formattedHtml = rawText
         .split('\n\n')
         .filter(p => p.trim() !== '')
         .map(p => `<p style="font-size: ${currentFontSize}px;">${p.trim()}</p>`)
@@ -312,9 +323,10 @@
 
     function filterChapters() {
       const keyword = document.getElementById('searchInput').value.toLowerCase();
-      window.chaptersData.forEach((chap, idx) => {
+      chaptersData.forEach((chap, idx) => {
         const el = document.getElementById('toc-item-' + idx);
-        if (el) el.style.display = chap.title.toLowerCase().includes(keyword) ? '' : 'none';
+        const titleText = (chap.title || chap.ep || '').toLowerCase();
+        if (el) el.style.display = titleText.includes(keyword) ? '' : 'none';
       });
     }
 
@@ -327,7 +339,7 @@
       });
     }
 
-    window.onload = initWebsite;
+    window.onload = loadDynamicChapters;
   </script>
 </body>
 </html>
