@@ -19,16 +19,13 @@ const SERVER_URL = 'https://neakan-backend.onrender.com';
 let bot = null;
 
 if (BOT_TOKEN) {
-  // បង្កើត Bot ដោយមិនប្រើ Polling
   bot = new TelegramBot(BOT_TOKEN);
-  
-  // កំណត់ Webhook ទៅកាន់ Render URL ផ្ទាល់
   bot.setWebHook(`${SERVER_URL}/bot${BOT_TOKEN}`)
     .then(() => console.log('🤖 Telegram Webhook ត្រូវបានភ្ជាប់ជោគជ័យ!'))
     .catch((err) => console.error('Webhook Error:', err.message));
 }
 
-// មូលដ្ឋានទិន្នន័យ APV
+// 🗄️ មូលដ្ឋានទិន្នន័យ APV
 let apvDatabase = {
   '103992': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null },
   '111111': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null },
@@ -40,7 +37,22 @@ let apvDatabase = {
   '471140': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null }
 };
 
-// 🌐 Route សម្រាប់ទទួលសារពី Telegram តាមរយៈ Webhook
+// 📚 មូលដ្ឋានទិន្នន័យជំពូកប្រលោមលោក និងវីដេអូ
+let chaptersDatabase = {
+  xianni: [
+    { ep: 'ភាគ ១០៦', title: 'ភាគ ១០៦ (ឥតគិតថ្លៃ)', url: 'https://ok.ru/videoembed/8982337718990', isFree: true },
+    { ep: 'ភាគ ១១៩', title: 'ភាគ ១១៩', url: 'https://ok.ru/videoembed/8982337718990', isFree: false }
+  ],
+  jianlai: [
+    { ep: 'ភាគ ១', title: 'ភាគ ១៖ យុវជនក្រុងភក់', url: '', isFree: true }
+  ],
+  bigbrother: [
+    { ep: 'ជំពូក ១', title: 'ជំពូក ១៖ ភ្នំព្រះអាទិត្យនិងព្រះច័ន្ទ', url: 'chapter1.html', isFree: true },
+    { ep: 'ជំពូក ២', title: 'ជំពូក ២៖ ការប្រុងប្រយ័ត្នជាចម្បង', url: 'chapter2.html', isFree: true }
+  ]
+};
+
+// 🌐 Route ទទួល Webhook ពី Telegram
 app.post(`/bot${BOT_TOKEN}`, (req, res) => {
   if (bot) {
     bot.processUpdate(req.body);
@@ -48,7 +60,7 @@ app.post(`/bot${BOT_TOKEN}`, (req, res) => {
   res.sendStatus(200);
 });
 
-// 🤖 មុខងារឆ្លើយតបសាររបស់ Telegram Bot
+// 🤖 មុខងារឆ្លើយតបសារ Bot
 if (bot) {
   bot.on('message', (msg) => {
     const chatId = msg.chat.id;
@@ -78,7 +90,45 @@ if (bot) {
   });
 }
 
-// API Dashboard
+// 📡 API សម្រាប់ Frontend ទាញយកបញ្ជីជំពូក
+app.get('/api/chapters/:novelId', (req, res) => {
+  const { novelId } = req.params;
+  const list = chaptersDatabase[novelId] || [];
+  res.json({ status: 'SUCCESS', data: list });
+});
+
+// 💾 API សម្រាប់ Admin បន្ថែមជំពូកថ្មី
+app.post('/api/chapters/add', (req, res) => {
+  const { novelId, ep, title, url, isFree } = req.body;
+  if (!novelId || !ep || !title) {
+    return res.status(400).json({ status: 'FAILED', message: 'សូមបំពេញលេខភាគ និងចំណងជើង!' });
+  }
+
+  if (!chaptersDatabase[novelId]) {
+    chaptersDatabase[novelId] = [];
+  }
+
+  chaptersDatabase[novelId].push({
+    ep: ep.trim(),
+    title: title.trim(),
+    url: url ? url.trim() : '',
+    isFree: Boolean(isFree)
+  });
+
+  res.json({ status: 'SUCCESS', message: `បានបន្ថែម ${ep} ចូលក្នុង ${novelId} ជោគជ័យ!` });
+});
+
+// 🗑️ API សម្រាប់ Admin លុបជំពូក
+app.post('/api/chapters/delete', (req, res) => {
+  const { novelId, index } = req.body;
+  if (chaptersDatabase[novelId] && chaptersDatabase[novelId][index] !== undefined) {
+    chaptersDatabase[novelId].splice(index, 1);
+    return res.json({ status: 'SUCCESS', message: 'បានលុបជំពូកជោគជ័យ!' });
+  }
+  res.status(400).json({ status: 'FAILED', message: 'មិនអាចលុបជំពូកនេះបានទេ!' });
+});
+
+// 📊 API Dashboard APV
 app.get('/api/dashboard', (req, res) => {
   const now = Date.now();
   Object.keys(apvDatabase).forEach(code => {
@@ -93,7 +143,7 @@ app.get('/api/dashboard', (req, res) => {
   res.json({ status: 'SUCCESS', data: apvDatabase });
 });
 
-// API Admin Action
+// ⚙️ API Admin APV Actions
 app.post('/api/admin-action', (req, res) => {
   const { action, code } = req.body;
 
@@ -123,7 +173,7 @@ app.post('/api/admin-action', (req, res) => {
   res.status(400).json({ status: 'FAILED', message: 'សកម្មភាពមិនត្រឹមត្រូវ!' });
 });
 
-// API Verify Payment
+// 🔐 API Verify Payment APV
 app.post('/api/verify-payment', (req, res) => {
   const { code, deviceId, deviceType } = req.body;
 
@@ -173,7 +223,7 @@ app.post('/api/verify-payment', (req, res) => {
   });
 });
 
-// 🌐 ផ្ទាំងគ្រប់គ្រង Dashboard Admin Online
+// 🌐 ផ្ទាំងគ្រប់គ្រងទិន្នន័យ APV (/admin/apv-status)
 app.get('/admin/apv-status', (req, res) => {
   res.send(`
 <!DOCTYPE html>
@@ -188,9 +238,10 @@ app.get('/admin/apv-status', (req, res) => {
     .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
     .title { font-size: 22px; font-weight: bold; color: #1a1a1a; display: flex; align-items: center; gap: 10px; }
     .btn-group { display: flex; gap: 10px; }
-    .btn { padding: 8px 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: #fff; }
+    .btn { padding: 8px 16px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; color: #fff; text-decoration: none; }
     .btn-danger { background: #dc3545; }
     .btn-primary { background: #0088cc; }
+    .btn-success { background: #28a745; }
     .card { background: #fff; border-radius: 10px; padding: 20px; margin-bottom: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
     .card-title { font-size: 16px; font-weight: bold; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
     table { width: 100%; border-collapse: collapse; margin-top: 10px; }
@@ -208,6 +259,7 @@ app.get('/admin/apv-status', (req, res) => {
   <div class="header">
     <div class="title">📊 ផ្ទាំងគ្រប់គ្រងទិន្នន័យ APV (Online Cloud)</div>
     <div class="btn-group">
+      <a href="/admin/manage-chapters" class="btn btn-success">➕ គ្រប់គ្រងជំពូក / Chapters</a>
       <button class="btn btn-danger" onclick="adminAction('LOCK_ALL')">🔒 Lock All Devices</button>
       <button class="btn btn-primary" onclick="adminAction('RESET_ALL')">🔄 Reset All Devices</button>
     </div>
@@ -324,6 +376,177 @@ app.get('/admin/apv-status', (req, res) => {
 
     setInterval(fetchDashboardData, 1000);
     fetchDashboardData();
+  </script>
+</body>
+</html>
+  `);
+});
+
+// 🌐 ផ្ទាំងគ្រប់គ្រងជំពូកប្រលោមលោក និងវីដេអូ (/admin/manage-chapters)
+app.get('/admin/manage-chapters', (req, res) => {
+  res.send(`
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <title>គ្រប់គ្រងជំពូកប្រលោមលោក - Neakan CMS</title>
+  <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; font-family: 'Battambang', sans-serif; margin: 0; padding: 0; }
+    body { background: #121212; color: #fff; padding: 25px 15px; display: flex; flex-direction: column; align-items: center; }
+    .header { width: 100%; max-width: 800px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .btn-back { background: #0088cc; color: #fff; padding: 8px 14px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; }
+    .cms-container { width: 100%; max-width: 800px; display: grid; grid-template-columns: 1fr; gap: 20px; }
+    @media(min-width: 768px) { .cms-container { grid-template-columns: 350px 1fr; } }
+    .cms-card { background: #1e1e1e; border: 1px solid #28a745; border-radius: 10px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+    h2 { color: #28a745; margin-bottom: 15px; font-size: 16px; }
+    .form-group { margin-bottom: 12px; display: flex; flex-direction: column; gap: 4px; }
+    label { font-size: 12px; color: #aaa; }
+    input, select { background: #101010; border: 1px solid #444; color: #fff; padding: 8px 10px; border-radius: 6px; font-size: 13px; outline: none; }
+    input:focus, select:focus { border-color: #28a745; }
+    .btn-submit { background: #28a745; border: none; color: #fff; padding: 10px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%; font-size: 14px; margin-top: 8px; }
+    .btn-submit:hover { background: #218838; }
+    .alert-msg { margin-top: 10px; text-align: center; font-size: 12px; min-height: 18px; font-weight: bold; }
+    .list-item { background: #141414; border: 1px solid #333; padding: 10px; border-radius: 6px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+    .btn-del { background: #dc3545; color: #fff; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1 style="font-size: 18px; color: #28a745;">📚 Neakan Chapter Management System</h1>
+    <a href="/admin/apv-status" class="btn-back">⬅️ ទៅកាន់ផ្ទាំង APV</a>
+  </div>
+
+  <div class="cms-container">
+    <!-- Form បន្ថែម -->
+    <div class="cms-card">
+      <h2>➕ បន្ថែមជំពូកថ្មី</h2>
+      <div class="form-group">
+        <label>ជ្រើសរើសរឿង៖</label>
+        <select id="novelId" onchange="loadChaptersList()">
+          <option value="xianni">仙逆 - Renegade Immortal (ស៊ាននី)</option>
+          <option value="jianlai">剑来 - Sword of Coming (ដាវឈិនភីងអាន)</option>
+          <option value="bigbrother">师兄啊师兄 - Big Brother (សិស្សច្បង)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>លេខភាគ (ឧ. ភាគ ១២០ ឬ ជំពូក ៣)៖</label>
+        <input type="text" id="ep" placeholder="ឧ. ភាគ ១២០">
+      </div>
+      <div class="form-group">
+        <label>ចំណងជើងពេញ៖</label>
+        <input type="text" id="title" placeholder="ឧ. ភាគ ១២០៖ សម្រេចជោគជ័យ">
+      </div>
+      <div class="form-group">
+        <label>Link វីដេអូ ឬ HTML Link៖</label>
+        <input type="text" id="url" placeholder="https://... ឬ chapter1.html">
+      </div>
+      <div class="form-group">
+        <label>ស្ថានភាពបង់ប្រាក់៖</label>
+        <select id="isFree">
+          <option value="false">🔒 ជាប់សោរ (Paywall / APV Required)</option>
+          <option value="true">🟢 ឥតគិតថ្លៃ (Free)</option>
+        </select>
+      </div>
+      <button class="btn-submit" onclick="submitChapter()">💾 រក្សាទុកជំពូកថ្មី</button>
+      <div id="alertMsg" class="alert-msg"></div>
+    </div>
+
+    <!-- បញ្ជីជំពូកបច្ចុប្បន្ន -->
+    <div class="cms-card">
+      <h2>📑 បញ្ជីជំពូកដែលមានស្រាប់</h2>
+      <div id="chaptersList">កំពុងទាញយក...</div>
+    </div>
+  </div>
+
+  <script>
+    async function loadChaptersList() {
+      const novelId = document.getElementById('novelId').value;
+      const listContainer = document.getElementById('chaptersList');
+      listContainer.innerHTML = 'កំពុងទាញយក...';
+
+      try {
+        const res = await fetch('/api/chapters/' + novelId);
+        const result = await res.json();
+        if (result.status === 'SUCCESS') {
+          if (result.data.length === 0) {
+            listContainer.innerHTML = '<div style="color:#888; font-size:13px;">មិនទាន់មានជំពូកនៅឡើយទេ</div>';
+            return;
+          }
+          let html = '';
+          result.data.forEach((item, idx) => {
+            const badge = item.isFree ? '<span style="color:#28a745; font-size:11px;">(Free)</span>' : '<span style="color:#ffc107; font-size:11px;">(Lock)</span>';
+            html += \`
+              <div class="list-item">
+                <div>
+                  <strong>\${item.ep}</strong> \${badge}<br>
+                  <span style="font-size:11px; color:#aaa;">\${item.title}</span>
+                </div>
+                <button class="btn-del" onclick="deleteChapter('\${novelId}', \${idx})">🗑️ លុប</button>
+              </div>\`;
+          });
+          listContainer.innerHTML = html;
+        }
+      } catch (err) {
+        listContainer.innerHTML = 'បរាជ័យក្នុងការទាញយកទិន្នន័យ!';
+      }
+    }
+
+    async function submitChapter() {
+      const msg = document.getElementById('alertMsg');
+      const payload = {
+        novelId: document.getElementById('novelId').value,
+        ep: document.getElementById('ep').value,
+        title: document.getElementById('title').value,
+        url: document.getElementById('url').value,
+        isFree: document.getElementById('isFree').value === 'true'
+      };
+
+      if (!payload.ep || !payload.title) {
+        msg.style.color = '#dc3545';
+        msg.innerText = '❌ សូមបំពេញលេខភាគ និងចំណងជើង!';
+        return;
+      }
+
+      msg.style.color = '#ffc107';
+      msg.innerText = '⏳ កំពុងរក្សាទុក...';
+
+      try {
+        const res = await fetch('/api/chapters/add', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.status === 'SUCCESS') {
+          msg.style.color = '#28a745';
+          msg.innerText = '✅ ' + data.message;
+          document.getElementById('ep').value = '';
+          document.getElementById('title').value = '';
+          document.getElementById('url').value = '';
+          loadChaptersList();
+        } else {
+          msg.style.color = '#dc3545';
+          msg.innerText = '❌ ' + data.message;
+        }
+      } catch (e) {
+        msg.style.color = '#dc3545';
+        msg.innerText = '❌ បរាជ័យក្នុងការតភ្ជាប់!';
+      }
+    }
+
+    async function deleteChapter(novelId, index) {
+      if (confirm('តើអ្នកពិតជាចង់លុបជំពូកនេះមែនទេ?')) {
+        await fetch('/api/chapters/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ novelId, index })
+        });
+        loadChaptersList();
+      }
+    }
+
+    window.onload = loadChaptersList;
   </script>
 </body>
 </html>
