@@ -1,1 +1,360 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>សិស្សច្បងកំពូលល្បិច / Big Brother (My Senior Brother Is Too Steady) - Neakan</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* 🎨 ការកំណត់ពណ៌ Theme */
+    :root {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --card-border: #2d2d2d;
+      --text-color: #e0e0e0;
+      --text-muted: #888888;
+      --header-bg: #1a1a1a;
+      --primary-green: #28a745;
+    }
+
+    body.light-mode {
+      --bg-color: #f8f9fa;
+      --card-bg: #ffffff;
+      --card-border: #e0e0e0;
+      --text-color: #212529;
+      --text-muted: #6c757d;
+      --header-bg: #ffffff;
+    }
+
+    body.sepia-mode {
+      --bg-color: #fbf0d9;
+      --card-bg: #f4ecd8;
+      --card-border: #e2d7bd;
+      --text-color: #5f4b32;
+      --text-muted: #8c7658;
+      --header-bg: #f4ecd8;
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: 'Battambang', sans-serif !important;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    *, *::before, *::after {
+      -webkit-user-select: none !important;
+      user-select: none !important;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* 🧭 របារខាងលើ Top Nav */
+    .top-nav {
+      width: 100%;
+      height: 55px;
+      background-color: var(--header-bg);
+      border-bottom: 2px solid var(--primary-green);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    }
+
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .back-btn {
+      color: var(--primary-green);
+      text-decoration: none;
+      font-size: 26px;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    .nav-title {
+      color: var(--primary-green);
+      font-weight: 700;
+      font-size: 14.5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
+    }
+
+    @media (min-width: 600px) {
+      .nav-title { max-width: 450px; font-size: 16px; }
+    }
+
+    /* 🌓 ប៊ូតុងប្តូរ Theme */
+    .theme-switch-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .theme-btn {
+      border: 1px solid var(--card-border);
+      background: var(--card-bg);
+      color: var(--text-color);
+      padding: 5px 9px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--primary-green);
+    }
+
+    /* 📦 កុងទីន័រមេ */
+    .main-container {
+      width: 100%;
+      max-width: 850px;
+      padding: 20px 14px 60px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* 📖 ប័ណ្ណព័ត៌មានរឿង */
+    .novel-hero-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    }
+
+    @media (min-width: 600px) {
+      .novel-hero-card {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+    }
+
+    .novel-cover-box {
+      width: 100%;
+      max-width: 160px;
+      aspect-ratio: 2/3;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0 auto;
+      border: 2px solid var(--primary-green);
+      flex-shrink: 0;
+    }
+
+    .novel-cover-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      pointer-events: none;
+    }
+
+    .novel-meta-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .novel-title-text {
+      font-size: 18px;
+      font-weight: 900;
+      color: var(--primary-green);
+      line-height: 1.4;
+    }
+
+    .novel-author-text {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .novel-status-badge {
+      display: inline-block;
+      width: fit-content;
+      font-size: 11.5px;
+      font-weight: bold;
+      color: #fff;
+      background-color: var(--primary-green);
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin: 4px 0;
+    }
+
+    .novel-desc-text {
+      font-size: 13.5px;
+      line-height: 1.7;
+      color: var(--text-color);
+      margin-top: 4px;
+    }
+
+    /* 📑 បញ្ជីជំពូកទាំងអស់ */
+    .chapters-section {
+      background-color: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    }
+
+    .chapters-header {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--primary-green);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 8px;
+    }
+
+    .chapter-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    @media (min-width: 600px) {
+      .chapter-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .chapter-card {
+      background-color: var(--bg-color);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 12px 14px;
+      text-decoration: none;
+      color: var(--text-color);
+      font-size: 13.5px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .chapter-card:hover {
+      border-color: var(--primary-green);
+      transform: translateX(4px);
+    }
+
+    .chapter-badge-free {
+      font-size: 11px;
+      font-weight: bold;
+      color: var(--primary-green);
+      background: rgba(40, 167, 69, 0.15);
+      border: 1px solid var(--primary-green);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- របារខាងលើ -->
+  <header class="top-nav">
+    <div class="nav-left">
+      <a href="../" class="back-btn">‹</a>
+      <div class="nav-title">សិស្សច្បងកំពូលល្បិច (Big Brother)</div>
+    </div>
+
+    <!-- ប៊ូតុងប្តូរពន្លឺ Theme -->
+    <div class="theme-switch-group">
+      <button class="theme-btn" onclick="setTheme('dark')">🌙 យប់</button>
+      <button class="theme-btn" onclick="setTheme('sepia')">📜 លឿង</button>
+      <button class="theme-btn" onclick="setTheme('light')">☀️ ថ្ងៃ</button>
+    </div>
+  </header>
+
+  <main class="main-container">
+
+    <!-- ប័ណ្ណរឿង -->
+    <div class="novel-hero-card">
+      <div class="novel-cover-box">
+        <img src="Cover.jpg" alt="Big Brother Poster" onerror="this.src='../xianni/Cover.jpg'">
+      </div>
+      <div class="novel-meta-info">
+        <div class="novel-title-text">សិស្សច្បងកំពូលល្បិច (师兄啊师兄 - My Senior Brother Is Too Steady)</div>
+        <div class="novel-author-text">អ្នកនិពន្ធ: យានជឺពីស៊ាវ (言归正传)</div>
+        <div><span class="novel-status-badge">ឥតគិតថ្លៃ (Free All Chapters)</span></div>
+        <div class="novel-desc-text">
+          ដំណើររឿងរបស់ លីឆាងស៊ូ (Li Changshou) ដែលបានកើតឡើងវិញក្នុងយុគសម័យបុរាណមុនសង្គ្រាម Fengshen។ គោលដៅតែមួយគត់របស់គាត់គឺរស់នៅឱ្យបានអមតៈ ដោយរក្សាភាពស្ងប់ស្ងាត់បំផុត មិនបង្ហាញសមត្ថភាពពិត រៀបចំផែនការបម្រុងរាប់ពាន់ជាន់ និងជៀសវាងរាល់គ្រោះថ្នាក់ទាំងអស់!
+        </div>
+      </div>
+    </div>
+
+    <!-- បញ្ជីជំពូកសម្រាប់អាន -->
+    <div class="chapters-section">
+      <div class="chapters-header">
+        <span>📑 បញ្ជីជំពូកទាំងអស់</span>
+        <span style="font-size: 12px; color: var(--text-muted);">ទើបចេញថ្មី</span>
+      </div>
+
+      <div class="chapter-grid" id="chapterListContainer">
+        <!-- ជំពូកគំរូ -->
+        <a href="chapter1.html" class="chapter-card">
+          <span>ជំពូកទី ១៖ ភ្នំព្រះអាទិត្យនិងព្រះច័ន្ទ</span>
+          <span class="chapter-badge-free">អានឥតគិតថ្លៃ</span>
+        </a>
+        <a href="chapter2.html" class="chapter-card">
+          <span>ជំពូកទី ២៖ ការប្រុងប្រយ័ត្នជាចម្បង</span>
+          <span class="chapter-badge-free">អានឥតគិតថ្លៃ</span>
+        </a>
+      </div>
+    </div>
+
+  </main>
+
+  <script>
+    // ១. មុខងារ Theme Switcher (កត់ត្រាទុកក្នុង Browser)
+    function setTheme(mode) {
+      document.body.classList.remove('light-mode', 'sepia-mode');
+      if (mode === 'light') {
+        document.body.classList.add('light-mode');
+      } else if (mode === 'sepia') {
+        document.body.classList.add('sepia-mode');
+      }
+      localStorage.setItem('neakan_theme_mode', mode);
+    }
+
+    // ទាញយក Theme ចាស់ដែលធ្លាប់បានជ្រើសរើស
+    const savedTheme = localStorage.getItem('neakan_theme_mode') || 'dark';
+    setTheme(savedTheme);
+
+    // ២. ការពារការ Copy និង Right-Click
+    document.addEventListener('contextmenu', e => e.preventDefault(), true);
+    document.addEventListener('copy', e => { e.preventDefault(); return false; }, true);
+    document.addEventListener('selectstart', e => { e.preventDefault(); return false; }, true);
+  </script>
+</body>
+</html>
