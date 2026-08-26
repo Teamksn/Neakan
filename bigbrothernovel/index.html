@@ -320,23 +320,16 @@
         <span style="font-size: 12px; color: var(--text-muted);">ទើបចេញថ្មី</span>
       </div>
 
+      <!-- កន្លែងបង្ហាញជំពូកដែលទាញចេញពី Server ដោយស្វ័យប្រវត្តិ -->
       <div class="chapter-grid" id="chapterListContainer">
-        <!-- ជំពូកគំរូ -->
-        <a href="chapter1.html" class="chapter-card">
-          <span>ជំពូកទី ១៖ ភ្នំព្រះអាទិត្យនិងព្រះច័ន្ទ</span>
-          <span class="chapter-badge-free">អានឥតគិតថ្លៃ</span>
-        </a>
-        <a href="chapter2.html" class="chapter-card">
-          <span>ជំពូកទី ២៖ ការប្រុងប្រយ័ត្នជាចម្បង</span>
-          <span class="chapter-badge-free">អានឥតគិតថ្លៃ</span>
-        </a>
+        <div style="color: var(--text-muted); font-size: 13px;">⏳ កំពុងទាញយកបញ្ជីជំពូកពី Server...</div>
       </div>
     </div>
 
   </main>
 
   <script>
-    // ១. មុខងារ Theme Switcher (កត់ត្រាទុកក្នុង Browser)
+    // ១. មុខងារ Theme Switcher
     function setTheme(mode) {
       document.body.classList.remove('light-mode', 'sepia-mode');
       if (mode === 'light') {
@@ -347,7 +340,6 @@
       localStorage.setItem('neakan_theme_mode', mode);
     }
 
-    // ទាញយក Theme ចាស់ដែលធ្លាប់បានជ្រើសរើស
     const savedTheme = localStorage.getItem('neakan_theme_mode') || 'dark';
     setTheme(savedTheme);
 
@@ -355,6 +347,38 @@
     document.addEventListener('contextmenu', e => e.preventDefault(), true);
     document.addEventListener('copy', e => { e.preventDefault(); return false; }, true);
     document.addEventListener('selectstart', e => { e.preventDefault(); return false; }, true);
+
+    // ៣. មុខងារទាញយកជំពូកពី Render Backend API ដោយស្វ័យប្រវត្តិ
+    async function loadDynamicChapters() {
+      const container = document.getElementById('chapterListContainer');
+      try {
+        const res = await fetch('https://neakan-backend.onrender.com/api/chapters/bigbrother');
+        const result = await res.json();
+        
+        if (result.status === 'SUCCESS' && result.data && result.data.length > 0) {
+          let html = '';
+          result.data.forEach(item => {
+            const linkUrl = item.url ? item.url : '#';
+            html += `
+              <a href="${linkUrl}" class="chapter-card">
+                <span>${item.title || item.ep}</span>
+                <span class="chapter-badge-free">អានឥតគិតថ្លៃ</span>
+              </a>
+            `;
+          });
+          container.innerHTML = html;
+        } else {
+          container.innerHTML = '<div style="color: var(--text-muted); font-size: 13px;">មិនទាន់មានជំពូកនៅឡើយទេ</div>';
+        }
+      } catch (err) {
+        console.error('Failed to load chapters:', err);
+        container.innerHTML = '<div style="color: #dc3545; font-size: 13px;">❌ មិនអាចទាញយកជំពូកពី Server បានទេ!</div>';
+      }
+    }
+
+    window.onload = () => {
+      loadDynamicChapters();
+    };
   </script>
 </body>
 </html>
