@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal / Xian Ni សម្រាយរឿង - Neakan</title>
-  
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Battambang:wght@400;700;900&display=swap" rel="stylesheet">
@@ -282,8 +282,8 @@
       padding: 14px; 
       border-radius: 8px; 
       border: 1px solid #282828; 
-      display: flex;
-      flex-direction: column;
+      display: flex; 
+      flex-direction: column; 
       gap: 4px; 
     }
     .video-details h2 { 
@@ -295,17 +295,17 @@
       font-size: 12px; 
       color: #888; 
     }
-    .timer-badge {
-      display: inline-block;
-      margin-top: 6px;
-      font-size: 12px;
-      font-weight: bold;
-      color: #28a745;
-      background: rgba(40, 167, 69, 0.12);
-      border: 1px solid #28a745;
-      padding: 4px 10px;
-      border-radius: 6px;
-      width: fit-content;
+    .timer-badge { 
+      display: inline-block; 
+      margin-top: 6px; 
+      font-size: 12px; 
+      font-weight: bold; 
+      color: #28a745; 
+      background: rgba(40, 167, 69, 0.12); 
+      border: 1px solid #28a745; 
+      padding: 4px 10px; 
+      border-radius: 6px; 
+      width: fit-content; 
     }
 
     .playlist-section { 
@@ -461,7 +461,7 @@
     </div>
 
     <div class="video-details">
-      <h2 id="currentEpTitle">ភាគ ១១៩</h2>
+      <h2 id="currentEpTitle">កំពុងផ្ទុក...</h2>
       <p>ប្រឆាំងនឹងអមតៈភាព / Renegade Immortal / Xian Ni សម្រាយរឿង</p>
       <div id="videoDetailsCountdown" class="timer-badge" style="display: none;"></div>
     </div>
@@ -481,10 +481,8 @@
     </div>
   </div>
 
-  <script src="episodes.js"></script>
-
   <script>
-    // ១. ប្រព័ន្ធការពារសន្តិសុខកម្រិតខ្ពស់ (បិទ F12, Right-Click, និង Shortcuts)
+    // ១. ប្រព័ន្ធការពារសន្តិសុខ (បិទ F12, Right-Click, និង Shortcuts)
     document.addEventListener('contextmenu', function(e) {
       e.preventDefault();
       return false;
@@ -520,9 +518,10 @@
       return '💻 PC';
     }
 
-    // ៣. ការកំណត់តំណភ្ជាប់ Node.js Server API Endpoint
+    // ៣. ការកំណត់ Endpoints និងអថេរ Playlist
     const API_VERIFY_URL = 'https://neakan-backend.onrender.com/api/verify-payment';
-    let currentSelectedEp = 13;
+    let episodesData = [];
+    let currentSelectedEp = 0;
 
     function openQrModal() {
       const modal = document.getElementById('qrModal');
@@ -547,7 +546,6 @@
       return devId;
     }
 
-    // ពិនិត្យសុពលភាពជាមួយ Node.js Server រាល់ពេលបើកមើលភាគ Paywall
     async function isSubscriptionValid() {
       const savedCode = localStorage.getItem('apv_unlocked_code');
       const deviceId = getOrCreateDeviceId();
@@ -566,7 +564,7 @@
           },
           body: JSON.stringify({ 
             code: savedCode, 
-            deviceId: deviceId,
+            deviceId: deviceId, 
             deviceType: getDeviceType() 
           })
         });
@@ -611,7 +609,7 @@
       const container = document.getElementById('playlistContainer');
       container.innerHTML = '';
 
-      if (typeof episodesData === 'undefined' || !episodesData) return;
+      if (!episodesData || episodesData.length === 0) return;
 
       episodesData.forEach((item, index) => {
         const btn = document.createElement('div');
@@ -626,8 +624,8 @@
     }
 
     async function selectEpisode(index, updateUrl = true) {
+      if (!episodesData || !episodesData[index]) return;
       currentSelectedEp = index;
-      if (typeof episodesData === 'undefined' || !episodesData[index]) return;
       const target = episodesData[index];
 
       const khmerNumerals = { '០':'0', '១':'1', '២':'2', '៣':'3', '៤':'4', '៥':'5', '៦':'6', '៧':'7', '៨':'8', '៩':'9' };
@@ -635,11 +633,7 @@
 
       if (updateUrl) {
         const baseUrl = window.location.pathname.split('?')[0];
-        if (epNum === '106') {
-          window.history.pushState({ epIndex: index }, '', baseUrl);
-        } else {
-          window.history.pushState({ epIndex: index }, '', `${baseUrl}?ep=${epNum}`);
-        }
+        window.history.pushState({ epIndex: index }, '', `${baseUrl}?ep=${epNum}`);
       }
 
       document.getElementById('currentEpTitle').innerText = target.title;
@@ -708,7 +702,7 @@
           },
           body: JSON.stringify({ 
             code: code, 
-            deviceId: deviceId,
+            deviceId: deviceId, 
             deviceType: getDeviceType() 
           })
         });
@@ -736,18 +730,38 @@
       const params = new URLSearchParams(window.location.search);
       const epParam = params.get('ep');
 
-      let initialIndex = 13;
+      let targetIndex = episodesData.length - 1 >= 0 ? episodesData.length - 1 : 0;
 
-      if (epParam && typeof episodesData !== 'undefined') {
+      if (epParam && episodesData.length > 0) {
         const khmerNumerals = { '០':'0', '១':'1', '២':'2', '៣':'3', '៤':'4', '៥':'5', '៦':'6', '៧':'7', '៨':'8', '៩':'9' };
         const foundIndex = episodesData.findIndex(item => {
           const itemNum = item.ep.replace(/[^០-៩0-9]/g, '').replace(/[០-៩]/g, d => khmerNumerals[d]);
           return itemNum === epParam;
         });
-        if (foundIndex !== -1) initialIndex = foundIndex;
+        if (foundIndex !== -1) targetIndex = foundIndex;
       }
 
-      selectEpisode(initialIndex, false);
+      if (episodesData.length > 0) {
+        selectEpisode(targetIndex, false);
+      }
+    }
+
+    // ៤. មុខងារទាញយកទិន្នន័យភាគពី API ដោយស្វ័យប្រវត្តិ
+    async function loadDynamicChapters() {
+      try {
+        const res = await fetch('https://neakan-backend.onrender.com/api/chapters/xianni');
+        const result = await res.json();
+        if (result.status === 'SUCCESS' && result.data && result.data.length > 0) {
+          episodesData = result.data;
+          renderPlaylist();
+          initEpisodeFromUrl();
+        } else {
+          document.getElementById('currentEpTitle').innerText = 'មិនទាន់មានភាគនៅឡើយទេ';
+        }
+      } catch (err) {
+        console.error('Failed to load dynamic chapters:', err);
+        document.getElementById('currentEpTitle').innerText = 'មិនអាចទាញយកភាគពី Server បានទេ';
+      }
     }
 
     window.onpopstate = (event) => {
@@ -759,8 +773,7 @@
     };
 
     window.onload = () => {
-      renderPlaylist();
-      initEpisodeFromUrl();
+      loadDynamicChapters();
       updateCountdownDisplay();
       setInterval(updateCountdownDisplay, 1000);
     };
