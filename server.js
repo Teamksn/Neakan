@@ -300,83 +300,155 @@ app.get('/admin/apv-status', (req, res) => {
   </div>
 
   <script>
-    async function fetchDashboardData() {
+    let chaptersData = [];
+    let currentChapterIndex = 0;
+    let currentFontSize = 18;
+
+    // វចនានុក្រមបំប្លែងលេខខ្មែរទៅលេខសកល
+    const khmerToLatinMap = { '០':'0', '១':'1', '២':'2', '៣':'3', '៤':'4', '៥':'5', '៦':'6', '៧':'7', '៨':'8', '៩':'9' };
+
+    function getChapterSlug(chapterObj, fallbackIndex) {
+      if (!chapterObj) return (fallbackIndex + 1).toString();
+      const textToScan = (chapterObj.ep || chapterObj.title || '').toString();
+      const normalized = textToScan.replace(/[០-៩]/g, d => khmerToLatinMap[d]);
+      const match = normalized.match(/\d+/);
+      return match ? match[0] : (fallbackIndex + 1).toString();
+    }
+
+    // ១. មុខងារផ្លាស់ប្តូរ Theme
+    function setTheme(mode) {
+      document.body.classList.remove('light-mode', 'sepia-mode');
+      if (mode === 'light') document.body.classList.add('light-mode');
+      if (mode === 'sepia') document.body.classList.add('sepia-mode');
+      localStorage.setItem('neakan_theme_mode', mode);
+    }
+
+    const savedTheme = localStorage.getItem('neakan_theme_mode') || 'dark';
+    setTheme(savedTheme);
+
+    // ២. ទាញយកជំពូកពី Server API និងចាប់យក Hash URL
+    async function loadDynamicChapters() {
       try {
-        const res = await fetch('/api/dashboard');
+        const res = await fetch('https://neakan-backend.onrender.com/api/chapters/bigbrother');
         const result = await res.json();
-        if (result.status === 'SUCCESS') {
-          renderTables(result.data);
+        if (result.status === 'SUCCESS' && result.data && result.data.length > 0) {
+          chaptersData = result.data;
+          renderSidebarTOC();
+          initChapterFromHash();
+        } else {
+          document.getElementById('topHeaderTitle').innerText = 'គ្មានជំពូក';
+          document.getElementById('displayTitle').innerText = 'មិនទាន់មានជំពូកនៅឡើយទេ';
+          document.getElementById('displayContent').innerHTML = '<p style="text-align:center;">សូមរង់ចាំការ Update ជំពូកថ្មីៗ...</p>';
         }
       } catch (err) {
-        console.error('Failed to load dashboard:', err);
+        console.error('Failed to load chapters:', err);
+        document.getElementById('topHeaderTitle').innerText = 'បរាជ័យ';
+        document.getElementById('displayTitle').innerText = 'មិនអាចភ្ជាប់ទៅកាន់ Server បានទេ';
       }
     }
 
-    function renderTables(data) {
-      const activeBody = document.getElementById('activeTableBody');
-      const idleBody = document.getElementById('idleTableBody');
-      let activeRows = '';
-      let idleRows = '';
-      let activeCount = 0;
-      let idleCount = 0;
-      const now = Date.now();
+    // ៣. បង្ហាញបញ្ជីមាតិកា TOC
+    function renderSidebarTOC() {
+      const container = document.getElementById('tocContainer');
+      container.innerHTML = '';
+      if (!chaptersData || chaptersData.length === 0) return;
 
-      Object.keys(data).forEach(code => {
-        const item = data[code];
-        if (item.status === 'ACTIVE' && item.expiresAt && now < item.expiresAt) {
-          activeCount++;
-          const remainingSec = Math.floor((item.expiresAt - now) / 1000);
-          const m = Math.floor(remainingSec / 60);
-          const s = remainingSec % 60;
-          const loginTime = item.loginAt ? new Date(item.loginAt).toLocaleTimeString() : 'មិនស្គាល់';
-          const expTime = new Date(item.expiresAt).toLocaleTimeString();
-          const devType = item.deviceType || 'PC';
-
-          activeRows += \`
-            <tr>
-              <td><strong>\${code}</strong></td>
-              <td><span class="badge badge-active">ACTIVE</span></td>
-              <td><span class="badge-device">\${devType}</span></td>
-              <td style="color:#555; font-weight:bold;">\${loginTime}</td>
-              <td style="color:#2e7d32; font-weight:bold;">\${m} នាទី \${s} វិនាទី</td>
-              <td>\${expTime}</td>
-              <td><button class="btn-action" onclick="adminAction('LOCK_ONE', '\${code}')">🔒 Lock / Kick</button></td>
-            </tr>\`;
-        } else {
-          idleCount++;
-          const statusBadge = item.status === 'LOCKED' 
-            ? '<span class="badge badge-locked">LOCKED</span>' 
-            : '<span class="badge badge-unused">UNUSED</span>';
-          
-          idleRows += \`
-            <tr>
-              <td><strong>\${code}</strong></td>
-              <td>\${statusBadge}</td>
-              <td>\${item.expiresAt ? new Date(item.expiresAt).toLocaleString() : 'គ្មាន'}</td>
-              <td><button class="btn-action" onclick="adminAction('DELETE_CODE', '\${code}')">🗑️ លុប</button></td>
-            </tr>\`;
-        }
+      chaptersData.forEach((chap, idx) => {
+        const li = document.createElement('li');
+        li.innerText = chap.title || chap.ep;
+        li.id = 'toc-item-' + idx;
+        li.onclick = () => {
+          loadChapter(idx, true);
+          toggleTOC();
+        };
+        container.appendChild(li);
       });
-
-      document.getElementById('activeCount').innerText = activeCount;
-      document.getElementById('idleCount').innerText = idleCount;
-      activeBody.innerHTML = activeRows || '<tr><td colspan="7" style="text-align:center; color:#888;">មិនមានអ្នកកំពុងប្រើប្រាស់ឡើយ</td></tr>';
-      idleBody.innerHTML = idleRows;
     }
 
-    async function adminAction(action, code = null) {
-      if (confirm('តើអ្នកពិតជាចង់អនុវត្តសកម្មភាពនេះមែនទេ?')) {
-        await fetch('/api/admin-action', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action, code })
-        });
-        fetchDashboardData();
+    // ៤. បង្ហាញខ្លឹមសារជំពូក និងកែប្រែ Hash URL (#168)
+    function loadChapter(index, updateHash = true) {
+      if (!chaptersData || index < 0 || index >= chaptersData.length) return;
+      currentChapterIndex = index;
+      const chapter = chaptersData[index];
+
+      // កំណត់ Hash URL ឧ. #168
+      const slug = getChapterSlug(chapter, index);
+      if (updateHash) {
+        window.history.pushState({ chapterIndex: index }, '', '#' + slug);
       }
+
+      document.getElementById('topHeaderTitle').innerText = chapter.title || chapter.ep;
+      document.getElementById('displayVolume').innerText = chapter.ep || '';
+      document.getElementById('displayTitle').innerText = chapter.title || '';
+
+      const rawText = chapter.content || chapter.url || 'មិនមានខ្លឹមសារអត្ថបទនៅឡើយទេ';
+      const formattedHtml = rawText
+        .split('\n\n')
+        .filter(p => p.trim() !== '')
+        .map(p => `<p style="font-size: ${currentFontSize}px;">${p.trim()}</p>`)
+        .join('');
+
+      document.getElementById('displayContent').innerHTML = formattedHtml;
+
+      document.querySelectorAll('#tocContainer li').forEach(li => li.classList.remove('active'));
+      const activeLi = document.getElementById('toc-item-' + index);
+      if (activeLi) {
+        activeLi.classList.add('active');
+        activeLi.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    setInterval(fetchDashboardData, 1000);
-    fetchDashboardData();
+    // ៥. ពិនិត្យ Hash URL ពេលបើកទំព័រដំបូង
+    function initChapterFromHash() {
+      const currentHash = window.location.hash.replace('#', '').trim();
+      let targetIndex = 0;
+
+      if (currentHash && chaptersData.length > 0) {
+        const foundIndex = chaptersData.findIndex((chap, idx) => getChapterSlug(chap, idx) === currentHash);
+        if (foundIndex !== -1) {
+          targetIndex = foundIndex;
+        }
+      }
+
+      loadChapter(targetIndex, false);
+    }
+
+    function navigateChapter(direction) {
+      loadChapter(currentChapterIndex + direction, true);
+    }
+
+    function toggleTOC() {
+      document.getElementById('tocDrawer').classList.toggle('open');
+      document.getElementById('tocOverlay').classList.toggle('active');
+    }
+
+    function toggleFontPanel() {
+      document.getElementById('fontPanel').classList.toggle('active');
+    }
+
+    function filterChapters() {
+      const keyword = document.getElementById('searchInput').value.toLowerCase();
+      chaptersData.forEach((chap, idx) => {
+        const el = document.getElementById('toc-item-' + idx);
+        const titleText = (chap.title || chap.ep || '').toLowerCase();
+        if (el) el.style.display = titleText.includes(keyword) ? '' : 'none';
+      });
+    }
+
+    function adjustFont(step) {
+      currentFontSize += step;
+      if (currentFontSize < 14) currentFontSize = 14;
+      if (currentFontSize > 28) currentFontSize = 28;
+      document.querySelectorAll('#displayContent p').forEach(p => {
+        p.style.fontSize = currentFontSize + 'px';
+      });
+    }
+
+    // ចាប់យកព្រឹត្តិការណ៍ចុច Back/Forward លើ Browser
+    window.onhashchange = initChapterFromHash;
+    window.onload = loadDynamicChapters;
   </script>
 </body>
 </html>
