@@ -12,18 +12,23 @@ app.use(cors({
 
 app.use(express.json());
 
-// 🔑 Telegram Bot Token ផ្លូវការរបស់អ្នក
+// 🔑 Telegram Bot Token ពី Environment Variables
 const BOT_TOKEN = process.env.BOT_TOKEN;
-let bot;
+const SERVER_URL = 'https://neakan-backend.onrender.com';
 
-try {
-  bot = new TelegramBot(BOT_TOKEN, { polling: true });
-  console.log('🤖 Telegram Bot ត្រូវបានភ្ជាប់ដំណើរការដោយជោគជ័យ!');
-} catch (e) {
-  console.error('Telegram Bot Error:', e.message);
+let bot = null;
+
+if (BOT_TOKEN) {
+  // បង្កើត Bot ដោយមិនប្រើ Polling
+  bot = new TelegramBot(BOT_TOKEN);
+  
+  // កំណត់ Webhook ទៅកាន់ Render URL ផ្ទាល់
+  bot.setWebHook(`${SERVER_URL}/bot${BOT_TOKEN}`)
+    .then(() => console.log('🤖 Telegram Webhook ត្រូវបានភ្ជាប់ជោគជ័យ!'))
+    .catch((err) => console.error('Webhook Error:', err.message));
 }
 
-// មូលដ្ឋានទិន្នន័យ APV រួមគ្នារវាង Server, Bot និង Dashboard
+// មូលដ្ឋានទិន្នន័យ APV
 let apvDatabase = {
   '103992': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null },
   '111111': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null },
@@ -35,16 +40,22 @@ let apvDatabase = {
   '471140': { status: 'UNUSED', deviceId: null, deviceType: null, loginAt: null, expiresAt: null }
 };
 
-// 🤖 មុខងារ Telegram Bot ឆ្លើយតប និងបញ្ជូនលេខកូដចូល Dashboard ស្វ័យប្រវត្តិ
+// 🌐 Route សម្រាប់ទទួលសារពី Telegram តាមរយៈ Webhook
+app.post(`/bot${BOT_TOKEN}`, (req, res) => {
+  if (bot) {
+    bot.processUpdate(req.body);
+  }
+  res.sendStatus(200);
+});
+
+// 🤖 មុខងារឆ្លើយតបសាររបស់ Telegram Bot
 if (bot) {
   bot.on('message', (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text ? msg.text.trim() : '';
 
-    // ករណី Admin ឬ User ផ្ញើលេខ ៦ ខ្ទង់
     if (text.length === 6 && !isNaN(text)) {
       const customCode = text;
-      
       apvDatabase[customCode] = {
         status: 'UNUSED',
         deviceId: null,
@@ -52,13 +63,9 @@ if (bot) {
         loginAt: null,
         expiresAt: null
       };
-
       bot.sendMessage(chatId, `🎉 ការទូទាត់ត្រូវបានអនុម័ត!\n🔑 លេខកូដ APV: ${customCode}\n⏱️ សុពលភាព: ២ នាទី (Test)`);
-    } 
-    // ករណី User ផ្ញើរូបភាពវិក្កយបត្រ ABA
-    else if (msg.photo) {
+    } else if (msg.photo) {
       const autoCode = Math.floor(100000 + Math.random() * 900000).toString();
-      
       apvDatabase[autoCode] = {
         status: 'UNUSED',
         deviceId: null,
@@ -66,13 +73,12 @@ if (bot) {
         loginAt: null,
         expiresAt: null
       };
-
       bot.sendMessage(chatId, `🎉 ផ្ទៀងផ្ទាត់ជោគជ័យ!\n🔑 លេខកូដ APV: ${autoCode}\n⏱️ សុពលភាព: ២ នាទី (Test)`);
     }
   });
 }
 
-// API Dashboard សម្រាប់ទាញទិន្នន័យ
+// API Dashboard
 app.get('/api/dashboard', (req, res) => {
   const now = Date.now();
   Object.keys(apvDatabase).forEach(code => {
@@ -117,7 +123,7 @@ app.post('/api/admin-action', (req, res) => {
   res.status(400).json({ status: 'FAILED', message: 'សកម្មភាពមិនត្រឹមត្រូវ!' });
 });
 
-// API ផ្ទៀងផ្ទាត់ និងដោះសោរវីដេអូ
+// API Verify Payment
 app.post('/api/verify-payment', (req, res) => {
   const { code, deviceId, deviceType } = req.body;
 
@@ -138,7 +144,7 @@ app.post('/api/verify-payment', (req, res) => {
   const now = Date.now();
 
   if (record.status === 'UNUSED' || !record.expiresAt || now >= record.expiresAt) {
-    const expiresAt = now + (2 * 60 * 1000); // ២ នាទី
+    const expiresAt = now + (2 * 60 * 1000);
     apvDatabase[code] = {
       status: 'ACTIVE',
       deviceId: deviceId || 'DEV-UNKNOWN',
