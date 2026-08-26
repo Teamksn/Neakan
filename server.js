@@ -13,7 +13,7 @@ app.use(cors({
 app.use(express.json());
 
 // 🔑 Telegram Bot Token ផ្លូវការរបស់អ្នក
-const BOT_TOKEN = '8896128281:AAFRVb54PhIdWess78ucaKZgXFX3obqmzy0';
+const BOT_TOKEN = process.env.BOT_TOKEN;
 let bot;
 
 try {
